@@ -61,6 +61,17 @@ object ConfidenceLevel {
 
 }
 
+case class CredentialStrength(strength: String) extends Predicate {
+  override def toJson: JsValue = Json.obj("credentialStrength" -> strength)
+}
+
+object CredentialStrength {
+
+  def strong: String = "strong"
+
+  def weak: String = "weak"
+}
+
 case class EnrolmentIdentifier(key: String, value: String)
 
 case class Enrolment(
@@ -200,6 +211,7 @@ object Retrievals {
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
   val authProviderId: Retrieval[Credentials] = SimpleRetrieval("authProviderId", Credentials.reads)
+  val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
   val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", Json.reads[LoginTimes])
