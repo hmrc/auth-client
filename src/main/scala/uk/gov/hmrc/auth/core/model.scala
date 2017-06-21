@@ -212,6 +212,7 @@ object Retrievals {
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
   val authProviderId: Retrieval[Credentials] = SimpleRetrieval("authProviderId", Credentials.reads)
   val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
+  val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
   val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", Json.reads[LoginTimes])
