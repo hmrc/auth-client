@@ -230,3 +230,4 @@ Whenever the auth microservice returns a 401 response to the library, it will co
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+
