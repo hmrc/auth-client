@@ -39,6 +39,7 @@ private object BuildDependencies {
   val test = Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % testScope,
     "org.pegdown" % "pegdown" % "1.5.0" % testScope,
+    "org.mockito" % "mockito-core" % "2.8.47" % testScope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % testScope
   )
 
