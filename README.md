@@ -20,31 +20,22 @@ libraryDependencies += "uk.gov.hmrc" %% "play-auth" % "[INSERT-VERSION]"
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the AuthorisedFunctions trait:
 ``` scala 
 // AuthorisedFunctions mixin
-trait MyController extends BaseController with AuthorisedFunctions {
+class MyController @Inject() (val authConnector: AuthConnector) extends BaseController with AuthorisedFunctions {
   
 }
 ```
-The concrete implementation of this controller must then satisfy the dependencies of the AuthorisedFunctions trait:
 
-``` scala 
-// Mixin Dependencies
-object MyController extends MyController {
-  val connector = AuthConnector
-}
-```
 The AuthConnector instance itself is then usually defined somewhere in your wiring setup:
 ``` scala 
 // AuthConnector Wiring
-object AuthConnector extends AuthConnector with ServicesConfig {
-  val serviceUrl = baseUrl("auth")
-  lazy val http = WSHttp
-}
+
+class ConcreteAuthConnector(val serviceUrl: String
+                            val http: HttpPost) extends PlayAuthConnector
  
-object WSHttp extends WSHttp {
+class MyWSHttp extends WSHttp {
   override val hooks: Seq[HttpHook] = NoneRequired
 }
 ```
-Note that above uses the old wiring style based on global objects here - you can also satisfy the dependencies in a DI-style if you wish.
 
 ---
 
@@ -226,6 +217,40 @@ Whenever the auth microservice returns a 401 response to the library, it will co
 - UnsupportedAffinityGroup: the requested affinityGroup did not match the one in the authority or the user is not a GG user
 - UnsupportedCredentialRole: the requested credentialRole did not match the one in the authority or the user is not a GG user
 - NoActiveSession: The user does not have an active session. This is an abstract type with 4 concrete subtypes, but you would usually handle all 4 types in the same way (most often by redirecting to the login page). The 4 subtypes are: MissingBearerToken (the user was probably not logged in), BearerTokenExpired (the user was logged in, but the session is expired), and two types which should never occur as they would hint at an internal error: InvalidBearerToken and SessionRecordNotFound.
+
+## Whitelisting / OTAC
+
+The library includes functional wrapper for whitelisting / OTAC authorisation, which used to be in passcode-verification.
+
+### Using the OTAC function wrapper
+First, in any controller, service or connector where you want to protect any part of your logic, mix in the OtacAuthorisationFunctions trait:
+``` scala
+class MyController @Inject() (val authConnector: AuthConnector) extends BaseController with OtacAuthorisationFunctions {
+
+}
+```
+
+The OtacAuthConnector instance itself is then usually defined somewhere in your wiring setup:
+``` scala
+class ConcreteOtacAuthConnector(val serviceUrl: String,
+                                val http: HttpGet) extends PlayOtacAuthConnector
+
+class MyWSHttp extends WSHttp {
+  override val hooks: Seq[HttpHook] = NoneRequired
+}
+```
+
+---
+
+Once that is set up you can use the OTAC functional wrapper in your controller:
+
+```
+withVerifiedPasscode("myServiceName") {
+  // your protected logic
+}
+```
+
+Note that the function does not extract any data from the config the way passcode-verification did, so you need to provide the service name (previously called "regime") explicitly.
 
 ## License
 

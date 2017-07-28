@@ -7,7 +7,5 @@ trait Await {
 
   implicit val defaultTimeout = 5 seconds
 
-  implicit def extractAwait[A](future: Future[A]) = await[A](future)
-
   def await[A](future: Future[A])(implicit timeout: Duration) = Await.result(future, timeout)
 }
