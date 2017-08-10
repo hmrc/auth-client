@@ -18,12 +18,13 @@ package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.authorise.{AffinityGroup, Enrolment, Enrolments, Predicate}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
 object Retrievals {
 
-  import uk.gov.hmrc.play.controllers.RestFormats.dateTimeRead
-  import uk.gov.hmrc.play.controllers.RestFormats.localDateRead
+  import uk.gov.hmrc.http.controllers.RestFormats.dateTimeRead
+  import uk.gov.hmrc.http.controllers.RestFormats.localDateRead
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)

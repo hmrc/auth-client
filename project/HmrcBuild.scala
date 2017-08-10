@@ -25,13 +25,8 @@ object HmrcBuild extends Build {
 
 private object BuildDependencies {
 
-  import play.core.PlayVersion
-  import play.sbt.PlayImport._
-
   val compile = Seq(
-    "com.typesafe.play" %% "play" % PlayVersion.current % "provided",
-    ws % "provided",
-    "uk.gov.hmrc" %% "http-verbs" % "6.3.0" % "provided",
+    "uk.gov.hmrc" %% "http-core" % "0.5.0" % "provided",
     "net.ceedubs" %% "ficus" % "1.1.1"
   )
 
@@ -39,8 +34,7 @@ private object BuildDependencies {
   val test = Seq(
     "org.scalatest" %% "scalatest" % "2.2.6" % testScope,
     "org.pegdown" % "pegdown" % "1.5.0" % testScope,
-    "org.mockito" % "mockito-core" % "2.8.47" % testScope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % testScope
+    "org.mockito" % "mockito-core" % "2.8.47" % testScope
   )
 
   def apply() = compile ++ test

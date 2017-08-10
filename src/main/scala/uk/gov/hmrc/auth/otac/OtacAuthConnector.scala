@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.auth.otac
 
-import play.api.mvc.Session
-import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,23 +35,23 @@ case class UnexpectedError(code: Int) extends OtacAuthorisationResult
 case class OtacFailureThrowable(result: OtacAuthorisationResult) extends Throwable
 
 trait OtacAuthConnector {
-  def authorise(serviceName: String, headerCarrier: HeaderCarrier, session: Session): Future[OtacAuthorisationResult]
+  def authorise(serviceName: String, headerCarrier: HeaderCarrier, otacToken: Option[String]): Future[OtacAuthorisationResult]
 }
 
 trait PlayOtacAuthConnector extends OtacAuthConnector {
   val serviceUrl: String
 
-  def http: HttpGet
+  def http: CoreGet
 
-  def authorise(serviceName: String, headerCarrier: HeaderCarrier, session: Session): Future[OtacAuthorisationResult] =
-    (session.get(SessionKeys.otacToken) match {
-      case Some(otacToken) => {
+  def authorise(serviceName: String, headerCarrier: HeaderCarrier, otacToken: Option[String]): Future[OtacAuthorisationResult] =
+    otacToken match {
+      case Some(ot) => {
         val enhancedHeaderCarrier =
-          headerCarrier.withExtraHeaders(HeaderNames.otacAuthorization -> otacToken)
+          headerCarrier.withExtraHeaders(HeaderNames.otacAuthorization -> ot)
         callAuth(serviceName, enhancedHeaderCarrier).flatMap(toResult)
       }
       case None => Future.successful(NoOtacTokenInSession)
-    })
+    }
 
   private def callAuth[A](serviceName: String, headerCarrier: HeaderCarrier): Future[Int] = {
     implicit val hc = headerCarrier

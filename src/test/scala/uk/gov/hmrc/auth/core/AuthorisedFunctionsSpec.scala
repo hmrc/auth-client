@@ -22,10 +22,10 @@ import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
@@ -39,7 +39,7 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
     def exception: Option[AuthorisationException] = None
 
     val authConnector: AuthConnector = new AuthConnector {
-      def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier): Future[A] = {
+      def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
         exception.fold(Future.successful(success.asInstanceOf[A]))(Future.failed(_))
       }
     }

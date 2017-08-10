@@ -16,62 +16,61 @@
 
 package uk.gov.hmrc.auth.filter
 
-import play.api.libs.json.{JsArray, Json}
-import play.api.mvc.{Filter, RequestHeader, Result, Results}
-import play.api.routing.Router.Tags
-import uk.gov.hmrc.auth.core.authorise.RawJsonPredicate
+//import play.api.libs.json.{JsArray, Json}
+//import play.api.mvc.{Filter, RequestHeader, Result, Results}
+//import play.api.routing.Router.Tags
+//import uk.gov.hmrc.auth.core.authorise.RawJsonPredicate
 import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException}
-import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+//import uk.gov.hmrc.http.HeaderCarrier
+//
+//import scala.concurrent.Future
 
-import scala.concurrent.Future
 
-
-trait AuthorisationFilter extends Filter {
-
-  def config: FilterConfig
-
-  def connector: AuthConnector
-
-  def apply(next: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
-    implicit val hc = HeaderCarrier.fromHeadersAndSession(rh.headers)
-
-    def applyPathMatcher(pathMatchers: Seq[PathMatcher]): Option[Map[String, String]] =
-      if (pathMatchers.isEmpty) None
-      else pathMatchers.head.matchPath(rh.path).orElse(
-        applyPathMatcher(pathMatchers.tail)
-      )
-
-    def prepareJson(config: AuthConfig, resolvedPathVariables: Map[String, String]): JsArray = {
-      val unresolvedJson = config.predicatesAsJson
-      val resolvedJson = resolvedPathVariables.foldLeft(unresolvedJson) {
-        case (json, (key, value)) => json.replaceAll("\\$" + key, value)
-      }
-      Json.parse(resolvedJson).as[JsArray]
-    }
-
-    def applyConfig(configs: Seq[AuthConfig]): Future[Result] =
-      if (configs.isEmpty) Future.successful(Results.Unauthorized)
-      else applyPathMatcher(configs.head.pathMatchers).fold(
-        applyConfig(configs.tail)
-      ) { resolvedPathVariables =>
-        val parsedJson = prepareJson(configs.head, resolvedPathVariables)
-        connector
-          .authorise(RawJsonPredicate(parsedJson), EmptyRetrieval).flatMap(_ => next(rh))
-          .recover { case _: AuthorisationException => Results.Unauthorized }
-      }
-
-    val authConfig = rh.tags
-      .get(Tags.RouteController)
-      .fold(Seq[AuthConfig]())(con => config.getConfigForController(con))
-
-    authConfig match {
-      case Seq() => next(rh)
-      case configs =>
-        val result = applyConfig(configs)
-        result
-    }
-  }
-
-}
+//trait AuthorisationFilter extends Filter {
+//
+//  def config: FilterConfig
+//
+//  def connector: AuthConnector
+//
+//  def apply(next: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+//    implicit val hc = HeaderCarrier.fromHeadersAndSession(rh.headers)
+//
+//    def applyPathMatcher(pathMatchers: Seq[PathMatcher]): Option[Map[String, String]] =
+//      if (pathMatchers.isEmpty) None
+//      else pathMatchers.head.matchPath(rh.path).orElse(
+//        applyPathMatcher(pathMatchers.tail)
+//      )
+//
+//    def prepareJson(config: AuthConfig, resolvedPathVariables: Map[String, String]): JsArray = {
+//      val unresolvedJson = config.predicatesAsJson
+//      val resolvedJson = resolvedPathVariables.foldLeft(unresolvedJson) {
+//        case (json, (key, value)) => json.replaceAll("\\$" + key, value)
+//      }
+//      Json.parse(resolvedJson).as[JsArray]
+//    }
+//
+//    def applyConfig(configs: Seq[AuthConfig]): Future[Result] =
+//      if (configs.isEmpty) Future.successful(Results.Unauthorized)
+//      else applyPathMatcher(configs.head.pathMatchers).fold(
+//        applyConfig(configs.tail)
+//      ) { resolvedPathVariables =>
+//        val parsedJson = prepareJson(configs.head, resolvedPathVariables)
+//        connector
+//          .authorise(RawJsonPredicate(parsedJson), EmptyRetrieval).flatMap(_ => next(rh))
+//          .recover { case _: AuthorisationException => Results.Unauthorized }
+//      }
+//
+//    val authConfig = rh.tags
+//      .get(Tags.RouteController)
+//      .fold(Seq[AuthConfig]())(con => config.getConfigForController(con))
+//
+//    authConfig match {
+//      case Seq() => next(rh)
+//      case configs =>
+//        val result = applyConfig(configs)
+//        result
+//    }
+//  }
+//
+//}
