@@ -24,7 +24,7 @@ import play.api.http.HeaderNames
 import play.api.mvc.Result
 import play.api.{Configuration, Environment, Mode}
 import play.test.WithApplication
-import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.auth.core.authorise.ConfidenceLevel
 
 
 class RedirectsSpec extends WordSpec with ScalaFutures with Matchers {

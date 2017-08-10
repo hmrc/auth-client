@@ -20,6 +20,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsArray, Json}
+import uk.gov.hmrc.auth.core.authorise.{AlternatePredicate, CompositePredicate, EmptyPredicate, Predicate}
 
 class PredicateSpec extends WordSpec with ScalaFutures {
 

@@ -18,6 +18,8 @@ package uk.gov.hmrc.auth.core
 
 import play.api.http.{HeaderNames => PlayHeaderNames}
 import play.api.libs.json._
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 

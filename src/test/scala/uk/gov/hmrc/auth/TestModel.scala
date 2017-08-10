@@ -17,7 +17,7 @@
 package uk.gov.hmrc.auth
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.auth.core.Predicate
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
 
 case class Foo(value: String)

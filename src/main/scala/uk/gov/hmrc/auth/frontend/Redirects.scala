@@ -19,7 +19,7 @@ package uk.gov.hmrc.auth.frontend
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.{Configuration, Environment, Mode}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
+import uk.gov.hmrc.auth.core.authorise.ConfidenceLevel
 import uk.gov.hmrc.play.http.SessionKeys
 
 

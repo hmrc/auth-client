@@ -21,6 +21,8 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsError, Json}
+import uk.gov.hmrc.auth.core.authorise._
+import uk.gov.hmrc.auth.core.retrieve._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
