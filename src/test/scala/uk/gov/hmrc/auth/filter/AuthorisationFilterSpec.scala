@@ -27,6 +27,8 @@ import play.api.mvc.Results._
 import play.api.routing.Router.Tags
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.{Predicate, RawJsonPredicate}
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future

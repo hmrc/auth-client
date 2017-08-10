@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.authorise
 
 import play.api.libs.json.{JsArray, JsValue, Json}
 

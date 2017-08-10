@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.retrieval.{AgentInformation, CredentialRole => RetrievalCredentialRole}
+import uk.gov.hmrc.auth.core.authorise.{AffinityGroup, Enrolment, Enrolments, Predicate}
 
 object Retrievals {
 
@@ -44,7 +44,7 @@ object Retrievals {
   val description: Retrieval[Option[String]] = OptionalRetrieval("description", Reads.StringReads)
   val agentInformation: Retrieval[AgentInformation] = SimpleRetrieval("agentInformation", AgentInformation.reads)
   val groupIdentifier: Retrieval[Option[String]] = OptionalRetrieval("groupIdentifier", Reads.StringReads)
-  val credentialRole: Retrieval[Option[RetrievalCredentialRole]] = OptionalRetrieval("credentialRole", RetrievalCredentialRole.reads)
+  val credentialRole: Retrieval[Option[CredentialRole]] = OptionalRetrieval("credentialRole", CredentialRole.reads)
 
   val allUserDetails = credentials and name and dateOfBirth and postCode and email and
     affinityGroup and agentCode and agentInformation and credentialRole and
@@ -52,38 +52,9 @@ object Retrievals {
 
 }
 
-package retrieval {
-
-  sealed trait CredentialRole
-
-  object Admin extends CredentialRole
-
-  object Assistant extends CredentialRole
-
-  object CredentialRole {
-    implicit val reads: Reads[CredentialRole] = new Reads[CredentialRole] {
-      override def reads(json: JsValue): JsResult[CredentialRole] =
-        json.as[String].toLowerCase match {
-          case "admin" => JsSuccess(Admin)
-          case "assistant" => JsSuccess(Assistant)
-          case value => JsError("Unsupported credential role value: " + value)
-        }
-    }
-  }
-
-  case class AgentInformation(agentId: Option[String],
-                              agentCode: Option[String],
-                              agentFriendlyName: Option[String])
-
-  object AgentInformation {
-    implicit val reads = Json.reads[AgentInformation]
-  }
-
-}
-
 trait AuthProvider
 
-case object AuthProvider {
+  case object AuthProvider {
 
   object GovernmentGateway extends AuthProvider
 
@@ -95,17 +66,17 @@ case object AuthProvider {
 
 }
 
-case class AuthProviders(providers: AuthProvider*) extends Predicate {
+  case class AuthProviders(providers: AuthProvider*) extends Predicate {
   def toJson: JsValue = Json.obj("authProviders" -> providers.map(_.getClass.getSimpleName.dropRight(1)))
 }
 
-case class Credentials(providerId: String, providerType: String)
+  case class Credentials(providerId: String, providerType: String)
 
-object Credentials {
+  object Credentials {
   implicit val reads = Json.reads[Credentials]
 }
 
-case class Name(name: Option[String], lastName: Option[String])
+  case class Name(name: Option[String], lastName: Option[String])
 
 object Name {
   implicit val reads = Json.reads[Name]
@@ -151,3 +122,28 @@ object LegacyCredentials {
 }
 
 case class LoginTimes(currentLogin: DateTime, previousLogin: Option[DateTime])
+
+sealed trait CredentialRole
+
+object Admin extends CredentialRole
+
+object Assistant extends CredentialRole
+
+object CredentialRole {
+    implicit val reads: Reads[CredentialRole] = new Reads[CredentialRole] {
+      override def reads(json: JsValue): JsResult[CredentialRole] =
+        json.as[String].toLowerCase match {
+          case "admin" => JsSuccess(Admin)
+          case "assistant" => JsSuccess(Assistant)
+          case value => JsError("Unsupported credential role value: " + value)
+        }
+    }
+  }
+
+case class AgentInformation(agentId: Option[String],
+                              agentCode: Option[String],
+                              agentFriendlyName: Option[String])
+
+object AgentInformation {
+    implicit val reads = Json.reads[AgentInformation]
+  }
