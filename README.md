@@ -1,4 +1,4 @@
-play-auth
+auth-client
 =========
 [![Build Status](https://travis-ci.org/hmrc/play-auth.svg)](https://travis-ci.org/hmrc/play-auth) [ ![Download](https://api.bintray.com/packages/hmrc/releases/play-auth/images/download.svg) ](https://bintray.com/hmrc/releases/play-auth/_latestVersion) [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
@@ -11,7 +11,7 @@ Include the following dependency in your SBT build
 ``` scala
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
  
-libraryDependencies += "uk.gov.hmrc" %% "play-auth" % "[INSERT-VERSION]"
+libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
 ```
 
 ## Usage
