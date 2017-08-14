@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.authorise
+package uk.gov.hmrc.auth.core
 
+import org.joda.time.DateTime
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{OptionalRetrieval, Retrieval, SimpleRetrieval}
 import uk.gov.hmrc.play.json.Mappings
 
 import scala.util.{Failure, Success, Try}
@@ -153,5 +156,69 @@ object CredentialRole {
   case object Admin extends CredentialRole
 
   case object Assistant extends CredentialRole
+
+}
+
+trait AuthProvider
+
+case object AuthProvider {
+
+  object GovernmentGateway extends AuthProvider
+
+  object Verify extends AuthProvider
+
+  object OneTimeLogin extends AuthProvider
+
+  object PrivilegedApplication extends AuthProvider
+
+}
+
+case class AuthProviders(providers: AuthProvider*) extends Predicate {
+  def toJson: JsValue = Json.obj("authProviders" -> providers.map(_.getClass.getSimpleName.dropRight(1)))
+}
+
+trait Credentials
+
+case class GGCredId(credId: String) extends Credentials
+
+case class VerifyPid(pid: String) extends Credentials
+
+case class PAClientId(clientId: String) extends Credentials
+
+case object OneTimeLogin extends Credentials
+
+object Credentials {
+  val reads: Reads[Credentials] = Reads[Credentials] { json =>
+
+    def toCreds(json: JsLookupResult, f: String => Credentials): Seq[Credentials] = json match {
+      case JsDefined(JsString(value)) => Seq(f(value))
+      case _: JsUndefined => Seq()
+      case JsDefined(json) => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
+    }
+
+    toCreds(json \ "ggCredId", GGCredId) ++ toCreds(json \ "verifyPid", VerifyPid) ++
+      toCreds(json \ "paClientId", PAClientId) ++ toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
+      case Seq(creds) => JsSuccess(creds)
+      case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
+    }
+  }
+}
+
+case class LoginTimes(currentLogin: DateTime, previousLogin: Option[DateTime])
+
+object Retrievals {
+
+  import uk.gov.hmrc.http.controllers.RestFormats.dateTimeRead
+
+  val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
+  val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
+  val authProviderId: Retrieval[Credentials] = SimpleRetrieval("authProviderId", Credentials.reads)
+  val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
+  val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
+  val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
+  val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
+  val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", Json.reads[LoginTimes])
+  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
+  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
 
 }

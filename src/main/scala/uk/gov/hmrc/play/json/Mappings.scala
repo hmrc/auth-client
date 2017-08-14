@@ -17,7 +17,6 @@
 package uk.gov.hmrc.play.json
 
 import play.api.libs.json._
-import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.reflect.{ClassTag, classTag}
 import scala.util.{Failure, Success, Try}
@@ -124,19 +123,19 @@ class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
     case Left(message) => Left(message)
   }
 
-  def pathBindable(implicit base: PathBindable[A]): PathBindable[B] = new PathBindable[B] {
-
-    def bind(key: String, value: String) = bindToDomain(base.bind(key, value))
-
-    def unbind(key: String, value: B): String = base.unbind(key, fromDomain(value))
-  }
-
-  def queryStringBindable(implicit base: QueryStringBindable[A]): QueryStringBindable[B] = new QueryStringBindable[B] {
-
-    def bind(key: String, params: Map[String, Seq[String]]) = base.bind(key, params).map(bindToDomain)
-
-    def unbind(key: String, value: B) = base.unbind(key, fromDomain(value))
-  }
+//  def pathBindable(implicit base: PathBindable[A]): PathBindable[B] = new PathBindable[B] {
+//
+//    def bind(key: String, value: String) = bindToDomain(base.bind(key, value))
+//
+//    def unbind(key: String, value: B): String = base.unbind(key, fromDomain(value))
+//  }
+//
+//  def queryStringBindable(implicit base: QueryStringBindable[A]): QueryStringBindable[B] = new QueryStringBindable[B] {
+//
+//    def bind(key: String, params: Map[String, Seq[String]]) = base.bind(key, params).map(bindToDomain)
+//
+//    def unbind(key: String, value: B) = base.unbind(key, fromDomain(value))
+//  }
 
 
 }

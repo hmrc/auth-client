@@ -19,16 +19,18 @@ package uk.gov.hmrc.auth.core
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.{Status, HeaderNames => PlayHeaderNames}
 import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.hooks.HttpHook
-import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.http._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
+object Status {
+  val OK = 200
+  val UNAUTHORIZED = 401
+}
 
 class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
@@ -43,20 +45,26 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def withBody: Option[JsValue] = None
 
     val authConnector = new PlayAuthConnector {
-      override lazy val http = new WSHttp {
-        override val hooks: Seq[HttpHook] = NoneRequired
-
-        override def doPost[A](url: String, body: A, headers: Seq[(String, String)])(implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
+      override lazy val http = new CorePost {
+        override def POST[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = {
           val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
-          Future.successful(httpResponse)
+
+          withStatus match {
+            case Status.OK => Future.successful(httpResponse.asInstanceOf[O])
+            case _ => Future.failed(Upstream4xxResponse("Unauthorised", httpResponse.status, 0, httpResponse.allHeaders))
+          }
+
         }
+
+        override def POSTString[O](url: String, body: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def POSTForm[O](url: String, body: Map[String, Seq[String]])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def POSTEmpty[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
       }
 
       override val serviceUrl: String = "/some-service"
-
     }
 
-    def exceptionHeaders(value: String) = Map(PlayHeaderNames.WWW_AUTHENTICATE -> s"""MDTP detail="$value"""")
+    def exceptionHeaders(value: String) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> s"""MDTP detail="$value"""")
   }
 
   private trait UnauthorisedSetup extends Setup {
@@ -198,7 +206,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     "throw InternalError on failed authorisation with invalid header" in new UnauthorisedSetup {
       val headerMsg = "some-invalid-header-value"
 
-      override def exceptionHeaders(value: String) = Map(PlayHeaderNames.WWW_AUTHENTICATE -> headerMsg)
+      override def exceptionHeaders(value: String) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
 
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 

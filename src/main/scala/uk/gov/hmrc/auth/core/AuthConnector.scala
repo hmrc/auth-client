@@ -16,28 +16,24 @@
 
 package uk.gov.hmrc.auth.core
 
-import play.api.http.{HeaderNames => PlayHeaderNames}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.http._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthConnector {
-
-  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier): Future[A]
-
+  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A]
 }
 
 trait PlayAuthConnector extends AuthConnector {
 
   val serviceUrl: String
 
-  def http: HttpPost
+  def http: CorePost
 
-  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier): Future[A] = {
+  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
     // if the predicate is a single field (1x SimplePredicate), place it into an array
     val predicateJson = predicate.toJson match {
@@ -63,10 +59,11 @@ trait PlayAuthConnector extends AuthConnector {
 
 object AuthenticateHeaderParser {
 
+  val WWW_AUTHENTICATE = "WWW-Authenticate"
   val regex = """^MDTP detail="(.+)"$""".r
 
   def parse(headers: Map[String, Seq[String]]): AuthorisationException = {
-    headers.get(PlayHeaderNames.WWW_AUTHENTICATE).flatMap(_.headOption) match {
+    headers.get(WWW_AUTHENTICATE).flatMap(_.headOption) match {
       case Some(regex(detail)) => AuthorisationException.fromString(detail)
       case Some(_) => new InternalError("InvalidResponseHeader")
       case None => new InternalError("MissingResponseHeader")
