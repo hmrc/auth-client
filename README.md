@@ -80,7 +80,10 @@ authorised(Enrolment("SOME-ENROLMENT")).retrieve(internalId and userDetailsUri) 
 }
 ```
 ---
-### Using Play Configuration
+### Using Play Configuration - DEPRECATED
+
+The config based approach should not be used for frontends.  A frontend will generally require more control over the handling of authorisation errors than is available in the filter chain to avoid raw http errors surfacing in the user''s browser.  Whilst this is not true of backend services which will generally just return any http error codes resulting from calls within the filter chain we believe that the wrapper function is a better approach being easier to understand, more explicit and more flexible.
+
 The following shows an example for a configuration for two controllers:
 ``` YAML 
 controllers {
