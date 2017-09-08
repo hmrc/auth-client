@@ -13,8 +13,11 @@ resolvers += Resolver.bintrayRepo("hmrc", "releases")
  
 libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
 ```
+Note that the library is only available for Play 2.5.x. If you plan to use it in a microservice that is still based on Play 2.3 you need to upgrade first.
 
 ## Usage
+
+The overall approach is to add the library and take advantage of it by extending various classes. When a user first logs in they will not have an active session, and this must be handled by ensuring that your play global object extends uk.gov.hmrc.auth.frontend.Redirects and has overridden the 'resolveError' method that it provides. Your method should contain a NoActiveSession case and a default case as a bare minimum, see the Error handling / Redirects section below for more detail.
 
 ### Using the function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the AuthorisedFunctions trait:
@@ -79,6 +82,9 @@ authorised(Enrolment("SOME-ENROLMENT")).retrieve(internalId and userDetailsUri) 
   case internalId ~ userDetailsUri => // your protected logic
 }
 ```
+Note the ~ for chaining the values in the pattern. While this syntax is unusual, it is the only cheap way of giving you any number of type-safe results inside the function without introducing a rather heavy-weight library like shapeless. You can combine any number of retrievals with and. A logical or is not available here as it would not make any sense for retrievals.
+That's all there is to it. If you were one of the unlucky users who had to use one of our older auth libraries which forced you to implement an AuthProvider, a TaxRegime and maybe also a PageVisibilityPredicate and whatnot, I hope you appreciate the simplicity and consistency of the new library. We did not implement a single trait in the examples above, we merely used existing building blocks to express our requirements!
+
 ---
 ### Using Play Configuration - DEPRECATED
 
