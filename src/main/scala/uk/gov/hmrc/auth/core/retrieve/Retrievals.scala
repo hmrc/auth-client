@@ -19,10 +19,9 @@ package uk.gov.hmrc.auth.core.retrieve
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, Enrolments}
+import uk.gov.hmrc.http.controllers.RestFormats
 
 trait Retrievals {
-
-  import uk.gov.hmrc.http.controllers.RestFormats.localDateRead
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
@@ -30,7 +29,7 @@ trait Retrievals {
   val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
-  val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", Json.reads[LoginTimes])
+  val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", LoginTimes.reads)
   val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
   val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
   val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
@@ -39,7 +38,7 @@ trait Retrievals {
 
   val credentials: Retrieval[Credentials] = SimpleRetrieval("credentials", Credentials.reads)
   val name: Retrieval[Name] = SimpleRetrieval("name", Name.reads)
-  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", localDateRead)
+  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", RestFormats.localDateRead)
   val postCode: Retrieval[Option[String]] = OptionalRetrieval("postCode", Reads.StringReads)
   val email: Retrieval[Option[String]] = OptionalRetrieval("email", Reads.StringReads)
   val description: Retrieval[Option[String]] = OptionalRetrieval("description", Reads.StringReads)
@@ -52,7 +51,7 @@ trait Retrievals {
     description and groupIdentifier
 
   val itmpName: Retrieval[ItmpName] = SimpleRetrieval("itmpName", ItmpName.reads)
-  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", localDateRead)
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
   val itmpAddress: Retrieval[ItmpAddress] = SimpleRetrieval("itmpAddress", ItmpAddress.reads)
 
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
@@ -112,6 +111,11 @@ object LegacyCredentials {
 }
 
 case class LoginTimes(currentLogin: DateTime, previousLogin: Option[DateTime])
+
+object LoginTimes {
+  implicit val dateTimeReads = RestFormats.dateTimeRead
+  val reads = Json.reads[LoginTimes]
+}
 
 case class AgentInformation(agentId: Option[String],
                             agentCode: Option[String],
