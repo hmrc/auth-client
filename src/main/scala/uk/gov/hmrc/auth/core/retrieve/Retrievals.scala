@@ -18,12 +18,10 @@ package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
-import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, Enrolments}
 
-object Retrievals {
+trait Retrievals {
 
-  import uk.gov.hmrc.http.controllers.RestFormats.dateTimeRead
   import uk.gov.hmrc.http.controllers.RestFormats.localDateRead
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
@@ -36,6 +34,8 @@ object Retrievals {
   val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
   val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
   val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
+  val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
+  val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
 
   val credentials: Retrieval[Credentials] = SimpleRetrieval("credentials", Credentials.reads)
   val name: Retrieval[Name] = SimpleRetrieval("name", Name.reads)
@@ -51,48 +51,37 @@ object Retrievals {
     affinityGroup and agentCode and agentInformation and credentialRole and
     description and groupIdentifier
 
+  val itmpName: Retrieval[ItmpName] = SimpleRetrieval("itmpName", ItmpName.reads)
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", localDateRead)
+  val itmpAddress: Retrieval[ItmpAddress] = SimpleRetrieval("itmpAddress", ItmpAddress.reads)
+
+  val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
 }
 
-trait AuthProvider
+object Retrievals extends Retrievals
 
-  case object AuthProvider {
+case class Credentials(providerId: String, providerType: String)
 
-  object GovernmentGateway extends AuthProvider
-
-  object Verify extends AuthProvider
-
-  object OneTimeLogin extends AuthProvider
-
-  object PrivilegedApplication extends AuthProvider
-
+object Credentials {
+  val reads = Json.reads[Credentials]
 }
 
-  case class AuthProviders(providers: AuthProvider*) extends Predicate {
-  def toJson: JsValue = Json.obj("authProviders" -> providers.map(_.getClass.getSimpleName.dropRight(1)))
-}
-
-  case class Credentials(providerId: String, providerType: String)
-
-  object Credentials {
-  implicit val reads = Json.reads[Credentials]
-}
-
-  case class Name(name: Option[String], lastName: Option[String])
+case class Name(name: Option[String], lastName: Option[String])
 
 object Name {
-  implicit val reads = Json.reads[Name]
+  val reads = Json.reads[Name]
 }
 
 case class PostCode(value: String)
 
 object PostCode {
-  implicit val reads = Json.reads[PostCode]
+  val reads = Json.reads[PostCode]
 }
 
 case class Email(value: String)
 
 object Email {
-  implicit val reads = Json.reads[Email]
+  val reads = Json.reads[Email]
 }
 
 trait LegacyCredentials
@@ -124,27 +113,41 @@ object LegacyCredentials {
 
 case class LoginTimes(currentLogin: DateTime, previousLogin: Option[DateTime])
 
-sealed trait CredentialRole
-
-object Admin extends CredentialRole
-
-object Assistant extends CredentialRole
-
-object CredentialRole {
-    implicit val reads: Reads[CredentialRole] = new Reads[CredentialRole] {
-      override def reads(json: JsValue): JsResult[CredentialRole] =
-        json.as[String].toLowerCase match {
-          case "admin" => JsSuccess(Admin)
-          case "assistant" => JsSuccess(Assistant)
-          case value => JsError("Unsupported credential role value: " + value)
-        }
-    }
-  }
-
 case class AgentInformation(agentId: Option[String],
-                              agentCode: Option[String],
-                              agentFriendlyName: Option[String])
+                            agentCode: Option[String],
+                            agentFriendlyName: Option[String])
 
 object AgentInformation {
-    implicit val reads = Json.reads[AgentInformation]
-  }
+    val reads = Json.reads[AgentInformation]
+}
+
+case class ItmpName(givenName: Option[String],
+                    middleName: Option[String],
+                    familyName: Option[String])
+
+object ItmpName {
+  val reads = Json.reads[ItmpName]
+}
+
+case class ItmpAddress(line1: Option[String],
+                       line2: Option[String],
+                       line3: Option[String],
+                       line4: Option[String],
+                       line5: Option[String],
+                       postCode: Option[String],
+                       countryName: Option[String],
+                       countryCode: Option[String])
+
+object ItmpAddress {
+  val reads = Json.reads[ItmpAddress]
+}
+
+case class MdtpInformation(deviceId: String, sessionId: String)
+object MdtpInformation {
+  val reads = Json.reads[MdtpInformation]
+}
+
+case class GatewayInformation(gatewayToken: Option[String], unreadMessageCount: Option[Int])
+object GatewayInformation {
+  val reads = Json.reads[GatewayInformation]
+}
