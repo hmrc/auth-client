@@ -149,12 +149,14 @@ trait CredentialRole extends Predicate {
   def toJson: JsValue = Json.obj("credentialRole" -> getClass.getSimpleName.dropRight(1).toLowerCase)
 }
 
+case object User extends CredentialRole
+
 case object Admin extends CredentialRole
 
 case object Assistant extends CredentialRole
 
 object CredentialRole {
-  private val mapping = Mappings.mapEnum[CredentialRole](Admin, Assistant)
+  private val mapping = Mappings.mapEnum[CredentialRole](Admin, Assistant, User)
 
   implicit val reads = mapping.jsonFormat
 }
