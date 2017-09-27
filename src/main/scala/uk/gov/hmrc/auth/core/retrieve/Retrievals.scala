@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.{AffinityGroup, CredentialRole, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.controllers.RestFormats
 
 trait Retrievals {
@@ -36,6 +36,7 @@ trait Retrievals {
   val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
   val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
   val unreadMessageCount: Retrieval[Option[Int]] = OptionalRetrieval("unreadMessageCount", Reads.IntReads)
+  val confidenceLevel: Retrieval[ConfidenceLevel] = SimpleRetrieval("confidenceLevel", ConfidenceLevel.jsonFormat)
 
   val credentials: Retrieval[Credentials] = SimpleRetrieval("credentials", Credentials.reads)
   val name: Retrieval[Name] = SimpleRetrieval("name", Name.reads)

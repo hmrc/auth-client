@@ -23,11 +23,13 @@ import uk.gov.hmrc.play.json.Mappings
 
 import scala.util.{Failure, Success, Try}
 
-sealed abstract class ConfidenceLevel(val level: Int) extends Ordered[ConfidenceLevel] {
+sealed abstract class ConfidenceLevel(val level: Int) extends Ordered[ConfidenceLevel] with Predicate {
 
   def compare(that: ConfidenceLevel) = this.level.compare(that.level)
 
   override val toString = level.toString
+
+  override def toJson: JsValue = Json.obj("confidenceLevel" -> level.toString)
 
 }
 
