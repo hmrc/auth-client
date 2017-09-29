@@ -175,11 +175,19 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   }
 
+  "The JSON reads for the confidence level" should {
+    "read confidence level value" in {
+      val json = Json.parse("""{ "confidenceLevel": 100 }""")
+
+      Retrievals.confidenceLevel.reads.reads(json).get shouldBe ConfidenceLevel.L100
+    }
+  }
+
   "The JSON reads for the enrolments retrieval" should {
 
     val enrolments = Set(
-      Enrolment("ENROL-A", Seq(EnrolmentIdentifier("ID-A", "123")), "Activated", ConfidenceLevel.L100),
-      Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), "Activated", ConfidenceLevel.L0)
+      Enrolment("ENROL-A", Seq(EnrolmentIdentifier("ID-A", "123")), "Activated"),
+      Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), "Activated")
     )
 
     def enrolmentsJson(retrieve: String) = Json.parse(
@@ -188,8 +196,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
          |  {
          |    "key": "ENROL-A",
          |    "identifiers": [{"key":"ID-A","value":"123"}],
-         |    "state": "Activated",
-         |    "confidenceLevel": 100
+         |    "state": "Activated"
          |  },
          |  {
          |    "key": "ENROL-B",
@@ -210,8 +217,6 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
       Retrievals.authorisedEnrolments.reads.reads(json).get shouldBe Enrolments(enrolments)
     }
-
-
   }
 
   "The JSON reads for multiple retrievals" should {

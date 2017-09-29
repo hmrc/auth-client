@@ -29,7 +29,7 @@ sealed abstract class ConfidenceLevel(val level: Int) extends Ordered[Confidence
 
   override val toString = level.toString
 
-  override def toJson: JsValue = Json.obj("confidenceLevel" -> level.toString)
+  override def toJson: JsValue = Json.obj("confidenceLevel" -> level)
 
 }
 
@@ -80,7 +80,6 @@ case class Enrolment(
                       key: String,
                       identifiers: Seq[EnrolmentIdentifier],
                       state: String,
-                      confidenceLevel: ConfidenceLevel,
                       delegatedAuthRule: Option[String] = None) extends Predicate {
 
   def getIdentifier(name: String): Option[EnrolmentIdentifier] = identifiers.find {
@@ -88,8 +87,6 @@ case class Enrolment(
   }
 
   def isActivated: Boolean = state.toLowerCase == "activated"
-
-  def withConfidenceLevel(confidenceLevel: ConfidenceLevel): Enrolment = copy(confidenceLevel = confidenceLevel)
 
   def withIdentifier(name: String, value: String): Enrolment =
     copy(identifiers = identifiers :+ EnrolmentIdentifier(name, value))
@@ -109,19 +106,17 @@ object Enrolment {
   implicit val reads: Reads[Enrolment] = ((__ \ "key").read[String] and
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and
     (__ \ "state").readNullable[String] and
-    (__ \ "confidenceLevel").readNullable[ConfidenceLevel] and
     (__ \ "delegatedAuthRule").readNullable[String]) {
-    (key, optIds, optState, optCL, optDelegateRule) =>
+    (key, optIds, optState, optDelegateRule) =>
       Enrolment(
         key,
         optIds.getOrElse(Seq()),
         optState.getOrElse("Activated"),
-        optCL.getOrElse(ConfidenceLevel.L0),
         optDelegateRule
       )
   }
 
-  def apply(key: String): Enrolment = apply(key, Seq(), "Activated", ConfidenceLevel.L0, None)
+  def apply(key: String): Enrolment = apply(key, Seq(), "Activated", None)
 }
 
 case class Enrolments(enrolments: Set[Enrolment]) {
