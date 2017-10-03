@@ -37,6 +37,8 @@ trait Retrievals {
   val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
   val unreadMessageCount: Retrieval[Option[Int]] = OptionalRetrieval("unreadMessageCount", Reads.IntReads)
   val confidenceLevel: Retrieval[ConfidenceLevel] = SimpleRetrieval("confidenceLevel", ConfidenceLevel.jsonFormat)
+  val nino: Retrieval[Option[String]] = OptionalRetrieval("nino", Reads.StringReads)
+  val saUtr: Retrieval[Option[String]] = OptionalRetrieval("saUtr", Reads.StringReads)
 
   val credentials: Retrieval[Credentials] = SimpleRetrieval("credentials", Credentials.reads)
   val name: Retrieval[Name] = SimpleRetrieval("name", Name.reads)
