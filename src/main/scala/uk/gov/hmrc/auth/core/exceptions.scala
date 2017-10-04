@@ -20,26 +20,25 @@ abstract class AuthorisationException(val reason: String) extends RuntimeExcepti
 
 abstract class NoActiveSession(r: String) extends AuthorisationException(r)
 
+case class InsufficientConfidenceLevel(msg: String = "Insufficient ConfidenceLevel") extends AuthorisationException(msg)
 
-class InsufficientConfidenceLevel extends AuthorisationException("Insufficient ConfidenceLevel")
+case class InsufficientEnrolments(msg: String = "Insufficient Enrolments") extends AuthorisationException(msg)
 
-class InsufficientEnrolments extends AuthorisationException("Insufficient Enrolments")
+case class UnsupportedAffinityGroup(msg: String = "UnsupportedAffinityGroup") extends AuthorisationException(msg)
 
-class UnsupportedAffinityGroup extends AuthorisationException("UnsupportedAffinityGroup")
+case class UnsupportedCredentialRole(msg: String = "UnsupportedCredentialRole") extends AuthorisationException(msg)
 
-class UnsupportedCredentialRole extends AuthorisationException("UnsupportedCredentialRole")
+case class UnsupportedAuthProvider(msg: String = "UnsupportedAuthProvider") extends AuthorisationException(msg)
 
-class UnsupportedAuthProvider extends AuthorisationException("UnsupportedAuthProvider")
+case class BearerTokenExpired(msg: String = "Bearer token expired") extends NoActiveSession(msg)
 
-class BearerTokenExpired extends NoActiveSession("Bearer token expired")
+case class MissingBearerToken(msg: String = "Bearer token not supplied") extends NoActiveSession(msg)
 
-class MissingBearerToken extends NoActiveSession("Bearer token not supplied")
+case class InvalidBearerToken(msg: String = "Invalid bearer token") extends NoActiveSession(msg)
 
-class InvalidBearerToken extends NoActiveSession("Invalid bearer token")
+case class SessionRecordNotFound(msg: String = "Session record not found") extends NoActiveSession(msg)
 
-class SessionRecordNotFound extends NoActiveSession("Session record not found")
-
-class InternalError(message: String) extends AuthorisationException(s"Internal Error, unexpected response: '$message'")
+case class InternalError(message: String = "Internal error") extends AuthorisationException(message)
 
 object AuthorisationException {
 
@@ -53,7 +52,6 @@ object AuthorisationException {
     case "MissingBearerToken" => new MissingBearerToken
     case "InvalidBearerToken" => new InvalidBearerToken
     case "SessionRecordNotFound" => new SessionRecordNotFound
-    case other => new InternalError(other)
+    case other => InternalError(other)
   }
-
 }
