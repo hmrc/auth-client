@@ -30,6 +30,8 @@ case class UnsupportedCredentialRole(msg: String = "UnsupportedCredentialRole") 
 
 case class UnsupportedAuthProvider(msg: String = "UnsupportedAuthProvider") extends AuthorisationException(msg)
 
+case class IncorrectCredentialStrength(msg: String = "Credential strength is different than expected") extends AuthorisationException(msg)
+
 case class BearerTokenExpired(msg: String = "Bearer token expired") extends NoActiveSession(msg)
 
 case class MissingBearerToken(msg: String = "Bearer token not supplied") extends NoActiveSession(msg)
@@ -52,6 +54,7 @@ object AuthorisationException {
     case "MissingBearerToken" => new MissingBearerToken
     case "InvalidBearerToken" => new InvalidBearerToken
     case "SessionRecordNotFound" => new SessionRecordNotFound
+    case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
     case other => InternalError(other)
   }
 }
