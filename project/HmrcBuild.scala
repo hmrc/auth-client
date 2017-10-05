@@ -12,8 +12,8 @@ object HmrcBuild extends Build {
     .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
     .settings(
       name := appName,
-      scalaVersion := "2.11.7",
-      crossScalaVersions := Seq("2.11.7"),
+      scalaVersion := "2.11.11",
+      crossScalaVersions := Seq("2.11.11"),
       libraryDependencies ++= BuildDependencies(),
       resolvers := Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
@@ -26,15 +26,15 @@ object HmrcBuild extends Build {
 private object BuildDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "http-core" % "0.5.0" % "provided",
-    "net.ceedubs" %% "ficus" % "1.1.1"
+    "uk.gov.hmrc" %% "http-core" % "0.6.0" % "provided",
+    "net.ceedubs" %% "ficus" % "1.1.2"
   )
 
   val testScope = "test"
   val test = Seq(
-    "org.scalatest" %% "scalatest" % "2.2.6" % testScope,
-    "org.pegdown" % "pegdown" % "1.5.0" % testScope,
-    "org.mockito" % "mockito-core" % "2.8.47" % testScope
+    "org.scalatest" %% "scalatest" % "3.0.1" % testScope,
+    "org.pegdown" % "pegdown" % "1.6.0" % testScope,
+    "org.mockito" % "mockito-core" % "2.10.0" % testScope
   )
 
   def apply() = compile ++ test
