@@ -12,8 +12,6 @@ object HmrcBuild extends Build {
     .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
     .settings(
       name := appName,
-      scalaVersion := "2.11.11",
-      crossScalaVersions := Seq("2.11.11"),
       libraryDependencies ++= BuildDependencies(),
       resolvers := Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
