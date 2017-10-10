@@ -27,6 +27,7 @@ trait Retrievals {
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
   val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
   val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
+  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri")
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
   val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", LoginTimes.reads)
