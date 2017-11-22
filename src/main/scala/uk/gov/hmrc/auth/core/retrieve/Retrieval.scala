@@ -22,7 +22,7 @@ import play.api.libs.json.{JsPath, Reads}
 /**
   * Some type-trickery to allow composing of multiple retrievals at the call site
   */
-case class ~[A, B](a: A, b: B)
+case class ~[+A, +B](a: A, b: B)
 
 /**
   * A typed class that models what will be returned from auth upon a successful authorisation call
