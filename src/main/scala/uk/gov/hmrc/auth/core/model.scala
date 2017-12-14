@@ -175,3 +175,15 @@ case object AuthProvider {
 case class AuthProviders(providers: AuthProvider*) extends Predicate {
   def toJson: JsValue = Json.obj("authProviders" -> providers.map(_.getClass.getSimpleName.dropRight(1)))
 }
+
+case class Nino(hasNino: Boolean, nino: Option[String]=None) extends Predicate {
+  override def toJson = Json.obj(
+    "hasNino" -> hasNino,
+    "nino" -> nino
+  )
+}
+
+object Nino {
+  implicit val reads = Json.reads[Nino]
+  implicit val writes = Json.writes[Nino]
+}
