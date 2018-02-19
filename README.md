@@ -268,6 +268,63 @@ withVerifiedPasscode("myServiceName") {
 
 Note that the function does not extract any data from the config the way passcode-verification did, so you need to provide the service name (previously called "regime") explicitly.
 
+
+## Testing
+In most cases testing a controller that uses auth-client is a matter of overriding the `AuthConnector` by providing a stubbed implementation.
+Here you can find an example which retrieves credentials and enrolments:
+```scala
+  private class TestSetupAuthorisationDemoController(stubbedRetrievalResult: Future[_]) extends AuthorisationDemoController {
+    override val authConnector: AuthConnector = new AuthConnector {
+
+      def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+        stubbedRetrievalResult.map(_.asInstanceOf[A])
+      }
+    }
+  }
+
+  "calling retrieveProviderIdAndAuthorisedEnrolments" should {
+    "return 200 for successful retrieval of 'authProviderId' and 'authorisedEnrolments' from auth-client" in {
+      val retrievalResult: Future[~[LegacyCredentials, Enrolments]] = Future.successful(new ~(GGCredId("cred-1234"), 
+          Enrolments(Set(Enrolment("enrolment-value")))))
+      val controller = new TestSetupAuthorisationDemoController(retrievalResult)
+
+      val result = controller.retrieveProviderIdAndAuthorisedEnrolments()(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return 401 for unsuccessful retrieval of 'authProviderId' and 'authorisedEnrolments' from auth-client" in {
+      val controller = new TestSetupAuthorisationDemoController(Future.failed(InsufficientEnrolments()))
+
+      val result = controller.retrieveProviderIdAndAuthorisedEnrolments()(fakeRequest)
+      status(result) shouldBe Status.UNAUTHORIZED
+    }
+  }
+
+```
+
+Another possibility is using `AuthConnector` as a class dependency. In that case you can rely on `AuthConnector#authorise()` being mocked.
+
+```scala
+    "allow mocking of response" in {
+      implicit val hc = mock[HeaderCarrier]
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val retrievalResult: Future[~[Credentials, Enrolments]] = Future.successful(new ~(Credentials("gg", "cred-1234"), 
+          Enrolments(Set(Enrolment("enrolment-value")))))
+
+      Mockito.when(mockAuthConnector.authorise[~[Credentials, Enrolments]](any(), any())(any(), any()))
+        .thenReturn(retrievalResult)
+
+      mockAuthConnector.authorise(EmptyPredicate, Retrievals.credentials and Retrievals.authorisedEnrolments)
+
+      Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate),
+        equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
+    }
+
+```
+
+For more testing examples head to `uk.gov.hmrc.auth.core.AuthConnectorSpec` or [Auth-Demo-Frontend]("https://github.com/hmrc/auth-demo-frontend")
+
+
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
