@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,15 +46,15 @@ object AuthorisationException {
 
   def fromString(reason: String): AuthorisationException = reason match {
     case "InsufficientConfidenceLevel" => new InsufficientConfidenceLevel
-    case "InsufficientEnrolments" => new InsufficientEnrolments
-    case "UnsupportedAffinityGroup" => new UnsupportedAffinityGroup
-    case "UnsupportedCredentialRole" => new UnsupportedCredentialRole
-    case "UnsupportedAuthProvider" => new UnsupportedAuthProvider
-    case "BearerTokenExpired" => new BearerTokenExpired
-    case "MissingBearerToken" => new MissingBearerToken
-    case "InvalidBearerToken" => new InvalidBearerToken
-    case "SessionRecordNotFound" => new SessionRecordNotFound
+    case "UnsupportedAffinityGroup"    => new UnsupportedAffinityGroup
+    case "UnsupportedCredentialRole"   => new UnsupportedCredentialRole
+    case "UnsupportedAuthProvider"     => new UnsupportedAuthProvider
+    case "BearerTokenExpired"          => new BearerTokenExpired
+    case "MissingBearerToken"          => new MissingBearerToken
+    case "InvalidBearerToken"          => new InvalidBearerToken
+    case "SessionRecordNotFound"       => new SessionRecordNotFound
     case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
+    case "InsufficientEnrolments"      => new InsufficientEnrolments
     case other => InternalError(other)
   }
 }
