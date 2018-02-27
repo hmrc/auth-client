@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,13 +60,18 @@ trait PlayAuthConnector extends AuthConnector {
 object AuthenticateHeaderParser {
 
   val WWW_AUTHENTICATE = "WWW-Authenticate"
+  val ENROLMENT = "Failing-Enrolment"
   val regex = """^MDTP detail="(.+)"$""".r
+
 
   def parse(headers: Map[String, Seq[String]]): AuthorisationException = {
     headers.get(WWW_AUTHENTICATE).flatMap(_.headOption) match {
-      case Some(regex(detail)) => AuthorisationException.fromString(detail)
-      case Some(_) => new InternalError("InvalidResponseHeader")
-      case None => new InternalError("MissingResponseHeader")
+      case Some(regex(detail)) => AuthorisationException.fromString(detail) match {
+        case ie:InsufficientEnrolments => headers.get(ENROLMENT).flatMap(_.headOption).fold(ie)(e => ie.copy(msg = e))
+        case other                     => other
+      }
+      case Some(_)             => new InternalError("InvalidResponseHeader")
+      case None                => new InternalError("MissingResponseHeader")
     }
   }
 

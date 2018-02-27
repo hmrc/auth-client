@@ -203,7 +203,7 @@ object MyGlobal extends DefaultFrontendGlobal {
   
   def resolveError(rh: RequestHeader, ex: Throwable) = ex match {
  
-    case ex: InsufficientEnrolments => // your custom recovery logic, usually redirects
+    case ex: InsufficientEnrolments("HMRC-SA") => // your custom recovery logic, usually redirects
  
     case _ => super.resolveError(rh, ex)
  
@@ -220,14 +220,14 @@ authorised(Enrolment("SOME-ENROLMENT")) {
   // your protected logic
 } recoverWith {
   
-  case ex: InsufficientEnrolments => // your custom recovery logic, usually redirects
+  case ex: InsufficientEnrolments("SOME-ENROLMENT") => // your custom recovery logic, usually redirects
 }
 ```
 
 ### Authorisation Exceptions
 
 Whenever the auth microservice returns a 401 response to the library, it will contain a `WWW-Authenticate` header with details about the failure which will then be translated to a custom exception. They are all a subtype of `AuthorisationException`. This is the complete list of possible exceptions:
-- InsufficientEnrolments: One or more of the requested enrolments were not present in the authority
+- InsufficientEnrolments(enrolmentName): One or more of the requested enrolments were not present in the authority, the first failing enrolment name is returned in the ```enrolment``` field
 - InsufficientConfidenceLevel: The confidence level requested for one of the enrolments was too low
 - UnsupportedAuthProvider: the provider for the current authority is not one of the providers your auth predicates listed as accepted
 - UnsupportedAffinityGroup: the requested affinityGroup did not match the one in the authority or the user is not a GG user

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,6 +146,17 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
       whenReady(result.failed) {
         e => e shouldBe a[InsufficientEnrolments]
+      }
+    }
+
+    "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new UnauthorisedSetup {
+      val headerMsg = "InsufficientEnrolments: SA-UTR"
+
+      val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
+
+      whenReady(result.failed) {
+        case InsufficientEnrolments(msg) => msg shouldEqual "SA-UTR"
+        case _                           => fail("Did not match InsufficientEnrolment")
       }
     }
 
