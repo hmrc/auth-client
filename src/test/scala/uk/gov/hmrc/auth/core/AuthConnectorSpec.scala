@@ -64,7 +64,11 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       override val serviceUrl: String = "/some-service"
     }
 
-    def exceptionHeaders(value: String) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> s"""MDTP detail="$value"""")
+    def exceptionHeaders(value: String,enrolment:Option[String] = None) =
+      Map(
+        AuthenticateHeaderParser.WWW_AUTHENTICATE -> s"""MDTP detail="$value"""",
+        enrolment.map(e => AuthenticateHeaderParser.ENROLMENT -> e).getOrElse("" -> "")
+      )
   }
 
   private trait UnauthorisedSetup extends Setup {
@@ -77,6 +81,16 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
   }
 
+  private trait FailedEnrolmentSetup extends Setup {
+
+    def headerMsg: String
+    def enrolment:String
+
+    override def withStatus = Status.UNAUTHORIZED
+
+    override def withHeaders = exceptionHeaders(headerMsg,Some(enrolment))
+
+  }
   "authorise" should {
 
     val fooRetrieval = SimpleRetrieval("fooProperty", Foo.reads)
@@ -149,14 +163,16 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       }
     }
 
-    "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new UnauthorisedSetup {
-      val headerMsg = "InsufficientEnrolments: SA-UTR"
+    "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new FailedEnrolmentSetup{
+      val headerMsg = "InsufficientEnrolments"
+      val enrolment = "SA-UTR"
 
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
+
       whenReady(result.failed) {
-        case InsufficientEnrolments(msg) => msg shouldEqual "SA-UTR"
-        case _                           => fail("Did not match InsufficientEnrolment")
+        case InsufficientEnrolments("SA-UTR")   => //success
+        case other                              => fail(s"Did not match InsufficientEnrolment: $other")
       }
     }
 
@@ -217,7 +233,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     "throw InternalError on failed authorisation with invalid header" in new UnauthorisedSetup {
       val headerMsg = "some-invalid-header-value"
 
-      override def exceptionHeaders(value: String) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
+      override def exceptionHeaders(value: String,enrolment:Option[String]) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
 
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
