@@ -67,7 +67,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def exceptionHeaders(value: String,enrolment:Option[String] = None) =
       Map(
         AuthenticateHeaderParser.WWW_AUTHENTICATE -> s"""MDTP detail="$value"""",
-        enrolment.map(e => AuthenticateHeaderParser.ENROLMENT -> e).getOrElse("" -> "")
+        AuthenticateHeaderParser.ENROLMENT        -> enrolment.getOrElse("")
       )
   }
 
