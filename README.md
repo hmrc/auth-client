@@ -64,7 +64,7 @@ In this example we require that the user has a SOME-ENROLMENT enrolment and only
 If you also want load some data for the current authority, add a retrieval call after the authorisation logic:
 ``` scala 
 // With Data Retrieval
-import uk.gov.hmrc.auth.core.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.Retrievals._
   
 authorised(Enrolment("SOME-ENROLMENT)).retrieve(externalId) { externalId =>
  
@@ -75,7 +75,7 @@ Here we specify that we want to retrieve the externalId of the current user, whi
 If you request more than one data item, they will be passed in a flexible wrapper that can be best accessed via a pattern match in the body:
 ``` scala 
 // Multiple Data Retrievals
-import uk.gov.hmrc.auth.core.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.Retrievals._
   
 authorised(Enrolment("SOME-ENROLMENT")).retrieve(internalId and userDetailsUri) {
  
