@@ -199,9 +199,11 @@ In frontends you would usually want to avoid letting 401 responses bubble up to 
 
 In many frontends, the recovery from certain types of authorisation failures will probably be similar. So keeping the logic in the Global object is convenient.
 ``` scala
+import import play.api.mvc.Results._
+
 object MyGlobal extends DefaultFrontendGlobal {
   
-  def resolveError(rh: RequestHeader, ex: Throwable) = ex match {
+  override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
  
     case ex: InsufficientEnrolments("HMRC-SA") => // your custom recovery logic, usually redirects
  
