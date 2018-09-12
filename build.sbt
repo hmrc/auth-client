@@ -21,7 +21,11 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 val libName = "auth-client"
 
 lazy val library = Project(libName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
+  .settings(
+    makePublicallyAvailableOnBintray := true,
+    majorVersion                     := 2
+  )
   .settings(
     name := libName,
     libraryDependencies ++= BuildDependencies(),
