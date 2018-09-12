@@ -16,6 +16,7 @@
 
 import sbt.Keys._
 import sbt._
+import uk.gov.hmrc.PlayCrossCompilation
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val libName = "auth-client"
@@ -32,5 +33,6 @@ lazy val library = Project(libName, file("."))
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.typesafeRepo("releases")
-    )
+    ),
+    PlayCrossCompilation()
   )

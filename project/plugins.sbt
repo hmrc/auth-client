@@ -8,3 +8,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "1.12.0")
 addSbtPlugin("uk.gov.hmrc" % "sbt-git-versioning" % "1.7.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.13.0")
+
+addSbtPlugin("uk.gov.hmrc" % "sbt-play-cross-compilation" % "0.4.0")
