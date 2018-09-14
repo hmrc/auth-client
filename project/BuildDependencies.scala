@@ -1,9 +1,9 @@
 import sbt._
-import uk.gov.hmrc.Dependencies
+import uk.gov.hmrc.crossPlayDependencies
 
 private object BuildDependencies {
 
-  val compile = Dependencies(
+  val compile = crossPlayDependencies(
     common = Seq(
       "net.ceedubs" %% "ficus" % "1.1.2"
     ),
