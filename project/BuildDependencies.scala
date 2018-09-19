@@ -1,18 +1,13 @@
+import PlayCrossCompilation._
 import sbt._
-import uk.gov.hmrc.crossPlayDependencies
+import uk.gov.hmrc.playcrosscompilation.PlayVersion._
 
 private object BuildDependencies {
 
-  val compile = crossPlayDependencies(
-    common = Seq(
-      "net.ceedubs" %% "ficus" % "1.1.2"
-    ),
-    play25 = Seq(
-      "uk.gov.hmrc" %% "http-core" % "0.6.0" % Provided
-    ),
-    play26 = Seq(
-      "uk.gov.hmrc" %% "http-core" % "1.2.0" % Provided
-    )
+  val compile = DependenciesSeq(
+    "net.ceedubs" %% "ficus" % "1.1.2",
+    "uk.gov.hmrc" %% "http-core" % "0.6.0" % Provided crossPlay Play25,
+    "uk.gov.hmrc" %% "http-core" % "1.2.0" % Provided crossPlay Play26
   )
 
   val test = Seq(
