@@ -18,9 +18,52 @@ package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.{retrieve, _}
 import uk.gov.hmrc.http.controllers.RestFormats
 
+trait SafeRetrievals {
+  val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
+  val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
+  val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
+  val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
+  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri")
+  val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
+  val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
+  val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", LoginTimes.reads)
+  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
+  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
+  @deprecated("Use 'credentials' retrieval")
+  val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
+  val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
+  val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
+  val unreadMessageCount: Retrieval[Option[Int]] = OptionalRetrieval("unreadMessageCount", Reads.IntReads)
+  val confidenceLevel: Retrieval[ConfidenceLevel] = SimpleRetrieval("confidenceLevel", ConfidenceLevel.jsonFormat)
+  val nino: Retrieval[Option[String]] = OptionalRetrieval("nino", Reads.StringReads)
+  val saUtr: Retrieval[Option[String]] = OptionalRetrieval("saUtr", Reads.StringReads)
+
+  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", RestFormats.localDateRead)
+  val postCode: Retrieval[Option[String]] = OptionalRetrieval("postCode", Reads.StringReads)
+  val email: Retrieval[Option[String]] = OptionalRetrieval("email", Reads.StringReads)
+  val description: Retrieval[Option[String]] = OptionalRetrieval("description", Reads.StringReads)
+  val groupIdentifier: Retrieval[Option[String]] = OptionalRetrieval("groupIdentifier", Reads.StringReads)
+  val credentialRole: Retrieval[Option[CredentialRole]] = OptionalRetrieval("credentialRole", CredentialRole.reads)
+  val agentInformation: Retrieval[AgentInformation] = SimpleRetrieval("agentInformation", AgentInformation.reads)
+
+  val allUserDetails = credentials and name and dateOfBirth and postCode and email and
+    affinityGroup and agentCode and agentInformation and credentialRole and
+    description and groupIdentifier and unreadMessageCount
+
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
+
+  val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
+
+  val credentials: Retrieval[Option[Credentials]] = OptionalRetrieval("optionalCredentials", Credentials.reads)
+  val name: Retrieval[Option[Name]] = OptionalRetrieval("optionalName",Name.reads)
+  val itmpName: Retrieval[Option[ItmpName]] = OptionalRetrieval("optionalItmpName", ItmpName.reads)
+  val itmpAddress: Retrieval[Option[ItmpAddress]] = OptionalRetrieval("optionalItmpAddress", ItmpAddress.reads)
+}
+
+@deprecated
 trait Retrievals {
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
@@ -63,7 +106,9 @@ trait Retrievals {
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
 }
 
+@deprecated
 object Retrievals extends Retrievals
+object SafeRetrievals extends SafeRetrievals
 
 case class Credentials(providerId: String, providerType: String)
 
