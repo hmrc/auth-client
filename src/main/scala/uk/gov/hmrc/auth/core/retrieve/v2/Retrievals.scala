@@ -65,4 +65,4 @@ trait Retrievals {
 
 }
 
-object SafeRetrievals extends Retrievals
+object Retrievals extends Retrievals
