@@ -49,18 +49,19 @@ trait SafeRetrievals {
   val credentialRole: Retrieval[Option[CredentialRole]] = OptionalRetrieval("credentialRole", CredentialRole.reads)
   val agentInformation: Retrieval[AgentInformation] = SimpleRetrieval("agentInformation", AgentInformation.reads)
 
-  val allUserDetails = credentials and name and dateOfBirth and postCode and email and
-    affinityGroup and agentCode and agentInformation and credentialRole and
-    description and groupIdentifier and unreadMessageCount
-
-  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
-
-  val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
-
   val credentials: Retrieval[Option[Credentials]] = OptionalRetrieval("optionalCredentials", Credentials.reads)
   val name: Retrieval[Option[Name]] = OptionalRetrieval("optionalName",Name.reads)
   val itmpName: Retrieval[Option[ItmpName]] = OptionalRetrieval("optionalItmpName", ItmpName.reads)
   val itmpAddress: Retrieval[Option[ItmpAddress]] = OptionalRetrieval("optionalItmpAddress", ItmpAddress.reads)
+
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
+
+  val allUserDetails = credentials and name and dateOfBirth and postCode and email and
+    affinityGroup and agentCode and agentInformation and credentialRole and
+    description and groupIdentifier and unreadMessageCount
+
+  val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
+
 }
 
 @deprecated
