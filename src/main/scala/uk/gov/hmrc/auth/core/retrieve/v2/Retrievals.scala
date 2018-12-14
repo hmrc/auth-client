@@ -17,7 +17,7 @@
 package uk.gov.hmrc.auth.core.retrieve.v2
 
 import org.joda.time.LocalDate
-import play.api.libs.json.Reads
+import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.controllers.RestFormats
@@ -63,6 +63,14 @@ trait Retrievals {
 
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
 
+  val oauthTokens: Retrieval[Option[OauthTokens]] = OptionalRetrieval("oauthTokens", OauthTokens.reads)
 }
 
 object Retrievals extends Retrievals
+
+
+case class OauthTokens(accessToken: Option[String], refreshToken: Option[String], idToken: Option[String])
+
+object OauthTokens {
+  val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
+}

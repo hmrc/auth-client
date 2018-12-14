@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.auth.core
 
+import java.util.UUID
+
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.auth.core.authorise._
 import uk.gov.hmrc.auth.core.retrieve._
 
@@ -242,6 +244,94 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       }
     }
 
+  }
+
+  "The JSON reads for the OAuth Token retrieval" should {
+    import v2.OauthTokens
+    import v2.Retrievals.oauthTokens
+
+    "read a fully populated OAuth Token object" in {
+      val idToken = UUID.randomUUID().toString
+      val accessToken = UUID.randomUUID().toString
+      val refreshToken = UUID.randomUUID().toString
+
+      val json = Json.obj(
+        "oauthTokens" -> Json.obj(
+          "idToken" -> idToken,
+          "accessToken" -> accessToken,
+          "refreshToken" -> refreshToken
+        )
+      )
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+
+      tokens.get shouldBe Some(OauthTokens(Some(accessToken), Some(refreshToken), Some(idToken)))
+    }
+
+    "read an OAuth Token object with no ID Token" in {
+      val accessToken = UUID.randomUUID().toString
+      val refreshToken = UUID.randomUUID().toString
+
+      val json = Json.obj(
+        "oauthTokens" -> Json.obj(
+          "accessToken" -> accessToken,
+          "refreshToken" -> refreshToken
+        )
+      )
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+      tokens.get shouldBe Some(OauthTokens(Some(accessToken), Some(refreshToken), None))
+    }
+
+    "read an OAuth Token object with no access token" in {
+      val idToken = UUID.randomUUID().toString
+      val refreshToken = UUID.randomUUID().toString
+
+      val json = Json.obj(
+        "oauthTokens" -> Json.obj(
+          "idToken" -> idToken,
+          "refreshToken" -> refreshToken
+        )
+      )
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+      tokens.get shouldBe Some(OauthTokens(None, Some(refreshToken), Some(idToken)))
+    }
+
+    "read an OAuth Token object with no refresh token" in {
+      val idToken = UUID.randomUUID().toString
+      val accessToken = UUID.randomUUID().toString
+
+      val json = Json.obj(
+        "oauthTokens" -> Json.obj(
+          "idToken" -> idToken,
+          "accessToken" -> accessToken
+        )
+      )
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+      tokens.get shouldBe Some(OauthTokens(Some(accessToken), None, Some(idToken)))
+    }
+
+    "read a null property as None" in {
+      val json = Json.parse("""{"oauthTokens": null}""")
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+      tokens.get shouldBe None
+    }
+
+    "read a missing property as None" in {
+      val json = Json.obj()
+
+      val tokens = oauthTokens.reads.reads(json)
+      tokens shouldBe a [JsSuccess[_]]
+      tokens.get shouldBe None
+    }
   }
 
 
