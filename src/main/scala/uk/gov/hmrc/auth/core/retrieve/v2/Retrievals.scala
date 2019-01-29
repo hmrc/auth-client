@@ -63,6 +63,10 @@ trait Retrievals {
 
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
 
+  val profile: Retrieval[Option[String]] = OptionalRetrieval("profile", Reads.StringReads)
+  val groupProfile: Retrieval[Option[String]] = OptionalRetrieval("groupProfile", Reads.StringReads)
+  val emailVerified: Retrieval[Option[Boolean]] = OptionalRetrieval("emailVerified", Reads.BooleanReads)
+
   val oauthTokens: Retrieval[Option[OauthTokens]] = OptionalRetrieval("oauthTokens", OauthTokens.reads)
 }
 

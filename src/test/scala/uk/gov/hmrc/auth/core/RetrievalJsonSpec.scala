@@ -23,7 +23,6 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import uk.gov.hmrc.auth.core.authorise._
 import uk.gov.hmrc.auth.core.retrieve._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
@@ -332,6 +331,27 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       tokens shouldBe a [JsSuccess[_]]
       tokens.get shouldBe None
     }
+  }
+
+  "The JSON reads for profile, groupProfile, emailVerified" should {
+    import v2.Retrievals.{emailVerified, groupProfile, profile}
+
+    "read the values from the Json" in {
+      val json = Json parse """{"profile": "someProfile", "groupProfile": "someGroupProfile", "emailVerified": true}"""
+
+      profile.reads.reads(json).get shouldBe Some("someProfile")
+      groupProfile.reads.reads(json).get shouldBe Some("someGroupProfile")
+      emailVerified.reads.reads(json).get shouldBe Some(true)
+    }
+
+    "read missing values as None from the Json" in {
+      val json = Json.obj()
+
+      profile.reads.reads(json).get shouldBe None
+      groupProfile.reads.reads(json).get shouldBe None
+      emailVerified.reads.reads(json).get shouldBe None
+    }
+
   }
 
 
