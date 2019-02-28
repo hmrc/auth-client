@@ -98,10 +98,9 @@ case class Enrolment(
 
 object Enrolment {
   implicit val idFormat = Json.format[EnrolmentIdentifier]
-  implicit val writes = Json.writes[Enrolment].transform { json: JsValue =>
-    json match {
-      case JsObject(props) => JsObject(props + ("enrolment" -> props("key")) - "key")
-    }
+  implicit val writes = Json.writes[Enrolment].transform { json: JsObject =>
+    val JsObject(props) = json
+    JsObject(props + ("enrolment" -> props("key")) - "key")
   }
   implicit val reads: Reads[Enrolment] = ((__ \ "key").read[String] and
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and
