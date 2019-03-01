@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,10 +98,9 @@ case class Enrolment(
 
 object Enrolment {
   implicit val idFormat = Json.format[EnrolmentIdentifier]
-  implicit val writes = Json.writes[Enrolment].transform { json: JsValue =>
-    json match {
-      case JsObject(props) => JsObject(props + ("enrolment" -> props("key")) - "key")
-    }
+  implicit val writes = Json.writes[Enrolment].transform { json: JsObject =>
+    val JsObject(props) = json
+    JsObject(props + ("enrolment" -> props("key")) - "key")
   }
   implicit val reads: Reads[Enrolment] = ((__ \ "key").read[String] and
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and
