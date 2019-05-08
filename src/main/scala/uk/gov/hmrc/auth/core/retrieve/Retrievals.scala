@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.{retrieve, _}
 import uk.gov.hmrc.http.controllers.RestFormats
 
 
-@deprecated
+@deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", "2.11.0-play-25, 2.11.0-play-26")
 trait Retrievals {
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
@@ -65,7 +65,7 @@ trait Retrievals {
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
 }
 
-@deprecated
+@deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", "2.11.0-play-25, 2.11.0-play-26")
 object Retrievals extends Retrievals
 
 case class Credentials(providerId: String, providerType: String)
