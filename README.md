@@ -13,7 +13,7 @@ resolvers += Resolver.bintrayRepo("hmrc", "releases")
  
 libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
 ```
-Note that the library is only available for Play 2.5.x. If you plan to use it in a microservice that is still based on Play 2.3 you need to upgrade first.
+Note that the library is only available for Play 2.5.x and Play 2.6.x. If you plan to use it in a microservice that is still based on Play 2.3 you need to upgrade first.
 
 ## Usage
 
