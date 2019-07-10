@@ -42,6 +42,8 @@ case class SessionRecordNotFound(msg: String = "Session record not found") exten
 
 case class InternalError(message: String = "Internal error") extends AuthorisationException(message)
 
+case class FailedRelationship(msg :String = "FailedRelationship") extends AuthorisationException(msg)
+
 object AuthorisationException {
 
   def fromString(reason: String): AuthorisationException = reason match {
@@ -55,6 +57,7 @@ object AuthorisationException {
     case "SessionRecordNotFound"       => new SessionRecordNotFound
     case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
     case "InsufficientEnrolments"      => new InsufficientEnrolments
+    case "FailedRelationship"          => new FailedRelationship
     case other => InternalError(other)
   }
 }
