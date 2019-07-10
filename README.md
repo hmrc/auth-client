@@ -54,12 +54,22 @@ The minimal check that this code will still do is that the user is currently log
 If you do have a few authorisation requirements, you can pass them to the authorise function:
 ``` scala 
 // With Predicates
+authorised(Relationship("TRUST",Set(BusinessKey("UTR","12345")))) {
+  
+  // your protected logic
+}
+```
+In this example we require that the user has a relationship in the relationship establishment service, with the  relationship name of TRUST and the business key of a UTR of 12345.
+``` scala 
+// With Predicates
 authorised(Enrolment("SOME-ENROLMENT") and AuthProvider(GovernmentGateway)) {
   
   // your protected logic
 }
 ```
-In this example we require that the user has a SOME-ENROLMENT enrolment and only accept users logged in via Government Gateway. There are many other predicates that can be freely combined with and and/or or.
+In this example we require that the user has a SOME-ENROLMENT enrolment and only accept users logged in via Government Gateway.
+
+There are many other predicates that can be freely combined with and and/or or.
 
 If you also want load some data for the current authority, add a retrieval call after the authorisation logic:
 ``` scala 
