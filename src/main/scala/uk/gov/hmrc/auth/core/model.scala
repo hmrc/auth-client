@@ -186,3 +186,17 @@ object Nino {
   implicit val reads = Json.reads[Nino]
   implicit val writes = Json.writes[Nino]
 }
+
+case class BusinessKey(name: String, value: String)
+case class Relationship(relationshipName: String, businessKeys: Set[BusinessKey]) extends Predicate {
+
+  def toJson: JsValue = Json.toJson(this)
+}
+
+object BusinessKey {
+  implicit val format: OFormat[BusinessKey] = Json.format[BusinessKey]
+}
+
+object Relationship {
+  implicit val format: OFormat[Relationship] = Json.format[Relationship]
+}

@@ -216,6 +216,16 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       }
     }
 
+    "throw FailedRelationship on failed authorisation with appropriate header" in new UnauthorisedSetup {
+      val headerMsg = "FailedRelationship"
+
+      val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
+
+      whenReady(result.failed) {
+        e => e shouldBe a[FailedRelationship]
+      }
+    }
+
     "throw InternalError on failed authorisation with unknown header message" in new UnauthorisedSetup {
       val headerMsg = "some-unknown-header-message"
 

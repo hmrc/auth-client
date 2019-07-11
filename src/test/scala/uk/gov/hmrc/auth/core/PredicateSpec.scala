@@ -20,7 +20,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsArray, Json}
-import uk.gov.hmrc.auth.core.authorise.{AlternatePredicate, CompositePredicate, EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise._
 
 class PredicateSpec extends WordSpec with ScalaFutures {
 
@@ -168,6 +168,52 @@ class PredicateSpec extends WordSpec with ScalaFutures {
       val result = AlternatePredicate(AlternatePredicate(firstAnd, loneOr), secondAnd)
 
       result.toJson shouldBe expectedJson
+
+
+    }
+  }
+  "Relationship Predicate" should {
+    "be able to correctly convert a relationship Predicate into json" in {
+
+      val relationshipName = "TRUST"
+
+      val businessKeyUTR = BusinessKey("UTR","12345")
+      val businessKeyPostcode = BusinessKey("PostCode","SW4 7HR")
+
+      val relationshipPredicateUTR = Relationship(relationshipName,Set(businessKeyUTR))
+
+      val relationshipPredicateUTRAndPostcode = Relationship(relationshipName,Set(businessKeyUTR, businessKeyPostcode))
+
+      val relationshipJsonWithOneBusinessKey :String =
+        s"""|{
+            |    "relationshipName": "TRUST",
+            |      "businessKeys": [
+            |        {
+            |          "name": "UTR",
+            |          "value": "12345"
+            |        }
+            |      ]
+            |}
+    """.stripMargin
+
+        val relationshipJsonWithTwoBusinessKeys :String =
+        s"""|{
+            |    "relationshipName": "TRUST",
+            |      "businessKeys": [
+            |        {
+            |          "name": "UTR",
+            |          "value": "12345"
+            |        },
+            |        {
+            |          "name": "PostCode",
+            |          "value": "SW4 7HR"
+            |        }
+            |      ]
+            |}
+    """.stripMargin
+
+     Json.parse(relationshipJsonWithOneBusinessKey) shouldBe relationshipPredicateUTR.toJson
+     Json.parse(relationshipJsonWithTwoBusinessKeys) shouldBe relationshipPredicateUTRAndPostcode.toJson
 
 
     }
