@@ -68,6 +68,8 @@ trait Retrievals {
   val emailVerified: Retrieval[Option[Boolean]] = OptionalRetrieval("emailVerified", Reads.BooleanReads)
 
   val oauthTokens: Retrieval[Option[OauthTokens]] = OptionalRetrieval("oauthTokens", OauthTokens.reads)
+
+  val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
 }
 
 object Retrievals extends Retrievals
@@ -77,4 +79,10 @@ case class OauthTokens(accessToken: Option[String], refreshToken: Option[String]
 
 object OauthTokens {
   val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
+}
+
+case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: Nino)
+
+object TrustedHelper {
+  val reads: Reads[TrustedHelper] = Json.reads[TrustedHelper]
 }
