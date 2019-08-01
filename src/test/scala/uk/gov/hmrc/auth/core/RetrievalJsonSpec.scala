@@ -394,7 +394,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       trustedHelper.reads.reads(json).isError shouldBe true
-      trustedHelper.reads.reads(json).toString shouldBe """JsError(List((/trustedHelper/attorneyName,List(ValidationError(List(error.path.missing),WrappedArray())))))"""
+      trustedHelper.reads.reads(json).toString.contains("""JsError(List((/trustedHelper/attorneyName""") shouldBe true
 
     }
   }
