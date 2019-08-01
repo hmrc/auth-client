@@ -21,6 +21,7 @@ import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.controllers.RestFormats
+import uk.gov.hmrc.domain.{Nino => DNino}
 
 trait Retrievals {
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
@@ -81,7 +82,7 @@ object OauthTokens {
   val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
 }
 
-case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: Nino)
+case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: DNino)
 
 object TrustedHelper {
   val reads: Reads[TrustedHelper] = Json.reads[TrustedHelper]
