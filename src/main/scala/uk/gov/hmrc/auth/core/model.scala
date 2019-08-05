@@ -147,6 +147,7 @@ trait CredentialRole extends Predicate {
 
 case object User extends CredentialRole
 
+@deprecated("Admin and User are equivalent. In the future Admin will be removed. Use User instead!")
 case object Admin extends CredentialRole
 
 case object Assistant extends CredentialRole
