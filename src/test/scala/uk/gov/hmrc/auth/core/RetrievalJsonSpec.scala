@@ -24,7 +24,6 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.domain.{Nino => DNino}
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
@@ -363,7 +362,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       val principalName = UUID.randomUUID().toString
       val attorneyName = UUID.randomUUID().toString
       val returnLinkUrl = UUID.randomUUID().toString
-      val principalNino = DNino("AA000003D")
+      val principalNino = "AA000003D"
 
       val json = Json.obj(
         "trustedHelper" -> Json.obj(
@@ -383,7 +382,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     "error when read a uncompleted trusted helper object e.g attorneyName is missing" in {
       val principalName = UUID.randomUUID().toString
       val returnLinkUrl = UUID.randomUUID().toString
-      val principalNino = DNino("AA000003D")
+      val principalNino = "AA000003D"
 
       val json = Json.obj(
         "trustedHelper" -> Json.obj(
