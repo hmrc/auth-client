@@ -19,19 +19,23 @@ package uk.gov.hmrc.auth.core
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.delegation.DelegationContext
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.http.ws.WSHttp
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthConnector {
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A]
+  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any]
+  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any]
 }
 
 trait PlayAuthConnector extends AuthConnector {
 
   val serviceUrl: String
 
-  def http: CorePost
+  def http: WSHttp
 
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
@@ -53,6 +57,14 @@ trait PlayAuthConnector extends AuthConnector {
       case res@Upstream4xxResponse(_, 401, _, headers) =>
         Future.failed(AuthenticateHeaderParser.parse(headers))
     }
+  }
+
+  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    http.POST(s"$serviceUrl/auth/authoriseDelegation", delegationContext)
+  }
+
+  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    http.DELETE(s"$serviceUrl/auth/endDelegation")
   }
 
 }

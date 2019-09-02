@@ -23,9 +23,10 @@ import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.play.http.ws.WSHttp
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 object Status {
   val OK = 200
@@ -36,7 +37,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
   private trait Setup {
 
-    implicit lazy val hc = HeaderCarrier()
+    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     def withStatus: Int = Status.OK
 
@@ -45,20 +46,25 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def withBody: Option[JsValue] = None
 
     val authConnector = new PlayAuthConnector {
-      override lazy val http = new CorePost {
+      override lazy val http = new WSHttp {
         override def POST[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = {
           val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
-
           withStatus match {
             case Status.OK => Future.successful(httpResponse.asInstanceOf[O])
             case _ => Future.failed(Upstream4xxResponse("Unauthorised", httpResponse.status, 0, httpResponse.allHeaders))
           }
-
         }
 
+        override def DELETE[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+
+        override def applicableHeaders(url: String)(implicit hc: HeaderCarrier): Seq[(String, String)] = ???
+        override def PATCH[I, O](url: String, body: I)(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def PUT[I, O](url: String, body: I)(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
         override def POSTString[O](url: String, body: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
         override def POSTForm[O](url: String, body: Map[String, Seq[String]])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
         override def POSTEmpty[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def GET[A](url: String)(implicit rds: HttpReads[A], hc: HeaderCarrier, ec: ExecutionContext): Future[A] = ???
+        override def GET[A](url: String, queryParams: Seq[(String, String)])(implicit rds: HttpReads[A], hc: HeaderCarrier, ec: ExecutionContext): Future[A] = ???
       }
 
       override val serviceUrl: String = "/some-service"

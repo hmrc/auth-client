@@ -10,7 +10,7 @@ private object BuildDependencies {
   )
 
   val test = Seq(
-    "org.scalatest" %% "scalatest" % "3.0.1" % Test,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test,
     "org.pegdown" % "pegdown" % "1.6.0" % Test,
     "org.mockito" % "mockito-core" % "2.10.0" % Test
   )

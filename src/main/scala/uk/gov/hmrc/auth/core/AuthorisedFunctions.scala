@@ -27,26 +27,19 @@ trait AuthorisedFunctions {
 
   def authConnector: AuthConnector
 
-
   def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate)
 
   def authorised(predicate: Predicate): AuthorisedFunction = new AuthorisedFunction(predicate)
 
-
   class AuthorisedFunction(predicate: Predicate) {
-
     def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
       authConnector.authorise(predicate, EmptyRetrieval).flatMap(_ => body)
-
-
     def retrieve[A](retrieval: Retrieval[A]) = new AuthorisedFunctionWithResult(predicate, retrieval)
-
   }
 
   class AuthorisedFunctionWithResult[A](predicate: Predicate, retrieval: Retrieval[A]) {
-
     def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
       authConnector.authorise(predicate, retrieval).flatMap(body)
-
   }
+
 }

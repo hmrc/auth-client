@@ -16,22 +16,21 @@
 
 package uk.gov.hmrc.auth.otac
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.ArgumentMatchers.{eq => equalTo}
+import org.mockito.ArgumentMatchers.{eq => equalTo, _}
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
-import uk.gov.hmrc.auth.Await
+import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
-class OtacAuthorisationFunctionsSpec extends WordSpec with ScalaFutures with Matchers with Await with MockitoSugar {
+class OtacAuthorisationFunctionsSpec extends UnitSpec with MockitoSugar {
 
-  val authConnectorMock = mock[OtacAuthConnector]
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+
+  val authConnectorMock: OtacAuthConnector = mock[OtacAuthConnector]
 
   class StubOtacAuthorisationFunctions(result: OtacAuthorisationResult) extends OtacAuthorisationFunctions {
     when(authConnectorMock.authorise(equalTo("myService"), any[HeaderCarrier], any[Option[String]])).thenReturn(Future.successful(result))
@@ -41,7 +40,6 @@ class OtacAuthorisationFunctionsSpec extends WordSpec with ScalaFutures with Mat
   "OtacAuthorisationFunctions" should {
 
     "execute code if user is authorised" in {
-      implicit val headerCarrier = HeaderCarrier()
       val otacToken: Option[String] = None
 
       await(new StubOtacAuthorisationFunctions(Authorised).withVerifiedPasscode("myService", otacToken){
@@ -50,7 +48,6 @@ class OtacAuthorisationFunctionsSpec extends WordSpec with ScalaFutures with Mat
     }
 
     "fail if user is unauthorised" in {
-      implicit val headerCarrier = HeaderCarrier()
       val otacToken: Option[String] = None
 
       await(new StubOtacAuthorisationFunctions(Unauthorised).withVerifiedPasscode("myService", otacToken){
@@ -61,7 +58,5 @@ class OtacAuthorisationFunctionsSpec extends WordSpec with ScalaFutures with Mat
     }
 
   }
-
-
 
 }

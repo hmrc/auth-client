@@ -21,6 +21,7 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval, ~}
+import uk.gov.hmrc.auth.delegation.DelegationContext
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,7 +33,7 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
 
   private trait Setup extends AuthorisedFunctions {
 
-    implicit lazy val hc = HeaderCarrier()
+    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     def success: Any = ()
 
@@ -42,6 +43,10 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
       def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
         exception.fold(Future.successful(success.asInstanceOf[A]))(Future.failed(_))
       }
+
+      override def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any] = ???
+
+      override def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any] = ???
     }
   }
 
