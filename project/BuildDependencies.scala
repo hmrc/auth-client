@@ -4,9 +4,9 @@ import sbt._
 private object BuildDependencies {
 
   val compile = dependencies(
-    shared = Seq("com.iheart" %% "ficus" % "1.4.3"),
-    play25 = Seq("uk.gov.hmrc" %% "http-verbs" % "9.3.0-play-25" % Provided),
-    play26 = Seq("uk.gov.hmrc" %% "http-verbs" % "9.3.0-play-26" % Provided)
+    shared = Seq("com.iheart" %% "ficus" % "1.4.7"),
+    play25 = Seq("uk.gov.hmrc" %% "http-verbs" % "9.8.0-play-25" % Provided),
+    play26 = Seq("uk.gov.hmrc" %% "http-verbs" % "9.8.0-play-26" % Provided)
   )
 
   val test = Seq(
