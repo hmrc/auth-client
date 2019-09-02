@@ -1,5 +1,6 @@
 import PlayCrossCompilation._
 import sbt._
+import play.sbt.PlayImport._
 
 private object BuildDependencies {
 
@@ -10,6 +11,7 @@ private object BuildDependencies {
   )
 
   val test = Seq(
+    ws,
     "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test,
     "org.pegdown" % "pegdown" % "1.6.0" % Test,
     "org.mockito" % "mockito-core" % "2.10.0" % Test

@@ -46,7 +46,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def withBody: Option[JsValue] = None
 
     val authConnector = new PlayAuthConnector {
-      override lazy val http = new WSHttp {
+        val http = new WSHttp {
         override def POST[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = {
           val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
           withStatus match {
