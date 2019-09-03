@@ -23,8 +23,8 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{RequestHeader, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.{AuthConnector, Nino}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.auth.core.{AuthConnector, DelegationAuthConnector, Nino}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,10 +35,10 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
   val DelegationStateSessionKey = "delegationState"
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockDelegationAuthConnector: DelegationAuthConnector = mock[DelegationAuthConnector]
 
   val delegator: Delegator = new Delegator {
-    override protected def authConnector: AuthConnector = mockAuthConnector
+    override protected def delegationConnector: DelegationAuthConnector = mockDelegationAuthConnector
   }
 
   "The startDelegation method" should {
@@ -56,7 +56,7 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       val redirectTo = "http://blah/blah"
 
-      when(mockAuthConnector.setDelegation(delegationContext)).thenReturn(Future.successful(()))
+      when(mockDelegationAuthConnector.setDelegation(delegationContext)).thenReturn(Future.successful(HttpResponse(201)))
 
       val result: Result = await(delegator.startDelegationAndRedirect(delegationContext, redirectTo))
 
@@ -65,7 +65,7 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       result.session.get(DelegationStateSessionKey) shouldBe Some("On")
 
-      verify(mockAuthConnector).setDelegation(delegationContext)
+      verify(mockDelegationAuthConnector).setDelegation(delegationContext)
     }
   }
 
@@ -78,7 +78,7 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       assert(request.session.get(DelegationStateSessionKey).contains("On"))
 
-      when(mockAuthConnector.endDelegation).thenReturn(Future.successful(()))
+      when(mockDelegationAuthConnector.endDelegation).thenReturn(Future.successful(HttpResponse(204)))
 
       val result = await(delegator.endDelegation(Ok))
 
@@ -86,7 +86,7 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       result.header.status shouldBe 200
 
-      verify(mockAuthConnector).endDelegation()
+      verify(mockDelegationAuthConnector).endDelegation()
     }
   }
 

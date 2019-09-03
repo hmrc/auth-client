@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.delegation
 
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.{AuthConnector, Nino}
+import uk.gov.hmrc.auth.core.{DelegationAuthConnector, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,18 +27,18 @@ import scala.concurrent.Future
 
 trait Delegator {
 
-  protected def authConnector: AuthConnector
+  protected def delegationConnector: DelegationAuthConnector
 
   val delegationStateSessionKey = "delegationState"
 
   def startDelegationAndRedirect(delegationContext: DelegationContext, redirectUrl: String)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] = {
-    authConnector.setDelegation(delegationContext).map { _ =>
+    delegationConnector.setDelegation(delegationContext).map { _ =>
       Results.SeeOther(redirectUrl).addingToSession(delegationStateSessionKey -> "On")
     }
   }
 
   def endDelegation(result: Result)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] = {
-    authConnector.endDelegation.map { _ =>
+    delegationConnector.endDelegation.map { _ =>
       result.removingFromSession(delegationStateSessionKey)
     }
   }

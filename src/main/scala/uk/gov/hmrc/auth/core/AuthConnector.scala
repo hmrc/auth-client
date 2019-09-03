@@ -27,15 +27,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait AuthConnector {
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A]
-  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any]
-  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Any]
 }
 
 trait PlayAuthConnector extends AuthConnector {
 
   val serviceUrl: String
 
-  def http: WSHttp
+  def http: CorePost
 
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
@@ -59,6 +57,11 @@ trait PlayAuthConnector extends AuthConnector {
     }
   }
 
+}
+
+trait DelegationAuthConnector {
+  val serviceUrl: String
+  def http: WSHttp
   def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     http.POST(s"$serviceUrl/auth/authoriseDelegation", delegationContext)
   }
@@ -66,7 +69,6 @@ trait PlayAuthConnector extends AuthConnector {
   def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     http.DELETE(s"$serviceUrl/auth/endDelegation")
   }
-
 }
 
 object AuthenticateHeaderParser {
