@@ -16,24 +16,27 @@
 
 package uk.gov.hmrc.auth.core
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsValue, Json, Writes}
+import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.http.ws.WSHttp
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 object Status {
   val OK = 200
   val UNAUTHORIZED = 401
 }
 
-class AuthConnectorSpec extends WordSpec with ScalaFutures {
+class AuthConnectorSpec extends WordSpec with ScalaFutures with MockitoSugar {
 
   private trait Setup {
 
@@ -45,27 +48,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     def withBody: Option[JsValue] = None
 
-    val authConnector = new PlayAuthConnector {
-        val http = new WSHttp {
-        override def POST[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = {
-          val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
-          withStatus match {
-            case Status.OK => Future.successful(httpResponse.asInstanceOf[O])
-            case _ => Future.failed(Upstream4xxResponse("Unauthorised", httpResponse.status, 0, httpResponse.allHeaders))
-          }
-        }
+    lazy val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
 
-        override def PUT[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def PUTString[O](url: String, body: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def PATCH[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def DELETE[O](url: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def GET[A](url: String, queryParams: Seq[(String, String)], headers: Seq[(String, String)])(implicit rds: HttpReads[A], hc: HeaderCarrier, ec: ExecutionContext): Future[A] = ???
-        override def applicableHeaders(url: String)(implicit hc: HeaderCarrier): Seq[(String, String)] = ???
-        override def POSTString[O](url: String, body: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def POSTForm[O](url: String, body: Map[String, Seq[String]])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def POSTEmpty[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-      }
-
+    val authConnector: PlayAuthConnector = new PlayAuthConnector {
+      val http: WSHttp = mock[WSHttp]
       override val serviceUrl: String = "/some-service"
     }
 
@@ -81,7 +67,6 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def headerMsg: String
 
     override def withStatus = Status.UNAUTHORIZED
-
     override def withHeaders = exceptionHeaders(headerMsg)
 
   }
@@ -92,7 +77,6 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     def enrolment:String
 
     override def withStatus = Status.UNAUTHORIZED
-
     override def withHeaders = exceptionHeaders(headerMsg,Some(enrolment))
 
   }
@@ -102,6 +86,9 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     val barRetrieval = SimpleRetrieval("barProperty", Bar.reads)
 
     "return a successful future when a 200 is returned and no retrievals are supplied" in new Setup {
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.successful(httpResponse))
+
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result) { _ => () }
@@ -117,10 +104,13 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
         """.stripMargin
       ))
 
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.successful(httpResponse))
+
       val result = authConnector.authorise(TestPredicate1("aValue"), fooRetrieval)
 
       whenReady(result) {
-        theFoo => theFoo shouldBe Foo("someValue")
+        theFoo: Foo => theFoo shouldBe Foo("someValue")
       }
     }
 
@@ -138,6 +128,9 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
         """.stripMargin
       ))
 
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.successful(httpResponse))
+
       val result = authConnector.authorise(TestPredicate1("aValue"), CompositeRetrieval(fooRetrieval, barRetrieval))
 
       whenReady(result) {
@@ -149,8 +142,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InsufficientConfidenceLevel on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "InsufficientConfidenceLevel"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new InsufficientConfidenceLevel))
 
+      val headerMsg = "InsufficientConfidenceLevel"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -159,8 +154,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InsufficientEnrolments on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "InsufficientEnrolments"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new InsufficientEnrolments))
 
+      val headerMsg = "InsufficientEnrolments"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -168,12 +165,13 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       }
     }
 
-    "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new FailedEnrolmentSetup{
+    "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new FailedEnrolmentSetup {
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new InsufficientEnrolments("SA-UTR")))
+
       val headerMsg = "InsufficientEnrolments"
       val enrolment = "SA-UTR"
-
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
-
 
       whenReady(result.failed) {
         case InsufficientEnrolments("SA-UTR")   => //success
@@ -182,8 +180,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw BearerTokenExpired on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "BearerTokenExpired"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new BearerTokenExpired))
 
+      val headerMsg = "BearerTokenExpired"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -192,8 +192,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw MissingBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "MissingBearerToken"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new MissingBearerToken))
 
+      val headerMsg = "MissingBearerToken"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -202,8 +204,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InvalidBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "InvalidBearerToken"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new InvalidBearerToken))
 
+      val headerMsg = "InvalidBearerToken"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -212,8 +216,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw SessionRecordNotFound on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "SessionRecordNotFound"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new SessionRecordNotFound))
 
+      val headerMsg = "SessionRecordNotFound"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -222,8 +228,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw FailedRelationship on failed authorisation with appropriate header" in new UnauthorisedSetup {
-      val headerMsg = "FailedRelationship"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(new FailedRelationship))
 
+      val headerMsg = "FailedRelationship"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -232,8 +240,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InternalError on failed authorisation with unknown header message" in new UnauthorisedSetup {
-      val headerMsg = "some-unknown-header-message"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(InternalError("some-unknown-header-message")))
 
+      val headerMsg = "some-unknown-header-message"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -246,10 +256,11 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InternalError on failed authorisation with invalid header" in new UnauthorisedSetup {
-      val headerMsg = "some-invalid-header-value"
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(Upstream4xxResponse("Unauthorised", httpResponse.status, 0, httpResponse.allHeaders)))
 
       override def exceptionHeaders(value: String,enrolment:Option[String]) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
-
+      val headerMsg = "some-invalid-header-value"
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -262,9 +273,10 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     }
 
     "throw InternalError on failed authorisation with missing header" in new Setup {
+      when(authConnector.http.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        .thenReturn(Future.failed(InternalError("MissingResponseHeader")))
 
       override val withStatus = Status.UNAUTHORIZED
-
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
