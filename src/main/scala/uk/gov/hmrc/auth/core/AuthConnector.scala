@@ -60,15 +60,18 @@ trait PlayAuthConnector extends AuthConnector {
 }
 
 trait DelegationAuthConnector {
-  val serviceUrl: String
+
+  val authServiceUrl: String
   def http: WSHttp
+
   def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST(s"$serviceUrl/auth/authoriseDelegation", delegationContext)
+    http.POST(s"$authServiceUrl/auth/authoriseDelegation", delegationContext)
   }
 
   def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.DELETE(s"$serviceUrl/auth/endDelegation")
+    http.DELETE(s"$authServiceUrl/auth/endDelegation")
   }
+
 }
 
 object AuthenticateHeaderParser {
