@@ -23,7 +23,7 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{RequestHeader, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.{AuthConnector, DelegationAuthConnector, Nino}
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -19,9 +19,7 @@ package uk.gov.hmrc.auth.core
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.auth.delegation.DelegationContext
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.http.ws.WSHttp
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,21 +53,6 @@ trait PlayAuthConnector extends AuthConnector {
       case res@Upstream4xxResponse(_, 401, _, headers) =>
         Future.failed(AuthenticateHeaderParser.parse(headers))
     }
-  }
-
-}
-
-trait DelegationAuthConnector {
-
-  val authServiceUrl: String
-  def http: WSHttp
-
-  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST(s"$authServiceUrl/auth/authoriseDelegation", delegationContext)
-  }
-
-  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.DELETE(s"$authServiceUrl/auth/endDelegation")
   }
 
 }

@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.delegation
 
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.{DelegationAuthConnector, Nino}
+import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
