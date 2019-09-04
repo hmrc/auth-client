@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.core.retrieve
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.{retrieve, _}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.controllers.RestFormats
 
 

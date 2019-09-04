@@ -17,15 +17,15 @@
 package uk.gov.hmrc.auth
 
 import org.mockito.ArgumentMatchers.{any, eq => equalTo}
-import org.mockito.{Mock, Mockito}
+import org.mockito.Mockito
 import org.scalatest.WordSpec
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MockingConnectorSpec extends WordSpec with MockitoSugar {

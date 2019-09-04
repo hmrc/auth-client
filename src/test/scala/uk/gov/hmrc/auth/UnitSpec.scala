@@ -16,12 +16,16 @@
 
 package uk.gov.hmrc.auth
 
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{Matchers, WordSpec}
+
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-trait Await {
-  import scala.concurrent.duration._
+trait UnitSpec extends WordSpec with Matchers with ScalaFutures {
 
-  implicit val defaultTimeout = 5 seconds
+  implicit val timeout: Duration = 5.seconds
 
-  def await[A](future: Future[A])(implicit timeout: Duration) = Await.result(future, timeout)
+  def await[A](future: Future[A])(implicit timeout: Duration): A = Await.result(future, timeout)
+
 }
