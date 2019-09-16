@@ -24,8 +24,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait OtacAuthorisationFunctions {
   def authConnector: OtacAuthConnector
-  def env : Environment
-  def verifictionFEBaseUrl : String
+  val serviceUrl : String
+  val useRelativeRedirect : Boolean = true
   private val tokenParam : String= "p"
 
   def withVerifiedPasscode[T](serviceName: String, otacToken: Option[String])(body: => Future[T])
@@ -45,16 +45,11 @@ trait OtacAuthorisationFunctions {
   }
 
   def redirectToLogin(implicit request: RequestHeader) = {
-    val getVerificationURL = verifictionFEBaseUrl
-    val protocol = if (env.mode == Mode.Prod) "https" else "http"
-
-    val (url, redirectUrl) = env.mode match {
-      case Mode.Prod =>
-        (s"/verification/otac/login${tokenQueryParam(request)}", request.path)
-      case _ =>
-        (s"$protocol://$getVerificationURL/verification/otac/login${tokenQueryParam(request)}", s"$protocol://${request.host}${request.path}")
+    val (url, redirectUrl) = if (useRelativeRedirect) {
+      (s"/verification/otac/login${tokenQueryParam(request)}", request.path)
+    } else {
+      (s"$serviceUrl/verification/otac/login${tokenQueryParam(request)}", s"http://${request.host}${request.path}")
     }
-
     Results.Redirect(url).withNewSession.addingToSession(SessionKeys.redirect -> redirectUrl)
   }
 
