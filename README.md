@@ -254,8 +254,9 @@ The library includes functional wrapper for whitelisting / OTAC authorisation, w
 ### Using the OTAC function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the OtacAuthorisationFunctions trait:
 ``` scala
-class MyController @Inject() (val authConnector: OtacAuthConnector, val env: Environment) extends BaseController with OtacAuthorisationFunctions {
-  override def verifictionFEBaseUrl : String = 
+class MyController @Inject() (val authConnector: OtacAuthConnector) extends BaseController with OtacAuthorisationFunctions {
+  override def serviceUrl : String = 
+  override val useRelativeRedirect: Boolean = 
 }
 ```
 
