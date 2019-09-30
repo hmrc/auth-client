@@ -255,14 +255,18 @@ The library includes functional wrapper for whitelisting / OTAC authorisation, w
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the OtacAuthorisationFunctions trait:
 ``` scala
 class MyController @Inject() (val authConnector: OtacAuthConnector) extends BaseController with OtacAuthorisationFunctions {
-  override def serviceUrl : String = 
-  override val useRelativeRedirect: Boolean = 
+
 }
 ```
 
 The OtacAuthConnector instance itself is then usually defined somewhere in your wiring setup:
 ``` scala
-class ConcreteOtacAuthConnector @Inject() (val serviceUrl : String, val http: HttpClient) extends PlayOtacAuthConnector
+class ConcreteOtacAuthConnector(val serviceUrl: String,
+                                val http: HttpGet) extends PlayOtacAuthConnector
+
+class MyWSHttp extends WSHttp {
+  override val hooks: Seq[HttpHook] = NoneRequired
+}
 ```
 
 ---
@@ -270,7 +274,7 @@ class ConcreteOtacAuthConnector @Inject() (val serviceUrl : String, val http: Ht
 Once that is set up you can use the OTAC functional wrapper in your controller:
 
 ```
-withPasscode("myServiceName") {
+withVerifiedPasscode("myServiceName", Some("<otac token>")) {
   // your protected logic
 }
 ```
