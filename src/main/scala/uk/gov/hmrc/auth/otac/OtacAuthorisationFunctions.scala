@@ -16,43 +16,19 @@
 
 package uk.gov.hmrc.auth.otac
 
-import play.api.{Environment, Mode}
-import play.api.mvc.{RequestHeader, Results, Result}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait OtacAuthorisationFunctions {
   def authConnector: OtacAuthConnector
-  val serviceUrl : String
-  val useRelativeRedirect : Boolean = true
-  private val tokenParam : String= "p"
 
   def withVerifiedPasscode[T](serviceName: String, otacToken: Option[String])(body: => Future[T])
                              (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[T] = {
 
     authConnector.authorise(serviceName, headerCarrier, otacToken).flatMap {
-        case Authorised => body
-        case otherResult => Future.failed(OtacFailureThrowable(otherResult))
-      }
-  }
-
-  def withPasscode[_](serviceName: String)(body: => Future[Result])
-                          (implicit request: RequestHeader, hc: HeaderCarrier, ec: ExecutionContext) = {
-    request.session.get(SessionKeys.otacToken).fold(Future.successful(redirectToLogin(request))) { token =>
-      withVerifiedPasscode(serviceName, Some(token))(body)
+      case Authorised => body
+      case otherResult => Future.failed(OtacFailureThrowable(otherResult))
     }
   }
-
-  def redirectToLogin(implicit request: RequestHeader) = {
-    val (url, redirectUrl) = if (useRelativeRedirect) {
-      (s"/verification/otac/login${tokenQueryParam(request)}", request.path)
-    } else {
-      (s"$serviceUrl/verification/otac/login${tokenQueryParam(request)}", s"http://${request.host}${request.path}")
-    }
-    Results.Redirect(url).withNewSession.addingToSession(SessionKeys.redirect -> redirectUrl)
-  }
-
-  private[otac] def tokenQueryParam(request: RequestHeader) : String =
-    request.getQueryString(tokenParam).map(token => s"?$tokenParam=$token").getOrElse("")
 }
