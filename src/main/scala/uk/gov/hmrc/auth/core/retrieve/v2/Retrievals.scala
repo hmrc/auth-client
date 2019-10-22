@@ -70,6 +70,8 @@ trait Retrievals {
   val oauthTokens: Retrieval[Option[OauthTokens]] = OptionalRetrieval("oauthTokens", OauthTokens.reads)
 
   val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
+
+  val legacySaUserId:Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
 }
 
 object Retrievals extends Retrievals
