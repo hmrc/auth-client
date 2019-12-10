@@ -69,9 +69,9 @@ case class CredentialStrength(strength: String) extends Predicate {
 
 object CredentialStrength {
 
-  def strong: String = "strong"
+  val strong: String = "strong"
 
-  def weak: String = "weak"
+  val weak: String = "weak"
 }
 
 case class EnrolmentIdentifier(key: String, value: String)
