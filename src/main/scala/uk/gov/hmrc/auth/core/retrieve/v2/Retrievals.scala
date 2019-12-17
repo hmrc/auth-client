@@ -71,7 +71,12 @@ trait Retrievals {
 
   val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
 
-  val legacySaUserId:Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
+  val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
+
+  val clientId: Retrieval[Option[String]] = OptionalRetrieval("optionalClientId", Reads.StringReads)
+
+  val applicationName: Retrieval[Option[String]] = OptionalRetrieval("optionalApplicationName", Reads.StringReads)
+
 }
 
 object Retrievals extends Retrievals

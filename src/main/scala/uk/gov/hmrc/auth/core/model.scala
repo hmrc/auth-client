@@ -170,6 +170,8 @@ case object AuthProvider {
 
   object PrivilegedApplication extends AuthProvider
 
+  object StandardApplication extends AuthProvider
+
 }
 
 case class AuthProviders(providers: AuthProvider*) extends Predicate {

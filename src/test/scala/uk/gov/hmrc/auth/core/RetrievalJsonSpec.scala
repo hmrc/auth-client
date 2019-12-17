@@ -354,6 +354,30 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   }
 
+  "The JSON reads for applicationName and clientId" should {
+
+    import v2.Retrievals.{clientId, applicationName}
+
+    "read the values from the Json" in {
+
+      val json = Json parse """{"optionalApplicationName": "App 1", "optionalClientId": "client-1"}"""
+
+      clientId.reads.reads(json).get shouldBe Some("client-1")
+      applicationName.reads.reads(json).get shouldBe Some("App 1")
+    }
+
+    "read missing values as None from the Json" in {
+
+      val json = Json.obj()
+
+      clientId.reads.reads(json).get shouldBe None
+      applicationName.reads.reads(json).get shouldBe None
+
+    }
+
+  }
+
+
   "The JSON reads for the trusted helper retrieval" should {
     import v2.Retrievals.trustedHelper
     import v2.TrustedHelper
