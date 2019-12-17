@@ -59,7 +59,7 @@ object ConfidenceLevel {
 
   private val mapping = Mappings.mapTry[Int, ConfidenceLevel](fromInt, _.level)
 
-  implicit val jsonFormat = mapping.jsonFormat
+  implicit val jsonFormat: Format[ConfidenceLevel] = mapping.jsonFormat
 
 }
 
