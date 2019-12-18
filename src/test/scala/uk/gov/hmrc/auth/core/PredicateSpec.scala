@@ -19,7 +19,7 @@ package uk.gov.hmrc.auth.core
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.{JsArray, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise._
 
 class PredicateSpec extends WordSpec with ScalaFutures {
@@ -36,11 +36,11 @@ class PredicateSpec extends WordSpec with ScalaFutures {
   "CompositePredicate" should {
 
     "convert to a JSON array containing all supplied Predicates" in {
-      val predicate1 = new Predicate {
-        val toJson = Json.obj("testPredicate1" -> "someValue1")
+      val predicate1: Predicate = new Predicate {
+        val toJson: JsValue = Json.obj("testPredicate1" -> "someValue1")
       }
-      val predicate2 = new Predicate {
-        val toJson = Json.obj("testPredicate2" -> "someValue2")
+      val predicate2: Predicate = new Predicate {
+        val toJson: JsValue = Json.obj("testPredicate2" -> "someValue2")
       }
 
       val expectedString =
@@ -67,11 +67,11 @@ class PredicateSpec extends WordSpec with ScalaFutures {
   "AlternatePredicate" should {
 
     "convert to a JSON object containing an array with all supplied Predicates encapsulated with $or expression" in {
-      val predicate1 = new Predicate {
-        val toJson = Json.obj("testPredicate1" -> "someValue1")
+      val predicate1: Predicate = new Predicate {
+        val toJson: JsValue = Json.obj("testPredicate1" -> "someValue1")
       }
-      val predicate2 = new Predicate {
-        val toJson = Json.obj("testPredicate2" -> "someValue2")
+      val predicate2: Predicate = new Predicate {
+        val toJson: JsValue = Json.obj("testPredicate2" -> "someValue2")
       }
 
       val expectedString =
@@ -97,71 +97,72 @@ class PredicateSpec extends WordSpec with ScalaFutures {
     }
   }
 
+  val firstAnd1: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("firstAnd1" -> "someValue1")
+  }
+  val firstAnd2: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("firstAnd2" -> "someValue2")
+  }
+  val firstAnd3: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("firstAnd3" -> "someValue3")
+  }
+
+  val loneOr: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("loneOr" -> "someValue4")
+  }
+
+  val secondAndOr1: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("secondAndOr1" -> "someValue5")
+  }
+  val secondAndOr2: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("secondAndOr2" -> "someValue6")
+  }
+
+  val secondAnd1: Predicate = new Predicate {
+    val toJson: JsValue = Json.obj("secondAnd1" -> "someValue3")
+  }
+
+  val expectedString: String =
+    """{
+      |  "$or": [
+      |    [
+      |      {
+      |        "firstAnd1": "someValue1"
+      |      },
+      |      {
+      |        "firstAnd2": "someValue2"
+      |      },
+      |      {
+      |        "firstAnd3": "someValue3"
+      |      }
+      |    ],
+      |    {
+      |      "loneOr": "someValue4"
+      |    },
+      |    [
+      |      {
+      |        "$or": [
+      |          {
+      |            "secondAndOr1": "someValue5"
+      |          },
+      |          {
+      |            "secondAndOr2": "someValue6"
+      |          }
+      |        ]
+      |      },
+      |      {
+      |        "secondAnd1": "someValue3"
+      |      }
+      |    ]
+      |  ]
+      |}
+        """.stripMargin
+
+  val expectedJson: JsValue = Json.parse(expectedString)
+
   "Complex nesting of predicates" should {
 
     "be possible and return correct json" in {
-      val firstAnd1 = new Predicate {
-        val toJson = Json.obj("firstAnd1" -> "someValue1")
-      }
-      val firstAnd2 = new Predicate {
-        val toJson = Json.obj("firstAnd2" -> "someValue2")
-      }
-      val firstAnd3 = new Predicate {
-        val toJson = Json.obj("firstAnd3" -> "someValue3")
-      }
-
-      val loneOr = new Predicate {
-        val toJson = Json.obj("loneOr" -> "someValue4")
-      }
-
-      val secondAndOr1 = new Predicate {
-        val toJson = Json.obj("secondAndOr1" -> "someValue5")
-      }
-      val secondAndOr2 = new Predicate {
-        val toJson = Json.obj("secondAndOr2" -> "someValue6")
-      }
-
-      val secondAnd1 = new Predicate {
-        val toJson = Json.obj("secondAnd1" -> "someValue3")
-      }
-
-      val expectedString =
-        """{
-          |  "$or": [
-          |    [
-          |      {
-          |        "firstAnd1": "someValue1"
-          |      },
-          |      {
-          |        "firstAnd2": "someValue2"
-          |      },
-          |      {
-          |        "firstAnd3": "someValue3"
-          |      }
-          |    ],
-          |    {
-          |      "loneOr": "someValue4"
-          |    },
-          |    [
-          |      {
-          |        "$or": [
-          |          {
-          |            "secondAndOr1": "someValue5"
-          |          },
-          |          {
-          |            "secondAndOr2": "someValue6"
-          |          }
-          |        ]
-          |      },
-          |      {
-          |        "secondAnd1": "someValue3"
-          |      }
-          |    ]
-          |  ]
-          |}
-        """.stripMargin
-
-      val expectedJson = Json.parse(expectedString)
 
       val firstAnd = CompositePredicate(CompositePredicate(firstAnd1, firstAnd2), firstAnd3)
       val secondAnd = CompositePredicate(AlternatePredicate(secondAndOr1, secondAndOr2), secondAnd1)
@@ -169,9 +170,18 @@ class PredicateSpec extends WordSpec with ScalaFutures {
 
       result.toJson shouldBe expectedJson
 
-
     }
+
+    "be possible using and and or operators" in {
+      val firstAnd = firstAnd1 and firstAnd2 and firstAnd3
+      val secondAnd = (secondAndOr1 or secondAndOr2) and secondAnd1
+      val result = (firstAnd or loneOr) or secondAnd
+
+      result.toJson shouldBe expectedJson
+    }
+
   }
+
   "Relationship Predicate" should {
     "be able to correctly convert a relationship Predicate into json" in {
 

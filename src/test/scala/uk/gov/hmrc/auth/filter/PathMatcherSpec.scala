@@ -22,7 +22,6 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PathMatcherSpec extends WordSpec with ScalaFutures with Matchers {
 
-
   "the path matcher" should {
 
     "match a static path" in {

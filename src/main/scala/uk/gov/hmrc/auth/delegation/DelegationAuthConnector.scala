@@ -27,7 +27,7 @@ trait DelegationAuthConnector {
   def http: WSHttp
 
   def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST(s"$authServiceUrl/auth/authoriseDelegation", delegationContext)
+    http.POST(s"$authServiceUrl/auth/authoriseDelegation", body = delegationContext)
   }
 
   def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
