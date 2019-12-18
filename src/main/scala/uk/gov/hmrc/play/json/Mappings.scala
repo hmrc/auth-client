@@ -107,7 +107,6 @@ object Mappings {
 
 class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
 
-
   def jsonReads(implicit base: Reads[A]): Reads[B] = Reads[B] {
     _.validate[A] flatMap {
       encoded => toDomain(encoded).fold[JsResult[B]](JsError(_), JsSuccess(_))
@@ -117,11 +116,6 @@ class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
   def jsonWrites(implicit base: Writes[A]): Writes[B] = Writes[B] { domain => base.writes(fromDomain(domain)) }
 
   def jsonFormat(implicit base: Format[A]): Format[B] = Format(jsonReads(base), jsonWrites(base))
-
-  private def bindToDomain(encoded: Either[String, A]): Either[String, B] = encoded match {
-    case Right(value) => toDomain(value)
-    case Left(message) => Left(message)
-  }
 
 }
 
