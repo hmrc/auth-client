@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.auth.filter
 
-import play.api.Logger
-
 import scala.util.matching.Regex.Match
 
 
@@ -37,15 +35,15 @@ case class PathMatcher(pattern: String) {
 
   def matchPath(path: String): Option[Map[String, String]] = {
 
-    println(s"Trying to match '$path' against Regex: '$regex'")
-
     def processResult(result: Match): Map[String, String] =
-      (pathVariables zip result.subgroups).toMap
+      if (result.groupCount != pathVariables.size) throw new RuntimeException("Internal error, unexpected number of groups")
+      else (pathVariables zip result.subgroups).toMap
 
-    val matchResult: Seq[Match] = regex.findAllMatchIn(path).toSeq
+    val matchResult = regex.findAllMatchIn(path).toSeq
     matchResult match {
       case Seq() => None
       case Seq(result) => Some(processResult(result))
+      case _ => throw new IllegalArgumentException(s"path $path resulted in more than one match")
     }
   }
 
