@@ -55,11 +55,6 @@ class MappingsSpec extends UnitSpec {
       mapping.jsonReads.reads(JsString("blah")) should be (JsSuccess(Foo("blah")))
       mapping.jsonWrites.writes(Foo("blah")) should be (JsString("blah"))
 
-      val mappingNone: Mapping[String, Foo] =
-        Mappings.mapOption[String, Foo](_ => None , _.value)
-      mappingNone.jsonReads.reads(JsString("blah")) should
-        be (JsError(ValidationError("blah could not be mapped to Foo")))
-
     }
 
     "create an either mapping between domains" in {
