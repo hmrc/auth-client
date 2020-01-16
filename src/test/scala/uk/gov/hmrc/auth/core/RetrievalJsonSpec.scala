@@ -95,6 +95,12 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       Retrievals.authProviderId.reads.reads(json).get shouldBe OneTimeLogin
     }
 
+    "read a StandardApplication applicationId" in {
+      val json = Json.parse("""{ "authProviderId": { "applicationId": "app-1" }}""")
+
+      Retrievals.authProviderId.reads.reads(json).get shouldBe StandardApplication("app-1")
+    }
+
     "produce an error for unknown credential types" in {
       val json = Json.parse("""{ "authProviderId": { "fooBar": "xyz" }}""")
 
@@ -354,16 +360,21 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   }
 
-  "The JSON reads for applicationName and clientId" should {
+  "The JSON reads for applicationName, applicationId and clientId" should {
 
-    import v2.Retrievals.{clientId, applicationName}
+    import v2.Retrievals.{clientId, applicationName, applicationId}
 
     "read the values from the Json" in {
 
-      val json = Json parse """{"optionalApplicationName": "App 1", "optionalClientId": "client-1"}"""
+      val json = Json.parse(
+      """{"optionalApplicationName": "App 1",
+          |"optionalClientId": "client-1",
+          |"optionalApplicationId": "app-1"}""".stripMargin)
 
       clientId.reads.reads(json).get shouldBe Some("client-1")
       applicationName.reads.reads(json).get shouldBe Some("App 1")
+      applicationId.reads.reads(json).get shouldBe Some("app-1")
+
     }
 
     "read missing values as None from the Json" in {
@@ -372,7 +383,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
       clientId.reads.reads(json).get shouldBe None
       applicationName.reads.reads(json).get shouldBe None
-
+      applicationId.reads.reads(json).get shouldBe None
     }
 
   }

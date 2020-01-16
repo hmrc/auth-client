@@ -77,6 +77,8 @@ trait Retrievals {
 
   val applicationName: Retrieval[Option[String]] = OptionalRetrieval("optionalApplicationName", Reads.StringReads)
 
+  val applicationId: Retrieval[Option[String]] = OptionalRetrieval("optionalApplicationId", Reads.StringReads)
+
 }
 
 object Retrievals extends Retrievals
