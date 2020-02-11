@@ -73,11 +73,11 @@ trait Retrievals {
 
   val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
 
-  val clientId: Retrieval[Option[String]] = OptionalRetrieval("optionalClientId", Reads.StringReads)
+  val clientId: Retrieval[Option[String]] = OptionalRetrieval("clientId", Reads.StringReads)
 
-  val applicationName: Retrieval[Option[String]] = OptionalRetrieval("optionalApplicationName", Reads.StringReads)
+  val applicationName: Retrieval[Option[String]] = OptionalRetrieval("applicationName", Reads.StringReads)
 
-  val applicationId: Retrieval[Option[String]] = OptionalRetrieval("optionalApplicationId", Reads.StringReads)
+  val applicationId: Retrieval[Option[String]] = OptionalRetrieval("applicationId", Reads.StringReads)
 
 }
 

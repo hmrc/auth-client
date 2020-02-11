@@ -367,9 +367,9 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     "read the values from the Json" in {
 
       val json = Json.parse(
-      """{"optionalApplicationName": "App 1",
-          |"optionalClientId": "client-1",
-          |"optionalApplicationId": "app-1"}""".stripMargin)
+      """{"applicationName": "App 1",
+          |"clientId": "client-1",
+          |"applicationId": "app-1"}""".stripMargin)
 
       clientId.reads.reads(json).get shouldBe Some("client-1")
       applicationName.reads.reads(json).get shouldBe Some("App 1")
