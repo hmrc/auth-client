@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,12 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       val json = Json.parse("""{ "authProviderId": { "oneTimeLogin": "" }}""")
 
       Retrievals.authProviderId.reads.reads(json).get shouldBe OneTimeLogin
+    }
+
+    "read a StandardApplication applicationId" in {
+      val json = Json.parse("""{ "authProviderId": { "applicationId": "app-1" }}""")
+
+      Retrievals.authProviderId.reads.reads(json).get shouldBe StandardApplication("app-1")
     }
 
     "produce an error for unknown credential types" in {
@@ -353,6 +359,35 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     }
 
   }
+
+  "The JSON reads for applicationName, applicationId and clientId" should {
+
+    import v2.Retrievals.{clientId, applicationName, applicationId}
+
+    "read the values from the Json" in {
+
+      val json = Json.parse(
+      """{"applicationName": "App 1",
+          |"clientId": "client-1",
+          |"applicationId": "app-1"}""".stripMargin)
+
+      clientId.reads.reads(json).get shouldBe Some("client-1")
+      applicationName.reads.reads(json).get shouldBe Some("App 1")
+      applicationId.reads.reads(json).get shouldBe Some("app-1")
+
+    }
+
+    "read missing values as None from the Json" in {
+
+      val json = Json.obj()
+
+      clientId.reads.reads(json).get shouldBe None
+      applicationName.reads.reads(json).get shouldBe None
+      applicationId.reads.reads(json).get shouldBe None
+    }
+
+  }
+
 
   "The JSON reads for the trusted helper retrieval" should {
     import v2.Retrievals.trustedHelper

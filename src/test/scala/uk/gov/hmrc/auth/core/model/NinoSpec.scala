@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.model
 
-package object syntax {
-  object retrieved extends RetrievedSyntax
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.Nino
+
+class NinoSpec extends UnitSpec {
+
+  "Nino" should {
+
+    "be serializable to Json" in {
+      val nino = Nino(true, Some("123456789"))
+      nino.toJson shouldBe
+        Json.obj("hasNino" -> true, "nino" -> "123456789")
+    }
+
+  }
+
 }

@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.model
 
-package object syntax {
-  object retrieved extends RetrievedSyntax
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.Assistant
+
+class CredentialRoleSpec extends UnitSpec {
+
+  "CredentialRole" should {
+
+    "be serializable to Json" in  {
+      Assistant.toJson shouldBe Json.obj("credentialRole" -> "assistant")
+    }
+
+  }
+
 }

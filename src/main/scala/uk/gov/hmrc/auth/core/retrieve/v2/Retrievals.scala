@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,14 @@ trait Retrievals {
 
   val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
 
-  val legacySaUserId:Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
+  val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
+
+  val clientId: Retrieval[Option[String]] = OptionalRetrieval("clientId", Reads.StringReads)
+
+  val applicationName: Retrieval[Option[String]] = OptionalRetrieval("applicationName", Reads.StringReads)
+
+  val applicationId: Retrieval[Option[String]] = OptionalRetrieval("applicationId", Reads.StringReads)
+
 }
 
 object Retrievals extends Retrievals

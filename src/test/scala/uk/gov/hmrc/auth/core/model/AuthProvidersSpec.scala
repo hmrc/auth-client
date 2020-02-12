@@ -14,8 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.model
 
-package object syntax {
-  object retrieved extends RetrievedSyntax
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.AuthProvider.{GovernmentGateway, StandardApplication, Verify}
+import uk.gov.hmrc.auth.core.AuthProviders
+
+class AuthProvidersSpec extends UnitSpec {
+
+  "AuthProviders" should {
+
+    "create valid Json from list of providers" in {
+
+      val providers = AuthProviders(GovernmentGateway, Verify, StandardApplication)
+      providers.toJson should be (Json.obj(
+        "authProviders" -> List("GovernmentGateway","Verify","StandardApplication")))
+
+    }
+
+  }
+
 }

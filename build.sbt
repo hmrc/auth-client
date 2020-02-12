@@ -17,6 +17,7 @@
 import PlayCrossCompilation._
 import sbt.Keys._
 import sbt._
+import scoverage.ScoverageKeys
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val libName = "auth-client"
@@ -37,4 +38,17 @@ lazy val library = Project(libName, file("."))
       Resolver.typesafeRepo("releases")
     ),
     playCrossCompilationSettings
+  )
+  .settings(
+    Seq(
+      ScoverageKeys.coverageExcludedPackages :=
+      """<empty>;
+        |Reverse.*;
+        |.*BuildInfo.*;
+        |.*Routes.*;
+        |.*RoutesPrefix.*;""".stripMargin,
+      ScoverageKeys.coverageMinimum := 80,
+      ScoverageKeys.coverageFailOnMinimum := false,
+      ScoverageKeys.coverageHighlighting := true
+    )
   )

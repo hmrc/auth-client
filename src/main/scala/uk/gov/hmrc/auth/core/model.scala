@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ object ConfidenceLevel {
 
   private val mapping = Mappings.mapTry[Int, ConfidenceLevel](fromInt, _.level)
 
-  implicit val jsonFormat = mapping.jsonFormat
+  implicit val jsonFormat: Format[ConfidenceLevel] = mapping.jsonFormat
 
 }
 
@@ -169,6 +169,8 @@ case object AuthProvider {
   object OneTimeLogin extends AuthProvider
 
   object PrivilegedApplication extends AuthProvider
+
+  object StandardApplication extends AuthProvider
 
 }
 

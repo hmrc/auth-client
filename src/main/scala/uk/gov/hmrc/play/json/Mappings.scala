@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,6 @@ object Mappings {
 
 class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
 
-
   def jsonReads(implicit base: Reads[A]): Reads[B] = Reads[B] {
     _.validate[A] flatMap {
       encoded => toDomain(encoded).fold[JsResult[B]](JsError(_), JsSuccess(_))
@@ -117,26 +116,6 @@ class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
   def jsonWrites(implicit base: Writes[A]): Writes[B] = Writes[B] { domain => base.writes(fromDomain(domain)) }
 
   def jsonFormat(implicit base: Format[A]): Format[B] = Format(jsonReads(base), jsonWrites(base))
-
-  private def bindToDomain(encoded: Either[String, A]): Either[String, B] = encoded match {
-    case Right(value) => toDomain(value)
-    case Left(message) => Left(message)
-  }
-
-//  def pathBindable(implicit base: PathBindable[A]): PathBindable[B] = new PathBindable[B] {
-//
-//    def bind(key: String, value: String) = bindToDomain(base.bind(key, value))
-//
-//    def unbind(key: String, value: B): String = base.unbind(key, fromDomain(value))
-//  }
-//
-//  def queryStringBindable(implicit base: QueryStringBindable[A]): QueryStringBindable[B] = new QueryStringBindable[B] {
-//
-//    def bind(key: String, params: Map[String, Seq[String]]) = base.bind(key, params).map(bindToDomain)
-//
-//    def unbind(key: String, value: B) = base.unbind(key, fromDomain(value))
-//  }
-
 
 }
 

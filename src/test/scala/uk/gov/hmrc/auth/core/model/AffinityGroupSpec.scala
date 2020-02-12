@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.model
 
-package object syntax {
-  object retrieved extends RetrievedSyntax
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+
+class AffinityGroupSpec extends UnitSpec {
+
+  "AffinityGroup" should {
+
+    "be serializable to Json" in {
+      Individual.toJson shouldBe Json.obj("affinityGroup" -> "Individual")
+    }
+
+  }
+
 }

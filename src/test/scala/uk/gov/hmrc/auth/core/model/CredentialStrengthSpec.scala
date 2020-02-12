@@ -14,8 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.model
 
-package object syntax {
-  object retrieved extends RetrievedSyntax
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.CredentialStrength
+import uk.gov.hmrc.auth.core.CredentialStrength._
+
+class CredentialStrengthSpec extends UnitSpec {
+
+  "CredentialStrength" should {
+
+    "contain weak and strong values" in {
+      weak shouldBe "weak"
+      strong shouldBe "strong"
+    }
+
+    "serialize to Json" in {
+      CredentialStrength(weak).toJson shouldBe
+        Json.obj("credentialStrength" -> "weak")
+    }
+
+  }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,8 @@ case class PAClientId(clientId: String) extends LegacyCredentials
 
 case object OneTimeLogin extends LegacyCredentials
 
+case class StandardApplication(applicationId: String) extends LegacyCredentials
+
 object LegacyCredentials {
   val reads: Reads[LegacyCredentials] = Reads[LegacyCredentials] { json =>
 
@@ -111,10 +113,13 @@ object LegacyCredentials {
       case JsDefined(json) => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
     }
 
-    toCreds(json \ "ggCredId", GGCredId) ++ toCreds(json \ "verifyPid", VerifyPid) ++
-      toCreds(json \ "paClientId", PAClientId) ++ toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
-      case Seq(creds) => JsSuccess(creds)
-      case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
+    toCreds(json \ "ggCredId", GGCredId) ++
+      toCreds(json \ "verifyPid", VerifyPid) ++
+      toCreds(json \ "paClientId", PAClientId) ++
+      toCreds(json \ "applicationId", StandardApplication) ++
+      toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
+        case Seq(creds) => JsSuccess(creds)
+        case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
     }
   }
 }
