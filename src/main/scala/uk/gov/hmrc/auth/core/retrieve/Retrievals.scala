@@ -102,7 +102,7 @@ case class PAClientId(clientId: String) extends LegacyCredentials
 
 case object OneTimeLogin extends LegacyCredentials
 
-case class StandardApplication(applicationId: String) extends LegacyCredentials
+case class StandardApplication(clientId: String) extends LegacyCredentials
 
 object LegacyCredentials {
   val reads: Reads[LegacyCredentials] = Reads[LegacyCredentials] { json =>
@@ -116,7 +116,7 @@ object LegacyCredentials {
     toCreds(json \ "ggCredId", GGCredId) ++
       toCreds(json \ "verifyPid", VerifyPid) ++
       toCreds(json \ "paClientId", PAClientId) ++
-      toCreds(json \ "applicationId", StandardApplication) ++
+      toCreds(json \ "clientId", StandardApplication) ++
       toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
         case Seq(creds) => JsSuccess(creds)
         case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
