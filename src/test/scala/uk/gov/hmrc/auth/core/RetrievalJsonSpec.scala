@@ -95,8 +95,8 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       Retrievals.authProviderId.reads.reads(json).get shouldBe OneTimeLogin
     }
 
-    "read a StandardApplication applicationId" in {
-      val json = Json.parse("""{ "authProviderId": { "applicationId": "app-1" }}""")
+    "read a StandardApplication clientId" in {
+      val json = Json.parse("""{ "authProviderId": { "clientId": "app-1" }}""")
 
       Retrievals.authProviderId.reads.reads(json).get shouldBe StandardApplication("app-1")
     }
