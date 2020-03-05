@@ -117,6 +117,7 @@ object LegacyCredentials {
       toCreds(json \ "verifyPid", VerifyPid) ++
       toCreds(json \ "paClientId", PAClientId) ++
       toCreds(json \ "clientId", StandardApplication) ++
+      toCreds(json \ "applicationId", StandardApplication) ++ // for backwards compatibility
       toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
         case Seq(creds) => JsSuccess(creds)
         case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")

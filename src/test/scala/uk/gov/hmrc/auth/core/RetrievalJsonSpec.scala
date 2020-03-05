@@ -22,7 +22,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsPath, JsSuccess, Json}
 import uk.gov.hmrc.auth.core.retrieve._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
@@ -97,6 +97,12 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
     "read a StandardApplication clientId" in {
       val json = Json.parse("""{ "authProviderId": { "clientId": "app-1" }}""")
+
+      Retrievals.authProviderId.reads.reads(json).get shouldBe StandardApplication("app-1")
+    }
+
+    "read a StandardApplication authProviderId using old auth format (backwards compatibility)" in {
+      val json = Json.parse("""{ "authProviderId": { "applicationId": "app-1" }}""")
 
       Retrievals.authProviderId.reads.reads(json).get shouldBe StandardApplication("app-1")
     }
