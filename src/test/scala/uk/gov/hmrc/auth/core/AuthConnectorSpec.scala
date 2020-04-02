@@ -57,8 +57,8 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
         }
 
         override def POSTString[O](url: String, body: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def POSTForm[O](url: String, body: Map[String, Seq[String]])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
-        override def POSTEmpty[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def POSTForm[O](url: String, body: Map[String, Seq[String]], headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
+        override def POSTEmpty[O](url: String, headers: Seq[(String, String)])(implicit rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = ???
       }
 
       override val serviceUrl: String = "/some-service"

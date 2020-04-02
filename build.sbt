@@ -31,7 +31,7 @@ lazy val library = Project(libName, file("."))
   .settings(
     name := libName,
     scalaVersion        := "2.11.12",
-    crossScalaVersions  := Seq("2.11.12", "2.12.8"),
+    crossScalaVersions  := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= BuildDependencies(),
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
