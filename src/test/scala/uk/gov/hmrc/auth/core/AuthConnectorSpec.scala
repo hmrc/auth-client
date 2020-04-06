@@ -24,8 +24,8 @@ import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, Simpl
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http._
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 object Status {
   val OK = 200

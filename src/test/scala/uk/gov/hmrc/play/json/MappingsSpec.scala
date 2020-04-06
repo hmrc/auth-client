@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.play.json
 
-import play.api.data.validation.ValidationError
-import play.api.libs.json.{JsError, JsString, JsSuccess}
+import play.api.libs.json.{JsString, JsSuccess}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.{Foo, UnitSpec}
