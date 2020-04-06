@@ -26,7 +26,7 @@ lazy val library = Project(libName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 2
+    majorVersion                     := 3
   )
   .settings(
     name := libName,
