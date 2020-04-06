@@ -37,7 +37,8 @@ lazy val library = Project(libName, file("."))
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.typesafeRepo("releases")
     ),
-    playCrossCompilationSettings
+    playCrossCompilationSettings,
+    fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
   .settings(
     Seq(
