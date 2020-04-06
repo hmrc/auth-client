@@ -17,7 +17,7 @@
 package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.auth.{UnitSpec, core}
+import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 class EnrolmentSpec extends UnitSpec {

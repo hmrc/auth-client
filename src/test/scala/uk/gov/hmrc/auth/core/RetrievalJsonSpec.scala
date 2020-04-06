@@ -22,7 +22,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.auth.core.retrieve._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
@@ -368,7 +368,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   "The JSON reads for applicationName, applicationId and clientId" should {
 
-    import v2.Retrievals.{clientId, applicationName, applicationId}
+    import v2.Retrievals.{applicationId, applicationName, clientId}
 
     "read the values from the Json" in {
 

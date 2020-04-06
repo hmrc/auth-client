@@ -26,18 +26,19 @@ lazy val library = Project(libName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 2
+    majorVersion                     := 3
   )
   .settings(
     name := libName,
     scalaVersion        := "2.11.12",
-    crossScalaVersions  := Seq("2.11.12", "2.12.8"),
+    crossScalaVersions  := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= BuildDependencies(),
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.typesafeRepo("releases")
     ),
-    playCrossCompilationSettings
+    playCrossCompilationSettings,
+    fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
   .settings(
     Seq(
