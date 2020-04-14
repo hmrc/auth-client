@@ -18,8 +18,8 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.AuthProvider.{GovernmentGateway, StandardApplication, Verify}
-import uk.gov.hmrc.auth.core.AuthProviders
+import uk.gov.hmrc.auth.core.models._
+import uk.gov.hmrc.auth.core.predicates.AuthProviders
 
 class AuthProvidersSpec extends UnitSpec {
 
@@ -28,7 +28,7 @@ class AuthProvidersSpec extends UnitSpec {
     "create valid Json from list of providers" in {
 
       val providers = AuthProviders(GovernmentGateway, Verify, StandardApplication)
-      providers.toJson should be (Json.obj(
+      Json.toJson(providers) should be (Json.obj(
         "authProviders" -> List("GovernmentGateway","Verify","StandardApplication")))
 
     }

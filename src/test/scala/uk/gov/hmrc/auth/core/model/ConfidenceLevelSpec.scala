@@ -18,10 +18,11 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.ConfidenceLevel.L500
+import uk.gov.hmrc.auth.core.models.ConfidenceLevel
+import uk.gov.hmrc.auth.core.predicates
 
-import scala.util.Success
+import scala.math.Ordering.Implicits._
+import scala.util.{Failure, Success}
 
 class ConfidenceLevelSpec extends UnitSpec {
 
@@ -41,14 +42,11 @@ class ConfidenceLevelSpec extends UnitSpec {
     }
 
     "be serializable to Json" in {
-      L500.toJson shouldBe Json.obj("confidenceLevel" -> 500)
+      Json.toJson(predicates.ConfidenceLevel(ConfidenceLevel.L500)) shouldBe Json.obj("confidenceLevel" -> 500)
     }
 
     "not accept invalid level values" in {
-      the [NoSuchElementException] thrownBy {
-        ConfidenceLevel.fromInt(250)
-      } should have message "Illegal confidence level: 250"
-
+      ConfidenceLevel.fromInt(250) shouldBe a[Failure[_]]
     }
   }
 

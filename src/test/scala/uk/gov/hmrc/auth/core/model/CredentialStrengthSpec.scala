@@ -18,20 +18,15 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.CredentialStrength
-import uk.gov.hmrc.auth.core.CredentialStrength._
+import uk.gov.hmrc.auth.core.models.{Strong, Weak}
+import uk.gov.hmrc.auth.core.predicates.CredentialStrength
 
 class CredentialStrengthSpec extends UnitSpec {
 
   "CredentialStrength" should {
 
-    "contain weak and strong values" in {
-      weak shouldBe "weak"
-      strong shouldBe "strong"
-    }
-
     "serialize to Json" in {
-      CredentialStrength(weak).toJson shouldBe
+      Json.toJson(CredentialStrength(Weak)) shouldBe
         Json.obj("credentialStrength" -> "weak")
     }
 

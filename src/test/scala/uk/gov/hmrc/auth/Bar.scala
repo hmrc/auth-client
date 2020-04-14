@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.models.Assistant
-import uk.gov.hmrc.auth.core.predicates
 
-class CredentialRoleSpec extends UnitSpec {
+case class Foo(value: String)
+object Foo { implicit val reads = Json.reads[Foo] }
 
-  "CredentialRole" should {
-
-    "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
-    }
-
-  }
-
-}
+case class Bar(value: String, number: Int)
+object Bar { implicit val reads = Json.reads[Bar] }

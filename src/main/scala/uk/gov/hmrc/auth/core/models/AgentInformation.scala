@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.auth.core.authorise.Predicate
+import play.api.libs.json.{Json, OFormat}
 
+final case class AgentInformation(agentId: Option[String],
+                            agentCode: Option[String],
+                            agentFriendlyName: Option[String])
 
-case class Foo(value: String)
-
-object Foo {
-  implicit val reads = Json.reads[Foo]
-}
-
-case class Bar(value: String, number: Int)
-
-object Bar {
-  implicit val reads = Json.reads[Bar]
-}
-
-case class TestPredicate1(value: String) extends Predicate {
-  override def toJson: JsValue = Json.obj("testPredicate1" -> value)
-}
-
-case class TestPredicate2(value: String) extends Predicate {
-  override def toJson: JsValue = Json.obj("testPredicate2" -> value)
+object AgentInformation {
+  implicit val format: OFormat[AgentInformation] = Json.format[AgentInformation]
 }

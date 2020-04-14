@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.delegation
 
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.auth.core.predicates
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,7 +45,7 @@ trait Delegator {
 
 }
 
-case class TaxIdentifiers(paye: Option[Nino] = None)
+case class TaxIdentifiers(paye: Option[predicates.Nino] = None)
 object TaxIdentifiers {
   implicit val format: OFormat[TaxIdentifiers] = Json.format[TaxIdentifiers]
 }

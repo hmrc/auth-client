@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.auth
 
-import org.mockito.ArgumentMatchers.{any, eq => equalTo}
+import org.mockito.ArgumentMatchers.{any, eq ⇒ equalTo}
 import org.mockito.Mockito
 import org.scalatest.WordSpec
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.models.{Credentials, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.predicates.EmptyPredicate
+import uk.gov.hmrc.auth.core.retrievals._
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,9 +40,9 @@ class MockingConnectorSpec extends WordSpec with MockitoSugar {
       Mockito.when(mockAuthConnector.authorise[~[Credentials, Enrolments]](any(), any())(any(), any()))
         .thenReturn(retrievalResult)
 
-      mockAuthConnector.authorise(EmptyPredicate, Retrievals.credentials and Retrievals.authorisedEnrolments)
+      mockAuthConnector.authorise(EmptyPredicate(), Retrievals.credentials and Retrievals.authorisedEnrolments)
 
-      Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate),
+      Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate()),
         equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
     }
   }

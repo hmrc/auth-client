@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.models.Assistant
-import uk.gov.hmrc.auth.core.predicates
+final case class Enrolments(enrolments: Set[Enrolment]) extends AnyVal
 
-class CredentialRoleSpec extends UnitSpec {
-
-  "CredentialRole" should {
-
-    "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
-    }
-
+object Enrolments{
+  implicit class EnrolmentsOps(e:Enrolments) {
+    def getEnrolment(key: String): Option[Enrolment] = e.enrolments.find(_.enrolment.equalsIgnoreCase(key))
   }
-
 }

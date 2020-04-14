@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.models.Assistant
-import uk.gov.hmrc.auth.core.predicates
+import play.api.libs.json.{Json, OFormat}
 
-class CredentialRoleSpec extends UnitSpec {
-
-  "CredentialRole" should {
-
-    "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
-    }
-
-  }
-
+final case class Relationship(relationshipName: String, businessKeys: Set[BusinessKey])
+object Relationship {
+  implicit val format: OFormat[Relationship] = Json.format[Relationship]
 }
+
+final case class BusinessKey(name: String, value: String)
+object BusinessKey {
+  implicit val format: OFormat[BusinessKey] = Json.format[BusinessKey]
+}
+

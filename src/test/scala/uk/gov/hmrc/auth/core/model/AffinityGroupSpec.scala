@@ -18,14 +18,15 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.models.Individual
+import uk.gov.hmrc.auth.core.predicates.AffinityGroup
 
 class AffinityGroupSpec extends UnitSpec {
 
   "AffinityGroup" should {
 
     "be serializable to Json" in {
-      Individual.toJson shouldBe Json.obj("affinityGroup" -> "Individual")
+      Json.toJson(AffinityGroup(Individual)) shouldBe Json.obj("affinityGroup" -> "Individual")
     }
 
   }

@@ -16,14 +16,17 @@
 
 package uk.gov.hmrc.auth.core
 
+import java.time.format.DateTimeFormatter
+import java.time.{ZoneId, ZonedDateTime}
 import java.util.UUID
 
-import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.models._
+import uk.gov.hmrc.auth.core.models.legacyCredentials.{GGCredId, PAClientId, StandardApplication, VerifyPid}
+import uk.gov.hmrc.auth.core.retrievals._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
@@ -92,7 +95,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     "read a OneTimeLogin" in {
       val json = Json.parse("""{ "authProviderId": { "oneTimeLogin": "" }}""")
 
-      Retrievals.authProviderId.reads.reads(json).get shouldBe OneTimeLogin
+      Retrievals.authProviderId.reads.reads(json).get shouldBe legacyCredentials.OneTimeLogin
     }
 
     "read a StandardApplication clientId" in {
@@ -140,19 +143,19 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     "read an Individual affinity group" in {
       val json = Json.parse("""{ "affinityGroup": "Individual" }""")
 
-      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(AffinityGroup.Individual)
+      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(Individual)
     }
 
     "read an Organisation affinity group" in {
       val json = Json.parse("""{ "affinityGroup": "Organisation" }""")
 
-      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(AffinityGroup.Organisation)
+      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(Organisation)
     }
 
     "read an Agent affinity group" in {
       val json = Json.parse("""{ "affinityGroup": "Agent" }""")
 
-      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(AffinityGroup.Agent)
+      Retrievals.affinityGroup.reads.reads(json).get shouldBe Some(Agent)
     }
 
     "produce an error for unknown credential types" in {
@@ -165,8 +168,9 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   "The JSON reads for the loginTimes retrieval" should {
 
-    val currentLogin = new DateTime(2015, 1, 1, 12, 0).withZone(DateTimeZone.UTC)
-    val previousLogin = new DateTime(2012, 1, 1, 12, 0).withZone(DateTimeZone.UTC)
+
+    val currentLogin = ZonedDateTime.parse("2015-01-01T12:00:00.000Z")
+    val previousLogin = ZonedDateTime.parse("2012-01-01T12:00:00.000Z")
 
     "read login times with a previous login" in {
       val json = Json.parse("""{ "loginTimes": { "currentLogin": "2015-01-01T12:00:00.000Z", "previousLogin": "2012-01-01T12:00:00.000Z" }}""")
@@ -199,8 +203,8 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
   "The JSON reads for the enrolments retrieval" should {
 
     val enrolments = Set(
-      Enrolment("ENROL-A", Seq(EnrolmentIdentifier("ID-A", "123")), "Activated"),
-      Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), "Activated")
+      Enrolment("ENROL-A", Seq(EnrolmentIdentifier("ID-A", "123")), Activated),
+      Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), Activated)
     )
 
     def enrolmentsJson(retrieve: String) = Json.parse(
@@ -258,7 +262,6 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
   }
 
   "The JSON reads for the OAuth Token retrieval" should {
-    import v2.OauthTokens
     import v2.Retrievals.oauthTokens
 
     "read a fully populated OAuth Token object" in {
@@ -397,7 +400,6 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   "The JSON reads for the trusted helper retrieval" should {
     import v2.Retrievals.trustedHelper
-    import v2.TrustedHelper
 
     "read a fully populated trusted helper object" in {
       val principalName = UUID.randomUUID().toString

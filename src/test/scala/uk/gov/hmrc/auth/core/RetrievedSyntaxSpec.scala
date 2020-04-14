@@ -17,8 +17,9 @@
 package uk.gov.hmrc.auth.core
 
 import org.scalatest.{Matchers, WordSpec}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.auth.core.retrieve.{GGCredId, LegacyCredentials, ~}
+import uk.gov.hmrc.auth.core.models._
+import uk.gov.hmrc.auth.core.models.legacyCredentials.{GGCredId, LegacyCredentials}
+import uk.gov.hmrc.auth.core.retrievals.~
 
 /**
   * Retrieved syntax is intended for use in unit tests in code that uses auth-client,

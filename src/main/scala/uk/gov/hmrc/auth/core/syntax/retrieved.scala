@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.auth.core.syntax
 
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrievals.~
 
 import scala.language.implicitConversions
 

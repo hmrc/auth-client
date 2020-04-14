@@ -17,8 +17,8 @@
 package uk.gov.hmrc.auth.core
 
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.predicates.Predicate
+import uk.gov.hmrc.auth.core.retrievals.Retrieval
 import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ trait PlayAuthConnector extends AuthConnector {
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
     // if the predicate is a single field (1x SimplePredicate), place it into an array
-    val predicateJson = predicate.toJson match {
+    val predicateJson = Json.toJson(predicate) match {
       case arr: JsArray => arr
       case other => Json.arr(other)
     }

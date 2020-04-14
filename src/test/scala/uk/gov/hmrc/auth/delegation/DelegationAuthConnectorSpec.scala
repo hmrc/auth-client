@@ -19,7 +19,7 @@ package uk.gov.hmrc.auth.delegation
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.Writes
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.Nino
+import uk.gov.hmrc.auth.core.predicates.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.http.ws.WSHttp
 

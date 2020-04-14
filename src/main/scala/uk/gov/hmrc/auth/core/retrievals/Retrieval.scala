@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.retrieve
+package uk.gov.hmrc.auth.core.retrievals
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Reads}

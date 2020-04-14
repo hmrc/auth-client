@@ -19,9 +19,10 @@ package uk.gov.hmrc.auth.core
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval, ~}
-import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.{Bar, Foo}
+import uk.gov.hmrc.auth.core.predicates.{Enrolment, Predicate}
+import uk.gov.hmrc.auth.core.retrievals.{Retrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -58,7 +59,7 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
     }
 
     "execute the supplied body when authorisation succeeds for a supplied predicate" in new Setup {
-      def testFunction() = authorised(TestPredicate1("someValue")) {
+      def testFunction() = authorised(Enrolment("someValue")) {
         Future("works")
       }
 
@@ -72,7 +73,7 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
 
       override def exception = Some(new MissingBearerToken)
 
-      def testFunction() = authorised(TestPredicate1("someValue")) {
+      def testFunction() = authorised(Enrolment("someValue")) {
         Future("works")
       }
 
@@ -85,7 +86,7 @@ class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
 
   "AuthorisedFunctionWithResult" should {
 
-    val simplePredicate = TestPredicate1("someValue")
+    val simplePredicate = Enrolment("someValue")
     val fooRetrieval = SimpleRetrieval("fooProperty", Foo.reads)
     val barRetrieval = SimpleRetrieval("barProperty", Bar.reads)
 

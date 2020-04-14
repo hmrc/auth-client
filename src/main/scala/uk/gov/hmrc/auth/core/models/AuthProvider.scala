@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.models.Assistant
-import uk.gov.hmrc.auth.core.predicates
+import ai.x.play.json.Jsonx
+import ai.x.play.json.SingletonEncoder.simpleName
+import ai.x.play.json.implicits.formatSingleton
+import play.api.libs.json.Format
 
-class CredentialRoleSpec extends UnitSpec {
+sealed trait AuthProvider
 
-  "CredentialRole" should {
+case object GovernmentGateway extends AuthProvider
+case object Verify extends AuthProvider
+case object OneTimeLogin extends AuthProvider
+case object PrivilegedApplication extends AuthProvider
+case object StandardApplication extends AuthProvider
 
-    "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
-    }
-
-  }
-
+case object AuthProvider {
+  implicit val format: Format[AuthProvider] = Jsonx.formatSealed[AuthProvider]
 }

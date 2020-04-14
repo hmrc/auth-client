@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.models.Assistant
-import uk.gov.hmrc.auth.core.predicates
+import ai.x.play.json.{Jsonx, SingletonEncoder}
+import ai.x.play.json.SingletonEncoder.decodeName
+import ai.x.play.json.implicits.formatSingleton
+import play.api.libs.json.{Format, JsString}
 
-class CredentialRoleSpec extends UnitSpec {
+sealed trait CredentialStrength
+case object Weak extends CredentialStrength
+case object Strong extends CredentialStrength
 
-  "CredentialRole" should {
-
-    "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
-    }
-
-  }
-
+object CredentialStrength{
+  implicit def simpleNameLowerCase = SingletonEncoder(cls => JsString(decodeName(cls.getSimpleName.toLowerCase)))
+  implicit val format: Format[CredentialStrength] = Jsonx.formatSealed[CredentialStrength]
 }
