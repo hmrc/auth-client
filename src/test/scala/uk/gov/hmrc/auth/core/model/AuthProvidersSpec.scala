@@ -18,8 +18,8 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.authorise.AuthProviders
 import uk.gov.hmrc.auth.core.models._
-import uk.gov.hmrc.auth.core.predicates.AuthProviders
 
 class AuthProvidersSpec extends UnitSpec {
 

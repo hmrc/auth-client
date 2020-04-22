@@ -20,9 +20,10 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.authorise.{Enrolment, Predicate}
 import uk.gov.hmrc.auth.{Bar, Foo}
-import uk.gov.hmrc.auth.core.predicates.{Enrolment, Predicate}
-import uk.gov.hmrc.auth.core.retrievals.{Retrieval, SimpleRetrieval, ~}
+import uk.gov.hmrc.auth.core.predicates.Enrolment
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global

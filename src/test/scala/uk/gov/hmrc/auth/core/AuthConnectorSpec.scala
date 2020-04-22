@@ -21,9 +21,9 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json, Writes}
+import uk.gov.hmrc.auth.core.authorise.Enrolment
 import uk.gov.hmrc.auth.{Bar, Foo}
-import uk.gov.hmrc.auth.core.predicates.Enrolment
-import uk.gov.hmrc.auth.core.retrievals.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
+import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global

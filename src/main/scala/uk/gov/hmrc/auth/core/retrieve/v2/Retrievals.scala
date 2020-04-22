@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.retrievals.v2
+package uk.gov.hmrc.auth.core.retrieve.v2
 
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Reads}
 import uk.gov.hmrc.auth.core.models._
 import uk.gov.hmrc.auth.core.models.legacyCredentials.LegacyCredentials
-import uk.gov.hmrc.auth.core.retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 
 trait Retrievals {
 

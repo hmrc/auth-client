@@ -18,8 +18,8 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.authorise.CredentialStrength
 import uk.gov.hmrc.auth.core.models.{Strong, Weak}
-import uk.gov.hmrc.auth.core.predicates.CredentialStrength
 
 class CredentialStrengthSpec extends UnitSpec {
 

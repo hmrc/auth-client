@@ -26,7 +26,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.auth.core.models._
 import uk.gov.hmrc.auth.core.models.legacyCredentials.{GGCredId, PAClientId, StandardApplication, VerifyPid}
-import uk.gov.hmrc.auth.core.retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 
 class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 

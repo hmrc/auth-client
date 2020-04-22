@@ -21,9 +21,9 @@ import org.mockito.Mockito
 import org.scalatest.WordSpec
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.auth.core.models.{Credentials, Enrolment, Enrolments}
-import uk.gov.hmrc.auth.core.predicates.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -18,6 +18,7 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.authorise.Nino
 import uk.gov.hmrc.auth.core.predicates
 
 class NinoSpec extends UnitSpec {
@@ -25,7 +26,7 @@ class NinoSpec extends UnitSpec {
   "Nino" should {
 
     "be serializable to Json" in {
-      val nino = predicates.Nino(true, Some("123456789"))
+      val nino = Nino(true, Some("123456789"))
       Json.toJson(nino) shouldBe
         Json.obj("hasNino" -> true, "nino" -> "123456789")
     }

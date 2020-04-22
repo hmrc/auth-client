@@ -20,7 +20,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.auth.core.retrievals.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval}
+import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval}
 import uk.gov.hmrc.auth.{Bar, Foo}
 
 class RetrievalSpec extends WordSpec with ScalaFutures {

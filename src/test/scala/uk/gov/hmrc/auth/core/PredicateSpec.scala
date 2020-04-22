@@ -20,6 +20,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsArray, Json}
+import uk.gov.hmrc.auth.core.authorise.{AffinityGroup, AndPred, AuthProviders, ConfidenceLevel, CredentialRole, CredentialStrength, EmptyPredicate, Enrolment, Nino, OrPred, Relationship}
 import uk.gov.hmrc.auth.core.predicates._
 
 class PredicateSpec extends WordSpec with ScalaFutures {
@@ -164,9 +165,9 @@ class PredicateSpec extends WordSpec with ScalaFutures {
       val businessKeyUTR = models.BusinessKey("UTR","12345")
       val businessKeyPostcode = models.BusinessKey("PostCode","SW4 7HR")
 
-      val relationshipPredicateUTR = predicates.Relationship(models.Relationship(relationshipName,Set(businessKeyUTR)))
+      val relationshipPredicateUTR = Relationship(models.Relationship(relationshipName,Set(businessKeyUTR)))
 
-      val relationshipPredicateUTRAndPostcode = predicates.Relationship(models.Relationship(relationshipName,Set(businessKeyUTR, businessKeyPostcode)))
+      val relationshipPredicateUTRAndPostcode = authorise.Relationship(models.Relationship(relationshipName,Set(businessKeyUTR, businessKeyPostcode)))
 
       val relationshipJsonWithOneBusinessKey :String =
         s"""|{

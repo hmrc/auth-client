@@ -17,8 +17,8 @@
 package uk.gov.hmrc.auth.core
 
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.predicates.Predicate
-import uk.gov.hmrc.auth.core.retrievals.Retrieval
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}

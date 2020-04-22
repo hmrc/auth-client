@@ -19,7 +19,7 @@ package uk.gov.hmrc.auth.core.model
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.auth.core.models.ConfidenceLevel
-import uk.gov.hmrc.auth.core.predicates
+import uk.gov.hmrc.auth.core.{authorise, predicates}
 
 import scala.math.Ordering.Implicits._
 import scala.util.{Failure, Success}
@@ -42,7 +42,7 @@ class ConfidenceLevelSpec extends UnitSpec {
     }
 
     "be serializable to Json" in {
-      Json.toJson(predicates.ConfidenceLevel(ConfidenceLevel.L500)) shouldBe Json.obj("confidenceLevel" -> 500)
+      Json.toJson(authorise.ConfidenceLevel(ConfidenceLevel.L500)) shouldBe Json.obj("confidenceLevel" -> 500)
     }
 
     "not accept invalid level values" in {

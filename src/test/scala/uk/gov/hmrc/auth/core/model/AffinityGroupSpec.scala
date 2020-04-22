@@ -18,8 +18,8 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.authorise.AffinityGroup
 import uk.gov.hmrc.auth.core.models.Individual
-import uk.gov.hmrc.auth.core.predicates.AffinityGroup
 
 class AffinityGroupSpec extends UnitSpec {
 

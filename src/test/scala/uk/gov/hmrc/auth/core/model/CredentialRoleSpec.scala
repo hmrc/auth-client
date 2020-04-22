@@ -18,6 +18,7 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
+import uk.gov.hmrc.auth.core.authorise.CredentialRole
 import uk.gov.hmrc.auth.core.models.Assistant
 import uk.gov.hmrc.auth.core.predicates
 
@@ -26,7 +27,7 @@ class CredentialRoleSpec extends UnitSpec {
   "CredentialRole" should {
 
     "be serializable to Json" in  {
-      Json.toJson(predicates.CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
+      Json.toJson(CredentialRole(Assistant)) shouldBe Json.obj("credentialRole" -> "Assistant")
     }
 
   }

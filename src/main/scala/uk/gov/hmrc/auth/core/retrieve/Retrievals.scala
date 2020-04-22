@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.retrievals
+package uk.gov.hmrc.auth.core.retrieve
 
 import java.time.LocalDate
 

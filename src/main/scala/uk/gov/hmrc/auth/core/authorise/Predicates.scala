@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.predicates
+package uk.gov.hmrc.auth.core.authorise
 
 import ai.x.play.json.Jsonx
 import play.api.libs.functional.syntax._
