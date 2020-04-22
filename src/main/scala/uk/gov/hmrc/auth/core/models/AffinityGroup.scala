@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.authorise.Nino
-import uk.gov.hmrc.auth.core.predicates
+import ai.x.play.json.Jsonx
+import ai.x.play.json.SingletonEncoder.simpleName
+import ai.x.play.json.implicits.formatSingleton
+import play.api.libs.json.Format
 
-class NinoSpec extends UnitSpec {
 
-  "Nino" should {
+sealed trait AffinityGroup
 
-    "be serializable to Json" in {
-      val nino = Nino(true, Some("123456789"))
-      Json.toJson(nino) shouldBe
-        Json.obj("hasNino" -> true, "nino" -> "123456789")
-    }
+case object Individual extends AffinityGroup
+case object Organisation extends AffinityGroup
+case object Agent extends AffinityGroup
 
-  }
-
+object AffinityGroup{
+  implicit val format: Format[AffinityGroup] = Jsonx.formatSealed[AffinityGroup]
 }
+

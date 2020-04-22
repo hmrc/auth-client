@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.authorise.Nino
-import uk.gov.hmrc.auth.core.predicates
+import play.api.libs.json.{Json, OFormat}
 
-class NinoSpec extends UnitSpec {
-
-  "Nino" should {
-
-    "be serializable to Json" in {
-      val nino = Nino(true, Some("123456789"))
-      Json.toJson(nino) shouldBe
-        Json.obj("hasNino" -> true, "nino" -> "123456789")
-    }
-
-  }
-
+final case class Relationship(relationshipName: String, businessKeys: Set[BusinessKey])
+object Relationship {
+  implicit val format: OFormat[Relationship] = Json.format[Relationship]
 }
+
+final case class BusinessKey(name: String, value: String)
+object BusinessKey {
+  implicit val format: OFormat[BusinessKey] = Json.format[BusinessKey]
+}
+

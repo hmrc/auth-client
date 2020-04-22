@@ -18,7 +18,7 @@ package uk.gov.hmrc.auth.core.model
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.models.{Activated, Enrolment, EnrolmentIdentifier, Enrolments}
 
 class EnrolmentSpec extends UnitSpec {
 
@@ -27,7 +27,7 @@ class EnrolmentSpec extends UnitSpec {
     List(
       EnrolmentIdentifier("key-1", "val-1"),
       EnrolmentIdentifier("key-2", "val-2")),
-    "activated",
+      Activated,
     None)
 
   val enrolment2 = Enrolment(
@@ -35,7 +35,7 @@ class EnrolmentSpec extends UnitSpec {
     List(
       EnrolmentIdentifier("key-a", "val-a"),
       EnrolmentIdentifier("key-b", "val-b")),
-    "activated",
+      Activated,
     None)
 
   "Enrolments" should {
@@ -69,7 +69,7 @@ class EnrolmentSpec extends UnitSpec {
     }
 
     "be serializable as Json" in {
-      enrolment.toJson shouldBe
+      Json.toJson(enrolment) shouldBe
         Json.obj(
           "enrolment" -> "foo",
           "identifiers" -> Json.arr(
@@ -82,7 +82,7 @@ class EnrolmentSpec extends UnitSpec {
               "value" -> "val-2"
             )
           ),
-          "state" -> "activated"
+          "state" -> "Activated"
         )
     }
 

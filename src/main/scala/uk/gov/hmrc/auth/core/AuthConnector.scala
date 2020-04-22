@@ -36,7 +36,7 @@ trait PlayAuthConnector extends AuthConnector {
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
 
     // if the predicate is a single field (1x SimplePredicate), place it into an array
-    val predicateJson = predicate.toJson match {
+    val predicateJson = Json.toJson(predicate) match {
       case arr: JsArray => arr
       case other => Json.arr(other)
     }

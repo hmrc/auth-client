@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.authorise.Nino
-import uk.gov.hmrc.auth.core.predicates
+import play.api.libs.json.{Json, OFormat}
 
-class NinoSpec extends UnitSpec {
+final case class GatewayInformation(gatewayToken: Option[String])
 
-  "Nino" should {
-
-    "be serializable to Json" in {
-      val nino = Nino(true, Some("123456789"))
-      Json.toJson(nino) shouldBe
-        Json.obj("hasNino" -> true, "nino" -> "123456789")
-    }
-
-  }
-
+object GatewayInformation {
+  implicit val format: OFormat[GatewayInformation] = Json.format[GatewayInformation]
 }

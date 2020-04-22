@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core.model
+package uk.gov.hmrc.auth.core.models
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.UnitSpec
-import uk.gov.hmrc.auth.core.authorise.Nino
-import uk.gov.hmrc.auth.core.predicates
+import ai.x.play.json.{Jsonx, SingletonEncoder}
+import ai.x.play.json.SingletonEncoder.decodeName
+import ai.x.play.json.implicits.formatSingleton
+import play.api.libs.json.{Format, JsString}
 
-class NinoSpec extends UnitSpec {
+sealed trait CredentialStrength
+case object Weak extends CredentialStrength
+case object Strong extends CredentialStrength
 
-  "Nino" should {
-
-    "be serializable to Json" in {
-      val nino = Nino(true, Some("123456789"))
-      Json.toJson(nino) shouldBe
-        Json.obj("hasNino" -> true, "nino" -> "123456789")
-    }
-
-  }
-
+object CredentialStrength{
+  implicit def simpleNameLowerCase = SingletonEncoder(cls => JsString(decodeName(cls.getSimpleName.toLowerCase)))
+  implicit val format: Format[CredentialStrength] = Jsonx.formatSealed[CredentialStrength]
 }

@@ -27,7 +27,7 @@ trait AuthorisedFunctions {
 
   def authConnector: AuthConnector
 
-  def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate)
+  def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate())
 
   def authorised(predicate: Predicate): AuthorisedFunction = new AuthorisedFunction(predicate)
 
