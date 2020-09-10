@@ -21,8 +21,8 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import scala.language.implicitConversions
 
 /**
-  * Convenience syntax for retrieved (~) - for usage examples see RetrievedSyntaxSpec
-  */
+ * Convenience syntax for retrieved (~) - for usage examples see RetrievedSyntaxSpec
+ */
 trait RetrievedSyntax {
   implicit def authSyntaxForRetrieved[A](a: A): RetrievedOps[A] = new RetrievedOps[A](a)
 }

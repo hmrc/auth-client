@@ -22,68 +22,68 @@ import scala.reflect.{ClassTag, classTag}
 import scala.util.{Failure, Success, Try}
 
 /**
-  * Usage examples:
-  *
-  * Constructor that never fails:
-  *
-  * {{{
-  * case class Foo(value: String)
-  *
-  * object Foo extends (String => Foo) {
-  *
-  *   private val mapping = Mappings.map[String, Foo](Foo, _.value)
-  *
-  *   implicit val jsonFormat = mapping.jsonReads
-  *
-  *   implicit val pathBindable = mapping.pathBindable
-  *
-  *   implicit val queryStringBindable = mapping.queryStringBindable
-  *
-  * }
-  * }}}
-  *
-  * Constructor that may fail:
-  *
-  * {{{
-  * case class Bar(value: String) {
-  *   require(value.nonEmpty)
-  * }
-  *
-  * object Bar {
-  *
-  *   private val mapping = Mappings.mapTry[String, Foo](s => Try(Foo(s)), _.value)
-  *
-  *   implicit val jsonFormat = mapping.jsonReads
-  *
-  *   implicit val pathBindable = mapping.pathBindable
-  *
-  *   implicit val queryStringBindable = mapping.queryStringBindable
-  *
-  * }
-  * }}}
-  *
-  * Enumeration:
-  *
-  * {{{
-  * sealed trait Base
-  * case object Thing1 extends Base
-  * case object Thing2 extends Base
-  *
-  * object Base {
-  *
-  *   private val mapping = Mappings.mapEnum(Thing1, Thing2)
-  *
-  *   def fromString(name: String): Option[Base] = mapping.fromString(name)
-  *
-  *   implicit val jsonFormat = mapping.jsonReads
-  *
-  *   implicit val pathBindable = mapping.pathBindable
-  *
-  *   implicit val queryStringBindable = mapping.queryStringBindable
-  *
-  * }
-  * }}}
-  */
+ * Usage examples:
+ *
+ * Constructor that never fails:
+ *
+ * {{{
+ * case class Foo(value: String)
+ *
+ * object Foo extends (String => Foo) {
+ *
+ *   private val mapping = Mappings.map[String, Foo](Foo, _.value)
+ *
+ *   implicit val jsonFormat = mapping.jsonReads
+ *
+ *   implicit val pathBindable = mapping.pathBindable
+ *
+ *   implicit val queryStringBindable = mapping.queryStringBindable
+ *
+ * }
+ * }}}
+ *
+ * Constructor that may fail:
+ *
+ * {{{
+ * case class Bar(value: String) {
+ *   require(value.nonEmpty)
+ * }
+ *
+ * object Bar {
+ *
+ *   private val mapping = Mappings.mapTry[String, Foo](s => Try(Foo(s)), _.value)
+ *
+ *   implicit val jsonFormat = mapping.jsonReads
+ *
+ *   implicit val pathBindable = mapping.pathBindable
+ *
+ *   implicit val queryStringBindable = mapping.queryStringBindable
+ *
+ * }
+ * }}}
+ *
+ * Enumeration:
+ *
+ * {{{
+ * sealed trait Base
+ * case object Thing1 extends Base
+ * case object Thing2 extends Base
+ *
+ * object Base {
+ *
+ *   private val mapping = Mappings.mapEnum(Thing1, Thing2)
+ *
+ *   def fromString(name: String): Option[Base] = mapping.fromString(name)
+ *
+ *   implicit val jsonFormat = mapping.jsonReads
+ *
+ *   implicit val pathBindable = mapping.pathBindable
+ *
+ *   implicit val queryStringBindable = mapping.queryStringBindable
+ *
+ * }
+ * }}}
+ */
 object Mappings {
 
   def map[A, B](toDomain: A => B, fromDomain: B => A) = new Mapping[A, B](v => Right(toDomain(v)), fromDomain)
@@ -103,7 +103,6 @@ object Mappings {
   def mapEnum[B: ClassTag](elements: B*) = new EnumMapping[B](new Enum[B](classTag[B].runtimeClass.getSimpleName, elements))
 
 }
-
 
 class Mapping[A, B](toDomain: A => Either[String, B], fromDomain: B => A) {
 

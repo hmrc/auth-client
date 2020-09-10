@@ -49,7 +49,7 @@ class MappingsSpec extends UnitSpec {
     "create an optional mapping between domains" in {
 
       val mapping: Mapping[String, Foo] =
-        Mappings.mapOption[String, Foo](x => Some(Foo(x)) , _.value)
+        Mappings.mapOption[String, Foo](x => Some(Foo(x)), _.value)
       mapping should not be null
       mapping.jsonReads.reads(JsString("blah")) should be (JsSuccess(Foo("blah")))
       mapping.jsonWrites.writes(Foo("blah")) should be (JsString("blah"))
@@ -59,7 +59,7 @@ class MappingsSpec extends UnitSpec {
     "create an either mapping between domains" in {
 
       val mapping: Mapping[String, Foo] =
-        Mappings.mapEither[String, Foo](x => Right(Foo(x)) , _.value)
+        Mappings.mapEither[String, Foo](x => Right(Foo(x)), _.value)
       mapping should not be null
       mapping.jsonReads should not be null
       mapping.jsonWrites should not be null

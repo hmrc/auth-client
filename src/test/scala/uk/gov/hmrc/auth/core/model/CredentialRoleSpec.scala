@@ -24,7 +24,7 @@ class CredentialRoleSpec extends UnitSpec {
 
   "CredentialRole" should {
 
-    "be serializable to Json" in  {
+    "be serializable to Json" in {
       Assistant.toJson shouldBe Json.obj("credentialRole" -> "assistant")
     }
 

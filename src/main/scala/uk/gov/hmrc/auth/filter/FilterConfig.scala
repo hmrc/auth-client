@@ -20,7 +20,6 @@ import com.typesafe.config.{Config, ConfigRenderOptions}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
-
 case class AuthConfig(patterns: Seq[String], predicates: Seq[Config]) {
 
   val pathMatchers = patterns.map(PathMatcher)
@@ -30,7 +29,6 @@ case class AuthConfig(patterns: Seq[String], predicates: Seq[Config]) {
     .mkString("[", ",", "]")
 
 }
-
 
 case class FilterConfig(controllerConfigs: Config) {
 

@@ -42,7 +42,7 @@ class MockingConnectorSpec extends WordSpec with MockitoSugar {
       mockAuthConnector.authorise(EmptyPredicate, Retrievals.credentials and Retrievals.authorisedEnrolments)
 
       Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate),
-        equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
+                                                  equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
     }
   }
 

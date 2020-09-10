@@ -27,7 +27,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
 
   private trait Setup extends AuthorisedFunctions {

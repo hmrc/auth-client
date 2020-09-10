@@ -21,7 +21,6 @@ import play.api.libs.json._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.controllers.RestFormats
 
-
 @deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", "2.11.0-play-25, 2.11.0-play-26")
 trait Retrievals {
 
@@ -107,11 +106,11 @@ case class StandardApplication(clientId: String) extends LegacyCredentials
 object LegacyCredentials {
   val reads: Reads[LegacyCredentials] = Reads[LegacyCredentials] { json =>
 
-    def toCreds(json: JsLookupResult, f: String => LegacyCredentials): Seq[LegacyCredentials] = json match {
-      case JsDefined(JsString(value)) => Seq(f(value))
-      case _: JsUndefined => Seq()
-      case JsDefined(json) => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
-    }
+      def toCreds(json: JsLookupResult, f: String => LegacyCredentials): Seq[LegacyCredentials] = json match {
+        case JsDefined(JsString(value)) => Seq(f(value))
+        case _: JsUndefined             => Seq()
+        case JsDefined(json)            => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
+      }
 
     toCreds(json \ "ggCredId", GGCredId) ++
       toCreds(json \ "verifyPid", VerifyPid) ++
@@ -120,8 +119,8 @@ object LegacyCredentials {
       toCreds(json \ "applicationId", StandardApplication) ++ // for backwards compatibility
       toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
         case Seq(creds) => JsSuccess(creds)
-        case _ => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
-    }
+        case _          => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
+      }
   }
 }
 
@@ -132,15 +131,15 @@ object LoginTimes {
   val reads = Json.reads[LoginTimes]
 }
 
-case class AgentInformation(agentId: Option[String],
-                            agentCode: Option[String],
+case class AgentInformation(agentId:           Option[String],
+                            agentCode:         Option[String],
                             agentFriendlyName: Option[String])
 
 object AgentInformation {
-    val reads = Json.reads[AgentInformation]
+  val reads = Json.reads[AgentInformation]
 }
 
-case class ItmpName(givenName: Option[String],
+case class ItmpName(givenName:  Option[String],
                     middleName: Option[String],
                     familyName: Option[String])
 
@@ -148,12 +147,12 @@ object ItmpName {
   val reads = Json.reads[ItmpName]
 }
 
-case class ItmpAddress(line1: Option[String],
-                       line2: Option[String],
-                       line3: Option[String],
-                       line4: Option[String],
-                       line5: Option[String],
-                       postCode: Option[String],
+case class ItmpAddress(line1:       Option[String],
+                       line2:       Option[String],
+                       line3:       Option[String],
+                       line4:       Option[String],
+                       line5:       Option[String],
+                       postCode:    Option[String],
                        countryName: Option[String],
                        countryCode: Option[String])
 

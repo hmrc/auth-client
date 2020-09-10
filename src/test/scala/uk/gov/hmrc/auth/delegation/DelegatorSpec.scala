@@ -49,9 +49,9 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       val delegationContext = DelegationContext(
         principalName = "Dave Client",
-        attorneyName = "Bob Agent",
-        accounts = TaxIdentifiers(paye = Some(Nino(hasNino = true, Some("AB123456D")))),
-        link = Link(url = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
+        attorneyName  = "Bob Agent",
+        accounts      = TaxIdentifiers(paye = Some(Nino(hasNino = true, Some("AB123456D")))),
+        link          = Link(url  = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
       )
 
       val redirectTo = "http://blah/blah"

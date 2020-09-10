@@ -60,7 +60,6 @@ class PredicateSpec extends WordSpec with ScalaFutures {
 
       result.toJson shouldBe expectedJson
 
-
     }
   }
 
@@ -92,7 +91,6 @@ class PredicateSpec extends WordSpec with ScalaFutures {
       val result = AlternatePredicate(predicate1, predicate2)
 
       result.toJson shouldBe expectedJson
-
 
     }
   }
@@ -187,14 +185,14 @@ class PredicateSpec extends WordSpec with ScalaFutures {
 
       val relationshipName = "TRUST"
 
-      val businessKeyUTR = BusinessKey("UTR","12345")
-      val businessKeyPostcode = BusinessKey("PostCode","SW4 7HR")
+      val businessKeyUTR = BusinessKey("UTR", "12345")
+      val businessKeyPostcode = BusinessKey("PostCode", "SW4 7HR")
 
-      val relationshipPredicateUTR = Relationship(relationshipName,Set(businessKeyUTR))
+      val relationshipPredicateUTR = Relationship(relationshipName, Set(businessKeyUTR))
 
-      val relationshipPredicateUTRAndPostcode = Relationship(relationshipName,Set(businessKeyUTR, businessKeyPostcode))
+      val relationshipPredicateUTRAndPostcode = Relationship(relationshipName, Set(businessKeyUTR, businessKeyPostcode))
 
-      val relationshipJsonWithOneBusinessKey :String =
+      val relationshipJsonWithOneBusinessKey: String =
         s"""|{
             |    "relationshipName": "TRUST",
             |      "businessKeys": [
@@ -206,7 +204,7 @@ class PredicateSpec extends WordSpec with ScalaFutures {
             |}
     """.stripMargin
 
-        val relationshipJsonWithTwoBusinessKeys :String =
+      val relationshipJsonWithTwoBusinessKeys: String =
         s"""|{
             |    "relationshipName": "TRUST",
             |      "businessKeys": [
@@ -222,9 +220,8 @@ class PredicateSpec extends WordSpec with ScalaFutures {
             |}
     """.stripMargin
 
-     Json.parse(relationshipJsonWithOneBusinessKey) shouldBe relationshipPredicateUTR.toJson
-     Json.parse(relationshipJsonWithTwoBusinessKeys) shouldBe relationshipPredicateUTRAndPostcode.toJson
-
+      Json.parse(relationshipJsonWithOneBusinessKey) shouldBe relationshipPredicateUTR.toJson
+      Json.parse(relationshipJsonWithTwoBusinessKeys) shouldBe relationshipPredicateUTRAndPostcode.toJson
 
     }
   }

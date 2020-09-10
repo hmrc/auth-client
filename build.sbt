@@ -40,16 +40,7 @@ lazy val library = Project(libName, file("."))
     playCrossCompilationSettings,
     fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
-  .settings(
-    Seq(
-      ScoverageKeys.coverageExcludedPackages :=
-      """<empty>;
-        |Reverse.*;
-        |.*BuildInfo.*;
-        |.*Routes.*;
-        |.*RoutesPrefix.*;""".stripMargin,
-      ScoverageKeys.coverageMinimum := 80,
-      ScoverageKeys.coverageFailOnMinimum := false,
-      ScoverageKeys.coverageHighlighting := true
-    )
-  )
+  .settings(ScoverageSettings())
+  .settings(SilencerSettings())
+  .settings(ScalariformSettings())
+  

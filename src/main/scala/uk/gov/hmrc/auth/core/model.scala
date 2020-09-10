@@ -52,9 +52,9 @@ object ConfidenceLevel {
     case 300 => Success(L300)
     case 200 => Success(L200)
     case 100 => Success(L100)
-    case 50 => Success(L50)
-    case 0 => Success(L0)
-    case _ => Failure(throw new NoSuchElementException(s"Illegal confidence level: $level"))
+    case 50  => Success(L50)
+    case 0   => Success(L0)
+    case _   => Failure(throw new NoSuchElementException(s"Illegal confidence level: $level"))
   }
 
   private val mapping = Mappings.mapTry[Int, ConfidenceLevel](fromInt, _.level)
@@ -77,10 +77,10 @@ object CredentialStrength {
 case class EnrolmentIdentifier(key: String, value: String)
 
 case class Enrolment(
-                      key: String,
-                      identifiers: Seq[EnrolmentIdentifier],
-                      state: String,
-                      delegatedAuthRule: Option[String] = None) extends Predicate {
+    key:               String,
+    identifiers:       Seq[EnrolmentIdentifier],
+    state:             String,
+    delegatedAuthRule: Option[String]           = None) extends Predicate {
 
   def getIdentifier(name: String): Option[EnrolmentIdentifier] = identifiers.find {
     _.key.equalsIgnoreCase(name)
@@ -106,14 +106,14 @@ object Enrolment {
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and
     (__ \ "state").readNullable[String] and
     (__ \ "delegatedAuthRule").readNullable[String]) {
-    (key, optIds, optState, optDelegateRule) =>
-      Enrolment(
-        key,
-        optIds.getOrElse(Seq()),
-        optState.getOrElse("Activated"),
-        optDelegateRule
-      )
-  }
+      (key, optIds, optState, optDelegateRule) =>
+        Enrolment(
+          key,
+          optIds.getOrElse(Seq()),
+          optState.getOrElse("Activated"),
+          optDelegateRule
+        )
+    }
 
   def apply(key: String): Enrolment = apply(key, Seq(), "Activated", None)
 }
@@ -178,7 +178,7 @@ case class AuthProviders(providers: AuthProvider*) extends Predicate {
   def toJson: JsValue = Json.obj("authProviders" -> providers.map(_.getClass.getSimpleName.dropRight(1)))
 }
 
-case class Nino(hasNino: Boolean, nino: Option[String]=None) extends Predicate {
+case class Nino(hasNino: Boolean, nino: Option[String] = None) extends Predicate {
   override def toJson = Json.obj(
     "hasNino" -> hasNino,
     "nino" -> nino
