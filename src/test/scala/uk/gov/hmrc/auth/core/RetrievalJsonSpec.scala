@@ -203,8 +203,8 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), "Activated")
     )
 
-    def enrolmentsJson(retrieve: String) = Json.parse(
-      s"""
+      def enrolmentsJson(retrieve: String) = Json.parse(
+        s"""
          |{ "$retrieve": [
          |  {
          |    "key": "ENROL-A",
@@ -275,7 +275,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
 
       tokens.get shouldBe Some(OauthTokens(Some(accessToken), Some(refreshToken), Some(idToken)))
     }
@@ -292,7 +292,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
       tokens.get shouldBe Some(OauthTokens(Some(accessToken), Some(refreshToken), None))
     }
 
@@ -308,7 +308,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
       tokens.get shouldBe Some(OauthTokens(None, Some(refreshToken), Some(idToken)))
     }
 
@@ -324,7 +324,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
       tokens.get shouldBe Some(OauthTokens(Some(accessToken), None, Some(idToken)))
     }
 
@@ -332,7 +332,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       val json = Json.parse("""{"oauthTokens": null}""")
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
       tokens.get shouldBe None
     }
 
@@ -340,7 +340,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       val json = Json.obj()
 
       val tokens = oauthTokens.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
       tokens.get shouldBe None
     }
   }
@@ -373,7 +373,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     "read the values from the Json" in {
 
       val json = Json.parse(
-      """{"applicationName": "App 1",
+        """{"applicationName": "App 1",
           |"clientId": "client-1",
           |"applicationId": "app-1"}""".stripMargin)
 
@@ -393,7 +393,6 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
     }
 
   }
-
 
   "The JSON reads for the trusted helper retrieval" should {
     import v2.Retrievals.trustedHelper
@@ -415,7 +414,7 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
       )
 
       val tokens = trustedHelper.reads.reads(json)
-      tokens shouldBe a [JsSuccess[_]]
+      tokens shouldBe a[JsSuccess[_]]
 
       tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, principalNino))
     }

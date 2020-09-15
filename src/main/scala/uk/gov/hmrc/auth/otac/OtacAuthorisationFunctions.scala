@@ -24,10 +24,10 @@ trait OtacAuthorisationFunctions {
   def authConnector: OtacAuthConnector
 
   def withVerifiedPasscode[T](serviceName: String, otacToken: Option[String])(body: => Future[T])
-                             (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[T] = {
+    (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[T] = {
 
     authConnector.authorise(serviceName, headerCarrier, otacToken).flatMap {
-      case Authorised => body
+      case Authorised  => body
       case otherResult => Future.failed(OtacFailureThrowable(otherResult))
     }
   }

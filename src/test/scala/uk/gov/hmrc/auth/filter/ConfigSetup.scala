@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.auth.filter
 
-
 trait ConfigSetup {
-
 
   val enrol1EnrolmentConfig =
     """[{
@@ -80,6 +78,5 @@ trait ConfigSetup {
        |  }
        |
      |}""".stripMargin
-
 
 }

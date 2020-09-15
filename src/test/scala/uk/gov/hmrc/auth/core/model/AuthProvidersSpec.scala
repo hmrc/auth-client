@@ -29,7 +29,7 @@ class AuthProvidersSpec extends UnitSpec {
 
       val providers = AuthProviders(GovernmentGateway, Verify, StandardApplication)
       providers.toJson should be (Json.obj(
-        "authProviders" -> List("GovernmentGateway","Verify","StandardApplication")))
+        "authProviders" -> List("GovernmentGateway", "Verify", "StandardApplication")))
 
     }
 

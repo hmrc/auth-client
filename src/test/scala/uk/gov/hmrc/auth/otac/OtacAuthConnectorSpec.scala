@@ -36,7 +36,7 @@ class OtacAuthConnectorSpec extends UnitSpec with MockFactory {
   def configureHttpStub(response: Future[HttpResponse]): Unit = {
     (stubbedCoreGet.GET[HttpResponse](
       _: String)(
-      _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
+        _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
       .when(mySerivceUrl + s"/authorise/read/$serviceName", *, *, *)
       .returns(response)
     ()

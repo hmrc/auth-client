@@ -19,29 +19,31 @@ package uk.gov.hmrc.auth.core.authorise
 import play.api.libs.json.{JsArray, JsValue, Json}
 
 /**
-  * Defines a boolean check against auth properties
-  */
+ * Defines a boolean check against auth properties
+ */
 trait Predicate {
 
-  /** Convert this predicate to JSON for sending over the wire
-    *
-    * @return the JSON
-    */
+  /**
+   * Convert this predicate to JSON for sending over the wire
+   *
+   * @return the JSON
+   */
   def toJson: JsValue
 
-  /** Join this Predicate with another as a boolean AND
-    *
-    * @param other A Predicate to join with this Predicate
-    * @return A CompositePredicate containing this Predicate and the supplied one
-    */
+  /**
+   * Join this Predicate with another as a boolean AND
+   *
+   * @param other A Predicate to join with this Predicate
+   * @return A CompositePredicate containing this Predicate and the supplied one
+   */
   def and(other: Predicate): Predicate = CompositePredicate(this, other)
 
-
-  /** Join this Predicate with another as a boolean OR
-    *
-    * @param other A Predicate to join with this Predicate
-    * @return An AlternatePredicate containing this Predicate and the supplied one
-    */
+  /**
+   * Join this Predicate with another as a boolean OR
+   *
+   * @param other A Predicate to join with this Predicate
+   * @return An AlternatePredicate containing this Predicate and the supplied one
+   */
   def or(other: Predicate): Predicate = AlternatePredicate(this, other)
 
 }
@@ -49,11 +51,11 @@ trait Predicate {
 case class CompositePredicate(predicateA: Predicate, predicateB: Predicate) extends Predicate {
 
   val toJson = {
-    def extractPredicates(predicate: Predicate) = predicate match {
-      case CompositePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
-      case EmptyPredicate => Seq()
-      case other => Seq(other)
-    }
+      def extractPredicates(predicate: Predicate) = predicate match {
+        case CompositePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
+        case EmptyPredicate             => Seq()
+        case other                      => Seq(other)
+      }
 
     val predicates = extractPredicates(predicateA) ++ extractPredicates(predicateB)
     JsArray(predicates.map(_.toJson))
@@ -64,11 +66,11 @@ case class CompositePredicate(predicateA: Predicate, predicateB: Predicate) exte
 case class AlternatePredicate(predicateA: Predicate, predicateB: Predicate) extends Predicate {
 
   val toJson = {
-    def extractPredicates(predicate: Predicate) = predicate match {
-      case AlternatePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
-      case EmptyPredicate => Seq()
-      case other => Seq(other)
-    }
+      def extractPredicates(predicate: Predicate) = predicate match {
+        case AlternatePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
+        case EmptyPredicate             => Seq()
+        case other                      => Seq(other)
+      }
 
     val predicates = extractPredicates(predicateA) ++ extractPredicates(predicateB)
     Json.obj("$or" -> JsArray(predicates.map(_.toJson)))

@@ -51,7 +51,7 @@ trait Retrievals {
   val agentInformation: Retrieval[AgentInformation] = SimpleRetrieval("agentInformation", AgentInformation.reads)
 
   val credentials: Retrieval[Option[Credentials]] = OptionalRetrieval("optionalCredentials", Credentials.reads)
-  val name: Retrieval[Option[Name]] = OptionalRetrieval("optionalName",Name.reads)
+  val name: Retrieval[Option[Name]] = OptionalRetrieval("optionalName", Name.reads)
   val itmpName: Retrieval[Option[ItmpName]] = OptionalRetrieval("optionalItmpName", ItmpName.reads)
   val itmpAddress: Retrieval[Option[ItmpAddress]] = OptionalRetrieval("optionalItmpAddress", ItmpAddress.reads)
 
@@ -71,7 +71,7 @@ trait Retrievals {
 
   val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
 
-  val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId",Reads.StringReads)
+  val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId", Reads.StringReads)
 
   val clientId: Retrieval[Option[String]] = OptionalRetrieval("clientId", Reads.StringReads)
 
@@ -82,7 +82,6 @@ trait Retrievals {
 }
 
 object Retrievals extends Retrievals
-
 
 case class OauthTokens(accessToken: Option[String], refreshToken: Option[String], idToken: Option[String])
 

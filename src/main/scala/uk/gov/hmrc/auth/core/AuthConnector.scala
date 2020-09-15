@@ -38,7 +38,7 @@ trait PlayAuthConnector extends AuthConnector {
     // if the predicate is a single field (1x SimplePredicate), place it into an array
     val predicateJson = predicate.toJson match {
       case arr: JsArray => arr
-      case other => Json.arr(other)
+      case other        => Json.arr(other)
     }
     val json = Json.obj(
       "authorise" -> predicateJson,
@@ -47,10 +47,10 @@ trait PlayAuthConnector extends AuthConnector {
     http.POST(s"$serviceUrl/auth/authorise", json) map {
       _.json match {
         case null => JsNull.as[A](retrieval.reads)
-        case bdy => bdy.as[A](retrieval.reads)
+        case bdy  => bdy.as[A](retrieval.reads)
       }
     } recoverWith {
-      case res@Upstream4xxResponse(_, 401, _, headers) =>
+      case res @ Upstream4xxResponse(_, 401, _, headers) =>
         Future.failed(AuthenticateHeaderParser.parse(headers))
     }
   }
@@ -63,15 +63,14 @@ object AuthenticateHeaderParser {
   val ENROLMENT = "Failing-Enrolment"
   val regex = """^MDTP detail="(.+)"$""".r
 
-
   def parse(headers: Map[String, Seq[String]]): AuthorisationException = {
     headers.get(WWW_AUTHENTICATE).flatMap(_.headOption) match {
       case Some(regex(detail)) => AuthorisationException.fromString(detail) match {
-        case ie:InsufficientEnrolments => headers.get(ENROLMENT).flatMap(_.headOption).fold(ie)(e => ie.copy(msg = e))
-        case other                     => other
+        case ie: InsufficientEnrolments => headers.get(ENROLMENT).flatMap(_.headOption).fold(ie)(e => ie.copy(msg = e))
+        case other                      => other
       }
-      case Some(_)             => new InternalError("InvalidResponseHeader")
-      case None                => new InternalError("MissingResponseHeader")
+      case Some(_) => new InternalError("InvalidResponseHeader")
+      case None    => new InternalError("MissingResponseHeader")
     }
   }
 

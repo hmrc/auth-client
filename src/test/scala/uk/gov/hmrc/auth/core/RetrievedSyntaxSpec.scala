@@ -21,9 +21,9 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.{GGCredId, LegacyCredentials, ~}
 
 /**
-  * Retrieved syntax is intended for use in unit tests in code that uses auth-client,
-  * it makes it more convenient to construct values to return from fake or mock AuthConnectors
-  */
+ * Retrieved syntax is intended for use in unit tests in code that uses auth-client,
+ * it makes it more convenient to construct values to return from fake or mock AuthConnectors
+ */
 class RetrievedSyntaxSpec extends WordSpec with Matchers {
 
   "syntax.retrieved._" should {

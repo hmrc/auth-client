@@ -56,7 +56,6 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
   "CompositeRetrieval" should {
 
-
     "contain all propertyNames and Reads from the supplied two SimpleRetrievals" in {
       val simpleRetrieval1 = SimpleRetrieval("fooProperty", Foo.reads)
       val simpleRetrieval2 = SimpleRetrieval("barProperty", Bar.reads)
@@ -64,7 +63,7 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
       result.retrievalA shouldBe simpleRetrieval1
       result.retrievalB shouldBe simpleRetrieval2
-      result.propertyNames should contain only("barProperty", "fooProperty")
+      result.propertyNames should contain only ("barProperty", "fooProperty")
     }
 
     "contain all propertyNames and Reads from the supplied SimpleRetrieval and CompositeRetrieval" in {
@@ -76,7 +75,7 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
       result.retrievalA shouldBe simpleRetrieval1
       result.retrievalB shouldBe compositeRetrieval
-      result.propertyNames should contain only("bar1Property", "fooProperty", "bar2Property")
+      result.propertyNames should contain only ("bar1Property", "fooProperty", "bar2Property")
     }
 
     "contain all propertyNames and Reads from the supplied CompositeRetrieval and SimpleRetrieval" in {
@@ -88,7 +87,7 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
       result.retrievalA shouldBe compositeRetrieval
       result.retrievalB shouldBe simpleRetrieval1
-      result.propertyNames should contain only("bar1Property", "fooProperty", "bar2Property")
+      result.propertyNames should contain only ("bar1Property", "fooProperty", "bar2Property")
     }
 
     "contain all propertyNames and Reads from the supplied two CompositeRetrievals" in {
@@ -102,7 +101,7 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
       result.retrievalA shouldBe compositeRetrieval1
       result.retrievalB shouldBe compositeRetrieval2
-      result.propertyNames should contain only("bar1Property", "foo1Property", "foo2Property", "bar2Property")
+      result.propertyNames should contain only ("bar1Property", "foo1Property", "foo2Property", "bar2Property")
     }
 
     "contain only the propertyNames and Reads from the supplied SimpleRetrieval when an EmpyRetrieval is also supplied" in {
@@ -122,7 +121,7 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
 
       result.retrievalA shouldBe compositeRetrieval
       result.retrievalB shouldBe EmptyRetrieval
-      result.propertyNames should contain only("barProperty", "fooProperty")
+      result.propertyNames should contain only ("barProperty", "fooProperty")
     }
 
     "be able to handle nested CompositeRetrievals" in {
@@ -137,12 +136,11 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
       val compositeRetrieval3 = CompositeRetrieval(compositeRetrieval1, compositeRetrieval2)
       val compositeRetrieval4 = CompositeRetrieval(simpleRetrieval5, simpleRetrieval6)
 
-
       val result = CompositeRetrieval(compositeRetrieval3, compositeRetrieval4)
 
       result.retrievalA shouldBe compositeRetrieval3
       result.retrievalB shouldBe compositeRetrieval4
-      result.propertyNames should contain only("foo1Property", "foo2Property", "foo3Property", "bar1Property", "bar2Property", "bar3Property")
+      result.propertyNames should contain only ("foo1Property", "foo2Property", "foo3Property", "bar1Property", "bar2Property", "bar3Property")
     }
 
   }

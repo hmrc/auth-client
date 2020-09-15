@@ -42,7 +42,7 @@ case class SessionRecordNotFound(msg: String = "Session record not found") exten
 
 case class InternalError(message: String = "Internal error") extends AuthorisationException(message)
 
-case class FailedRelationship(msg :String = "FailedRelationship") extends AuthorisationException(msg)
+case class FailedRelationship(msg: String = "FailedRelationship") extends AuthorisationException(msg)
 
 object AuthorisationException {
 
@@ -58,6 +58,6 @@ object AuthorisationException {
     case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
     case "InsufficientEnrolments"      => new InsufficientEnrolments
     case "FailedRelationship"          => new FailedRelationship
-    case other => InternalError(other)
+    case other                         => InternalError(other)
   }
 }

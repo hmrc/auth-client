@@ -20,13 +20,10 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Matchers, WordSpec}
 
-
 class FilterConfigSpec extends WordSpec with ScalaFutures with Matchers with ConfigSetup {
-
 
   val config = ConfigFactory.parseString(fullConfig).getConfig("controllers")
   val filterConfig = FilterConfig(config)
-
 
   "FilterConfig" should {
 
@@ -76,6 +73,5 @@ class FilterConfigSpec extends WordSpec with ScalaFutures with Matchers with Con
     }
 
   }
-
 
 }

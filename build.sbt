@@ -31,7 +31,7 @@ lazy val library = Project(libName, file("."))
   .settings(
     name := libName,
     scalaVersion        := "2.11.12",
-    crossScalaVersions  := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions  := Seq("2.11.12", "2.12.12"),
     libraryDependencies ++= BuildDependencies(),
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
@@ -40,16 +40,7 @@ lazy val library = Project(libName, file("."))
     playCrossCompilationSettings,
     fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
-  .settings(
-    Seq(
-      ScoverageKeys.coverageExcludedPackages :=
-      """<empty>;
-        |Reverse.*;
-        |.*BuildInfo.*;
-        |.*Routes.*;
-        |.*RoutesPrefix.*;""".stripMargin,
-      ScoverageKeys.coverageMinimum := 80,
-      ScoverageKeys.coverageFailOnMinimum := false,
-      ScoverageKeys.coverageHighlighting := true
-    )
-  )
+  .settings(ScoverageSettings())
+  .settings(SilencerSettings())
+  .settings(ScalariformSettings())
+  

@@ -21,7 +21,6 @@ import uk.gov.hmrc.http._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 trait OtacAuthorisationResult
 
 object Authorised extends OtacAuthorisationResult
@@ -60,8 +59,8 @@ trait PlayOtacAuthConnector extends OtacAuthConnector {
 
   private def toResult[T](status: Int): Future[OtacAuthorisationResult] =
     status match {
-      case 200 => Future.successful(Authorised)
-      case 401 => Future.successful(Unauthorised)
+      case 200    => Future.successful(Authorised)
+      case 401    => Future.successful(Unauthorised)
       case status => Future.successful(UnexpectedError(status))
     }
 }

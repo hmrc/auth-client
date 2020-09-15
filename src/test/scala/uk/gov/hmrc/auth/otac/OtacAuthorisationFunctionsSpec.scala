@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 class OtacAuthorisationFunctionsSpec extends UnitSpec with MockitoSugar {
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()

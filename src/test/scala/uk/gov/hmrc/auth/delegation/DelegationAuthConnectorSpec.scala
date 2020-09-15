@@ -33,9 +33,9 @@ class DelegationAuthConnectorSpec extends UnitSpec with MockFactory {
 
   val delegationContext: DelegationContext = DelegationContext(
     principalName = "Client",
-    attorneyName = "Agent",
-    accounts = TaxIdentifiers(paye = Some(Nino(hasNino = true, Some("AB123456D")))),
-    link = Link(url = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
+    attorneyName  = "Agent",
+    accounts      = TaxIdentifiers(paye = Some(Nino(hasNino = true, Some("AB123456D")))),
+    link          = Link(url  = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
   )
 
   val authUrl = "http://localhost:8500"
@@ -49,8 +49,8 @@ class DelegationAuthConnectorSpec extends UnitSpec with MockFactory {
     "call authoriseDelegation" in {
 
       (stubbedHttp.POST[DelegationContext, HttpResponse](
-        _ : String, _: DelegationContext, _: Seq[(String, String)])(
-        _: Writes[DelegationContext], _: HttpReads[HttpResponse], _: HeaderCarrier, _:ExecutionContext ) )
+        _: String, _: DelegationContext, _: Seq[(String, String)])(
+          _: Writes[DelegationContext], _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
         .when(s"$authUrl/auth/authoriseDelegation", delegationContext, *, *, *, *, *)
         .returns(stubResponse)
 
@@ -66,7 +66,7 @@ class DelegationAuthConnectorSpec extends UnitSpec with MockFactory {
 
       (stubbedHttp.DELETE[HttpResponse](
         _: String, _: Seq[(String, String)])(
-        _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
+          _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
         .when(s"$authUrl/auth/endDelegation", *, *, *, *)
         .returns(stubResponse)
 

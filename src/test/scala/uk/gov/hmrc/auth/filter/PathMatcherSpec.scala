@@ -19,7 +19,6 @@ package uk.gov.hmrc.auth.filter
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{Matchers, WordSpec}
 
-
 class PathMatcherSpec extends WordSpec with ScalaFutures with Matchers {
 
   "the path matcher" should {

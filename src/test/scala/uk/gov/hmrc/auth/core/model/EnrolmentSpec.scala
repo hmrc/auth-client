@@ -74,11 +74,11 @@ class EnrolmentSpec extends UnitSpec {
           "enrolment" -> "foo",
           "identifiers" -> Json.arr(
             Json.obj(
-              "key" ->"key-1",
+              "key" -> "key-1",
               "value" -> "val-1"
             ),
             Json.obj(
-              "key" ->"key-2",
+              "key" -> "key-2",
               "value" -> "val-2"
             )
           ),

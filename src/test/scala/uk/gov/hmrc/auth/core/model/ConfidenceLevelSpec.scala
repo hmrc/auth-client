@@ -35,9 +35,8 @@ class ConfidenceLevelSpec extends UnitSpec {
         c200 <- ConfidenceLevel.fromInt(200)
         c300 <- ConfidenceLevel.fromInt(300)
         c500 <- ConfidenceLevel.fromInt(500)
-      } yield
-        List(c0 < c50, c50 < c200, c200 < c300, c300 < c500) shouldBe
-          Success(List(true, true, true, true))
+      } yield List(c0 < c50, c50 < c200, c200 < c300, c300 < c500) shouldBe
+        Success(List(true, true, true, true))
     }
 
     "be serializable to Json" in {
@@ -45,7 +44,7 @@ class ConfidenceLevelSpec extends UnitSpec {
     }
 
     "not accept invalid level values" in {
-      the [NoSuchElementException] thrownBy {
+      the[NoSuchElementException] thrownBy {
         ConfidenceLevel.fromInt(250)
       } should have message "Illegal confidence level: 250"
 
