@@ -252,9 +252,9 @@ Whenever the auth microservice returns a 401 response to the library, it will co
 - NoActiveSession: The user does not have an active session. This is an abstract type with 4 concrete subtypes, but you would usually handle all 4 types in the same way (most often by redirecting to the login page). The 4 subtypes are: MissingBearerToken (the user was probably not logged in), BearerTokenExpired (the user was logged in, but the session is expired), and two types which should never occur as they would hint at an internal error: InvalidBearerToken and SessionRecordNotFound.
 - FailedRelationship: The requested relationship in the authority did not match the one in the Relationship Establishment.
 
-## Whitelisting / OTAC
+## Allowlisting / OTAC
 
-The library includes functional wrapper for whitelisting / OTAC authorisation, which used to be in passcode-verification.
+The library includes functional wrapper for allowlisting / OTAC authorisation, which used to be in passcode-verification.
 
 ### Using the OTAC function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the OtacAuthorisationFunctions trait:
