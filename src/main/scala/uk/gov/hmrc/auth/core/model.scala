@@ -39,6 +39,8 @@ object ConfidenceLevel {
 
   case object L300 extends ConfidenceLevel(300)
 
+  case object L250 extends ConfidenceLevel(250)
+
   case object L200 extends ConfidenceLevel(200)
 
   case object L100 extends ConfidenceLevel(100)
@@ -50,6 +52,7 @@ object ConfidenceLevel {
   def fromInt(level: Int): Try[ConfidenceLevel] = level match {
     case 500 => Success(L500)
     case 300 => Success(L300)
+    case 250 => Success(L250)
     case 200 => Success(L200)
     case 100 => Success(L100)
     case 50  => Success(L50)
