@@ -5,9 +5,9 @@ private object BuildDependencies {
 
   val compile: Seq[ModuleID] = dependencies(
     shared = Seq("com.iheart" %% "ficus" % "1.4.7"),
-    play25 = Seq("uk.gov.hmrc" %% "http-verbs-play-25" % "10.11.0" % Provided),
-    play26 = Seq("uk.gov.hmrc" %% "http-verbs-play-26" % "10.11.0" % Provided),
-    play27 = Seq("uk.gov.hmrc" %% "http-verbs-play-27" % "10.11.0" % Provided)
+    play25 = Seq("uk.gov.hmrc" %% "http-verbs-play-25" % "12.3.0" % Provided),
+    play26 = Seq("uk.gov.hmrc" %% "http-verbs-play-26" % "12.3.0" % Provided),
+    play27 = Seq("uk.gov.hmrc" %% "http-verbs-play-27" % "12.3.0" % Provided)
   )
 
   val test: Seq[ModuleID] = dependencies(
