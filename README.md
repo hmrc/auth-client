@@ -13,7 +13,7 @@ resolvers += Resolver.bintrayRepo("hmrc", "releases")
  
 libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
 ```
-Note that this library is only available for Play 2.5.x through to Play 2.7.x. Play 2.8+ is not yet supported.
+Note that this library is only available for Play 2.6.x through to Play 2.7.x. Play 2.8+ is not yet supported.
 
 > N.B. Play 2.7 support requires major version 3 of `auth-client`. This major release also includes an upgrade of the 
 > underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 10.  
