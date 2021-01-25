@@ -17,7 +17,7 @@
 package uk.gov.hmrc.auth.delegation
 
 import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Results.Ok
 import play.api.mvc.{RequestHeader, Result}

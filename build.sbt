@@ -26,12 +26,11 @@ lazy val library = Project(libName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 3
+    majorVersion                     := 4
   )
   .settings(
     name := libName,
-    scalaVersion        := "2.11.12",
-    crossScalaVersions  := Seq("2.11.12", "2.12.12"),
+    scalaVersion        := "2.12.12",
     libraryDependencies ++= BuildDependencies(),
     resolvers := Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
@@ -43,4 +42,3 @@ lazy val library = Project(libName, file("."))
   .settings(ScoverageSettings())
   .settings(SilencerSettings())
   .settings(ScalariformSettings())
-  
