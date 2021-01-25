@@ -5,7 +5,6 @@ private object BuildDependencies {
 
   val compile: Seq[ModuleID] = dependencies(
     shared = Seq("com.iheart" %% "ficus" % "1.4.7"),
-    play25 = Seq("uk.gov.hmrc" %% "http-verbs-play-25" % "12.3.0" % Provided),
     play26 = Seq("uk.gov.hmrc" %% "http-verbs-play-26" % "12.3.0" % Provided),
     play27 = Seq("uk.gov.hmrc" %% "http-verbs-play-27" % "12.3.0" % Provided)
   )
@@ -15,7 +14,6 @@ private object BuildDependencies {
                  "org.mockito" % "mockito-core" % "2.10.0" % Test,
                  "org.scalamock" %% "scalamock" % "4.4.0" % Test
     ),
-    play25 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test),
     play26 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % Test),
     play27 = Seq("org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test)
   )
