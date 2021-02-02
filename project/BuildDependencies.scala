@@ -4,10 +4,10 @@ import sbt._
 private object BuildDependencies {
 
   val compile: Seq[ModuleID] = dependencies(
-    shared = Seq("com.iheart"  %% "ficus"              % "1.4.7"),
-    play26 = Seq("uk.gov.hmrc" %% "http-verbs-play-26" % "13.0.0-SNAPSHOT" % Provided),
-    play27 = Seq("uk.gov.hmrc" %% "http-verbs-play-27" % "13.0.0-SNAPSHOT" % Provided),
-    play28 = Seq("uk.gov.hmrc" %% "http-verbs-play-28" % "13.0.0-SNAPSHOT" % Provided)
+    shared = Seq("com.iheart"  %% "ficus"              % "1.4.7"  ),
+    play26 = Seq("uk.gov.hmrc" %% "http-verbs-play-26" % "13.0.0" ),
+    play27 = Seq("uk.gov.hmrc" %% "http-verbs-play-27" % "13.0.0" ),
+    play28 = Seq("uk.gov.hmrc" %% "http-verbs-play-28" % "13.0.0" )
   )
 
   val test: Seq[ModuleID] = dependencies(
