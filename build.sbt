@@ -22,11 +22,19 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val libName = "auth-client"
 
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "hello"
+  )
+
+
 lazy val library = Project(libName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
   .settings(
     makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 4
+    majorVersion                     := 5
   )
   .settings(
     name := libName,
@@ -39,6 +47,10 @@ lazy val library = Project(libName, file("."))
     playCrossCompilationSettings,
     fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
+  .settings( //see https://github.com/sbt/sbt-buildinfo
+    buildInfoKeys := Seq[BuildInfoKey](name, version),
+    buildInfoPackage := "buildinfo"
+   )
   .settings(ScoverageSettings())
   .settings(SilencerSettings())
   .settings(ScalariformSettings())
