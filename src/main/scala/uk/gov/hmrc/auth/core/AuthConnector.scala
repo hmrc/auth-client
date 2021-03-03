@@ -17,7 +17,6 @@
 package uk.gov.hmrc.auth.core
 
 import play.api.libs.json._
-import play.api.mvc.Headers
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http._
@@ -55,7 +54,7 @@ trait PlayAuthConnector extends AuthConnector {
       "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
     )
 
-    http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> clientVersion))) map {
+    http.POST[JsObject, HttpResponse](s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> clientVersion))) map {
       _.json match {
         case null => JsNull.as[A](retrieval.reads)
         case bdy  => bdy.as[A](retrieval.reads)
