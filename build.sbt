@@ -22,14 +22,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val libName = "auth-client"
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "hello"
-  )
-
-
 lazy val library = Project(libName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
   .settings(
