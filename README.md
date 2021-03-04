@@ -4,6 +4,18 @@ auth-client
 
 Library for supporting user authorisation on microservices.
 
+## Change History
+
+###v5.x March 2021
+Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
+Earlier versions only supported CL50 or CL200, plus deprecated CL100.
+See the March 2021 auth-client v5.x Tech Blog Post for further details inc. the full changelog under "Notes"
+
+###v4.x Feb 2021, deprecated
+Added support for Play 2.8, plus CL250 in part. 
+
+###v3.x deprecated
+
 ## Installing
  
 Include the following dependency in your SBT build
@@ -106,6 +118,13 @@ That's all there is to it. If you were one of the unlucky users who had to use o
 In order to check confidence level and retrieve its value, use the following snippet:
 ```scala
 authorised(ConfidenceLevel.L200).retrieve(Retrievals.confidenceLevel) {
+  case confidenceLevel => // logic
+}
+```
+
+To check confidence level was obtained via multiple evidence sources, use CL250 instead as follows:
+```scala
+authorised(ConfidenceLevel.L250).retrieve(Retrievals.confidenceLevel) {
   case confidenceLevel => // logic
 }
 ```

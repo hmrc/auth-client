@@ -29,6 +29,15 @@ trait AuthConnector {
 
 trait PlayAuthConnector extends AuthConnector {
 
+  val clientVersion = {
+    val versionRegex = raw"([0-9]+\.[0-9]+\.[0-9]+).+".r
+    val version = buildinfo.BuildInfo.version match {
+      case versionRegex(version) => version
+      case _                     => throw new RuntimeException("auth-client version could not be determined")
+    }
+    s"${buildinfo.BuildInfo.name}-${version}"
+  }
+
   val serviceUrl: String
 
   def http: CorePost
@@ -44,7 +53,8 @@ trait PlayAuthConnector extends AuthConnector {
       "authorise" -> predicateJson,
       "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
     )
-    http.POST(s"$serviceUrl/auth/authorise", json) map {
+
+    http.POST[JsObject, HttpResponse](s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> clientVersion))) map {
       _.json match {
         case null => JsNull.as[A](retrieval.reads)
         case bdy  => bdy.as[A](retrieval.reads)
