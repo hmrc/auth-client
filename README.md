@@ -4,6 +4,15 @@ auth-client
 
 Library for supporting user authorisation on microservices.
 
+## Change History
+
+### 5.0.0  - March 2021
+Allows confidence level to be reported as CL250.\
+CL250 indicates confidence obtained via multiple evidence sources, whereas the earlier CL200 is via single evidence option.\
+The auth service will only return CL250 to auth-client versions from 5.0.0 onward.
+Earlier auth-client versions (that can't support CL250) will still receive CL200 in this case so upgrading is recommended.
+
+
 ## Installing
  
 Include the following dependency in your SBT build
@@ -106,6 +115,13 @@ That's all there is to it. If you were one of the unlucky users who had to use o
 In order to check confidence level and retrieve its value, use the following snippet:
 ```scala
 authorised(ConfidenceLevel.L200).retrieve(Retrievals.confidenceLevel) {
+  case confidenceLevel => // logic
+}
+```
+
+To check confidence level was obtained via multiple evidence sources, use CL250 instead as follows:
+```scala
+authorised(ConfidenceLevel.L250).retrieve(Retrievals.confidenceLevel) {
   case confidenceLevel => // logic
 }
 ```
