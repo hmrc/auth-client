@@ -41,7 +41,7 @@ lazy val library = Project(libName, file("."))
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo
     buildInfoKeys := Seq[BuildInfoKey](name, version),
-    buildInfoPackage := "buildinfo"
+    buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
    )
   .settings(ScoverageSettings())
   .settings(SilencerSettings())

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.auth.core
 
 import play.api.libs.json._
+import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http._
@@ -28,15 +29,6 @@ trait AuthConnector {
 }
 
 trait PlayAuthConnector extends AuthConnector {
-
-  val clientVersion = {
-    val versionRegex = raw"([0-9]+\.[0-9]+\.[0-9]+).+".r
-    val version = buildinfo.BuildInfo.version match {
-      case versionRegex(version) => version
-      case _                     => throw new RuntimeException("auth-client version could not be determined")
-    }
-    s"${buildinfo.BuildInfo.name}-${version}"
-  }
 
   val serviceUrl: String
 
@@ -54,7 +46,7 @@ trait PlayAuthConnector extends AuthConnector {
       "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
     )
 
-    http.POST[JsObject, HttpResponse](s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> clientVersion))) map {
+    http.POST[JsObject, HttpResponse](s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
       _.json match {
         case null => JsNull.as[A](retrieval.reads)
         case bdy  => bdy.as[A](retrieval.reads)
