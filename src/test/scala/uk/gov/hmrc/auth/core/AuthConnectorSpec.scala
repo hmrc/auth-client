@@ -20,6 +20,7 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsValue, Json, Writes}
+import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http._
@@ -38,6 +39,8 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     implicit lazy val hc = HeaderCarrier()
 
+    val clientVersion = ClientVersion.toString()
+
     def withStatus: Int = Status.OK
 
     def withHeaders: Map[String, String] = Map.empty
@@ -48,7 +51,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       override lazy val http = new CorePost {
         override def POST[I, O](url: String, body: I, headers: Seq[(String, String)])(implicit wts: Writes[I], rds: HttpReads[O], hc: HeaderCarrier, ec: ExecutionContext): Future[O] = {
 
-          headers shouldBe Seq(("Auth-Client-Version" -> "auth-client-5.0.0"))
+          headers shouldBe Seq(("Auth-Client-Version" -> clientVersion))
 
           val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
 
