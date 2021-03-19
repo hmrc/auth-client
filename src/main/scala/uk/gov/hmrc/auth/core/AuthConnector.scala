@@ -46,7 +46,7 @@ trait PlayAuthConnector extends AuthConnector {
       "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
     )
 
-    http.POST[JsObject, HttpResponse](s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
+    http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
       _.json match {
         case null => JsNull.as[A](retrieval.reads)
         case bdy  => bdy.as[A](retrieval.reads)

@@ -11,17 +11,21 @@ private object BuildDependencies {
   )
 
   val test: Seq[ModuleID] = dependencies(
-    shared = Seq("org.scalamock"          %% "scalamock"          % "4.4.0"   % Test),
-    play26 = Seq("org.mockito"            %  "mockito-core"       % "2.10.0"  % Test,
-                 "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3"   % Test,
-                 "org.pegdown"            %  "pegdown"            % "1.6.0"   % Test),
-    play27 = Seq("org.mockito"            %  "mockito-core"       % "2.10.0"  % Test,
-                 "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3"   % Test,
-                 "org.pegdown"            %  "pegdown"            % "1.6.0"   % Test),
-    play28 = Seq("com.vladsch.flexmark"   %  "flexmark-all"       % "0.35.10" % Test,
-                 "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"   % Test,
-                 "org.scalatestplus"      %% "mockito-3-4"        % "3.2.2.0" % Test)
+    shared = Seq("org.scalamock"          %% "scalamock"          % "4.4.0"   % "test, it"),
+    play26 = Seq("org.mockito"            %  "mockito-core"       % "2.10.0"  % "test, it",
+                 "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3"   % "test, it",
+                 "org.pegdown"            %  "pegdown"            % "1.6.0"   % "test, it",
+                 "uk.gov.hmrc"            %% "bootstrap-backend-play-26" % "4.0.0" % "test, it"),
+    play27 = Seq("org.mockito"            %  "mockito-core"       % "2.10.0"  % "test, it",
+                 "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3"   % "test, it",
+                 "org.pegdown"            %  "pegdown"            % "1.6.0"   % "test, it",
+                 "uk.gov.hmrc"            %% "bootstrap-backend-play-27" % "4.0.0"  % "test, it"),
+    play28 = Seq("com.vladsch.flexmark"   %  "flexmark-all"       % "0.35.10" % "test, it",
+                 "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"   % "test, it",
+                 "org.scalatestplus"      %% "mockito-3-4"        % "3.2.2.0" % "test, it",
+                 "uk.gov.hmrc"            %% "bootstrap-backend-play-28" % "4.0.0" %  "test, it")
   )
+
 
   def apply(): Seq[ModuleID] = compile ++ test
 }
