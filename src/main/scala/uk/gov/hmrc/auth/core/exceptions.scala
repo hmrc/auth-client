@@ -44,6 +44,8 @@ case class InternalError(message: String = "Internal error") extends Authorisati
 
 case class FailedRelationship(msg: String = "FailedRelationship") extends AuthorisationException(msg)
 
+case object IncorrectNino extends AuthorisationException("IncorrectNino")
+
 object AuthorisationException {
 
   def fromString(reason: String): AuthorisationException = reason match {
@@ -58,6 +60,7 @@ object AuthorisationException {
     case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
     case "InsufficientEnrolments"      => new InsufficientEnrolments
     case "FailedRelationship"          => new FailedRelationship
+    case "IncorrectNino"          => IncorrectNino
     case other                         => InternalError(other)
   }
 }
