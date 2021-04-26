@@ -190,9 +190,9 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   "The JSON reads for the confidence level" should {
     "read confidence level value" in {
-      val json = Json.parse("""{ "confidenceLevel": 100 }""")
+      val json = Json.parse("""{ "confidenceLevel": 200 }""")
 
-      Retrievals.confidenceLevel.reads.reads(json).get shouldBe ConfidenceLevel.L100
+      Retrievals.confidenceLevel.reads.reads(json).get shouldBe ConfidenceLevel.L200
     }
   }
 
