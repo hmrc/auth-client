@@ -60,7 +60,7 @@ object AuthorisationException {
     case "IncorrectCredentialStrength" => new IncorrectCredentialStrength
     case "InsufficientEnrolments"      => new InsufficientEnrolments
     case "FailedRelationship"          => new FailedRelationship
-    case "IncorrectNino"          => IncorrectNino
+    case "IncorrectNino"               => IncorrectNino
     case other                         => InternalError(other)
   }
 }

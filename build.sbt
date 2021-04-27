@@ -29,38 +29,13 @@ lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")
 )
 
-lazy val baseDir = file(".")
-lazy val absoluteBaseDir = new sbt.File(baseDir.getAbsolutePath.replace(s"${java.io.File.separator}.",""))
-lazy val classesDir = absoluteBaseDir / "target"/ "scala-2.12" / "classes"
-val jarExclusions = Seq( //exclude the play bits we only needed for integration test
-  classesDir/"conf",
-  classesDir/"prod",
-  classesDir/"application.conf",
-  classesDir/"prod.routes"
-)
-
-lazy val library = Project(libName, baseDir)
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
+lazy val library = Project(libName, file("."))
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
-  .settings(
-    unmanagedSourceDirectories in Compile := (baseDirectory in Compile)(base => Seq(
-      base / "src" / "main" / "scala"
-    )).value,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(
-      base / "src" / "it" / "scala"
-    )).value,
-    unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(
-      base / "src" / "test" / "scala"
-    )).value
-  )
-  .settings(
-    mappings in (Compile, packageBin) ~= { _.filter(mapping => {
-      val excludedPath = jarExclusions.find(path=>mapping._1.getAbsolutePath.startsWith(path.getAbsolutePath))
-      excludedPath.foreach(_=>println(s"Excluding from jar : ${mapping._1.getAbsolutePath}"))
-      excludedPath.isEmpty
-    })}
-  )
+  .settings(unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(
+    base / "src" / "it" / "scala"
+  )).value)
   .settings(serviceManagerSettings: _*)
   .settings(itDependenciesList := externalServices)
   .settings(
