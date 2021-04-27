@@ -71,10 +71,7 @@ lazy val library = Project(libName, baseDir)
     name := libName,
     scalaVersion        := "2.12.12",
     libraryDependencies ++= BuildDependencies(),
-    resolvers := Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.typesafeRepo("releases")
-    ),
+    resolvers += Resolver.typesafeRepo("releases"),
     playCrossCompilationSettings,
     fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )

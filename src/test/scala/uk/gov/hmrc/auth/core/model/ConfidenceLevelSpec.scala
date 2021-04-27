@@ -21,23 +21,20 @@ import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.auth.core.ConfidenceLevel._
 
-import scala.util.Success
-
 class ConfidenceLevelSpec extends UnitSpec {
 
   "ConfidenceLevel" should {
 
     "be comparable" in {
 
-      for {
-        c0 <- ConfidenceLevel.fromInt(0)
-        c50 <- ConfidenceLevel.fromInt(50)
-        c200 <- ConfidenceLevel.fromInt(200)
-        c250 <- ConfidenceLevel.fromInt(250)
-        c300 <- ConfidenceLevel.fromInt(300)
-        c500 <- ConfidenceLevel.fromInt(500)
-      } yield List(c0 < c50, c50 < c200, c200 < c250, c250 < c300, c300 < c500) shouldBe
-        Success(List(true, true, true, true, true))
+      val cl50 = ConfidenceLevel.fromInt(50).get
+      val cl200 = ConfidenceLevel.fromInt(200).get
+      val cl250 = ConfidenceLevel.fromInt(250).get
+      val cl500 = ConfidenceLevel.fromInt(500).get
+
+      cl50 should be < cl200
+      cl200 should be < cl250
+      cl250 should be < cl500
     }
 
     "be serializable to Json" in {
