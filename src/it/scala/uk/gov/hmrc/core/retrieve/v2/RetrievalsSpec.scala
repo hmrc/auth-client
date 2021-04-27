@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
 
-class RetrievalsSpec extends BaseSpec  with AuthUtils {
+class RetrievalsSpec extends BaseSpec with AuthUtils {
 
   "Credentials" should {
     "retrieve the correct data" in {
