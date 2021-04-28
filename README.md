@@ -6,10 +6,10 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
-###v5.x March 2021
+###v5.x May 2021
 Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
 Earlier versions only supported CL50 or CL200, plus deprecated CL100.
-See the March 2021 auth-client v5.x Tech Blog Post for further details inc. the full changelog under "Notes"
+See the May 2021 auth-client v5.x Tech Blog Post for further details inc. the full changelog under "Notes"
 
 ###v4.x Feb 2021, deprecated
 Added support for Play 2.8, plus CL250 in part. 
