@@ -30,7 +30,7 @@ lazy val externalServices = List(
 )
 
 lazy val library = Project(libName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
+  .enablePlugins(SbtArtifactory, BuildInfoPlugin)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(
@@ -39,8 +39,8 @@ lazy val library = Project(libName, file("."))
   .settings(serviceManagerSettings: _*)
   .settings(itDependenciesList := externalServices)
   .settings(
-    makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 5
+    isPublicArtefact := true,
+    majorVersion     := 5
   )
   .settings(
     name := libName,
