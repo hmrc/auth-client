@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v5.x July 2021
+Updated to latest version of sbt-auto-build and dropped Artifactory.
+
 ### v5.x May 2021
 Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
 Earlier versions only supported CL50 or CL200, plus deprecated CL100.
