@@ -17,7 +17,6 @@
 import PlayCrossCompilation._
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.ExternalService
 import uk.gov.hmrc.ServiceManagerPlugin.Keys.itDependenciesList
@@ -30,7 +29,7 @@ lazy val externalServices = List(
 )
 
 lazy val library = Project(libName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory, BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(
@@ -39,8 +38,8 @@ lazy val library = Project(libName, file("."))
   .settings(serviceManagerSettings: _*)
   .settings(itDependenciesList := externalServices)
   .settings(
-    makePublicallyAvailableOnBintray := true,
-    majorVersion                     := 5
+    isPublicArtefact := true,
+    majorVersion     := 5
   )
   .settings(
     name := libName,
