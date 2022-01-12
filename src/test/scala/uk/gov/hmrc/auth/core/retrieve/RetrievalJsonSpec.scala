@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.retrieve
 
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.{JsError, JsSuccess, Json}
+import uk.gov.hmrc.auth.core._
+
+import java.time.Instant
 import java.util.UUID
 
-import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
-import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsError, JsSuccess, Json}
-import uk.gov.hmrc.auth.core.retrieve._
-
-class RetrievalJsonSpec extends WordSpec with ScalaFutures {
+class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
 
   "The JSON reads for the internalId retrieval" should {
 
@@ -165,8 +165,8 @@ class RetrievalJsonSpec extends WordSpec with ScalaFutures {
 
   "The JSON reads for the loginTimes retrieval" should {
 
-    val currentLogin = new DateTime(2015, 1, 1, 12, 0).withZone(DateTimeZone.UTC)
-    val previousLogin = new DateTime(2012, 1, 1, 12, 0).withZone(DateTimeZone.UTC)
+    val currentLogin = Instant.parse("2015-01-01T12:00:00.000Z")
+    val previousLogin = Instant.parse("2012-01-01T12:00:00.000Z")
 
     "read login times with a previous login" in {
       val json = Json.parse("""{ "loginTimes": { "currentLogin": "2015-01-01T12:00:00.000Z", "previousLogin": "2012-01-01T12:00:00.000Z" }}""")

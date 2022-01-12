@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.auth.core.retrieve.v2
 
-import org.joda.time.LocalDate
 import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.http.controllers.RestFormats
+import java.time.LocalDate
 
 trait Retrievals {
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
@@ -42,7 +41,7 @@ trait Retrievals {
   val nino: Retrieval[Option[String]] = OptionalRetrieval("nino", Reads.StringReads)
   val saUtr: Retrieval[Option[String]] = OptionalRetrieval("saUtr", Reads.StringReads)
 
-  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", RestFormats.localDateRead)
+  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", Reads.DefaultLocalDateReads)
   val postCode: Retrieval[Option[String]] = OptionalRetrieval("postCode", Reads.StringReads)
   val email: Retrieval[Option[String]] = OptionalRetrieval("email", Reads.StringReads)
   val description: Retrieval[Option[String]] = OptionalRetrieval("description", Reads.StringReads)
@@ -55,7 +54,7 @@ trait Retrievals {
   val itmpName: Retrieval[Option[ItmpName]] = OptionalRetrieval("optionalItmpName", ItmpName.reads)
   val itmpAddress: Retrieval[Option[ItmpAddress]] = OptionalRetrieval("optionalItmpAddress", ItmpAddress.reads)
 
-  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", Reads.DefaultLocalDateReads)
 
   val allUserDetails = credentials and name and dateOfBirth and postCode and email and
     affinityGroup and agentCode and agentInformation and credentialRole and

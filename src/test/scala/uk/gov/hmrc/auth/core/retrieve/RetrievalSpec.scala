@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.auth.core
+package uk.gov.hmrc.auth.core.retrieve
 
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
-import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval}
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.{JsResult, JsSuccess, Json, Reads}
 import uk.gov.hmrc.auth.{Bar, Foo}
 
-class RetrievalSpec extends WordSpec with ScalaFutures {
+import java.time.LocalDate
+
+class RetrievalSpec extends AnyWordSpec with ScalaFutures {
 
   "EmptyRetrieval" should {
 
@@ -143,6 +144,35 @@ class RetrievalSpec extends WordSpec with ScalaFutures {
       result.propertyNames should contain only ("foo1Property", "foo2Property", "foo3Property", "bar1Property", "bar2Property", "bar3Property")
     }
 
+  }
+
+  "Retrieval" should {
+
+    "read java.time.LocalDate" in {
+      val json = Json.parse(
+        """
+          |{
+          | "dateOfBirth": "2000-06-10"
+          |}
+        """.stripMargin)
+
+      val reads = Reads.DefaultLocalDateReads
+      val result: JsResult[LocalDate] = SimpleRetrieval("dateOfBirth", reads).reads.reads(json)
+      result.get shouldBe java.time.LocalDate.of(2000, 6, 10)
+    }
+
+    "read java.time.Instant" in {
+      val json = Json.parse(
+        """
+          |{
+          | "loginTime": "2022-06-10T15:42:02.562Z"
+          |}
+        """.stripMargin)
+
+      val reads = Reads.DefaultInstantReads
+      val result = SimpleRetrieval("loginTime", reads).reads.reads(json)
+      result.get shouldBe java.time.Instant.ofEpochMilli(1654875722562L)
+    }
   }
 
 }
