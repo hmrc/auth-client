@@ -1,13 +1,14 @@
 auth-client
 =========
-[![Build Status](https://travis-ci.org/hmrc/auth-client.svg)](https://travis-ci.org/hmrc/auth-client) [ ![Download](https://api.bintray.com/packages/hmrc/releases/auth-client/images/download.svg) ](https://bintray.com/hmrc/releases/auth-client/_latestVersion) [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Library for supporting user authorisation on microservices.
 
 ## Change History
 
 ### v5.x Jan 2022
-Removed Joda time dependency.
+Removed Joda time dependency.  
+Drop support for play 2.7 and play 2.6.
 
 ### v5.x July 2021
 Updated to latest version of sbt-auto-build and dropped Artifactory.
