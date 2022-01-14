@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.auth.core.retrieve
 
-import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.http.controllers.RestFormats
+import java.time.{Instant, LocalDate}
 
 @deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", "2.11.0-play-26")
 trait Retrievals {
@@ -45,7 +44,7 @@ trait Retrievals {
 
   val credentials: Retrieval[Credentials] = SimpleRetrieval("credentials", Credentials.reads)
   val name: Retrieval[Name] = SimpleRetrieval("name", Name.reads)
-  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", RestFormats.localDateRead)
+  val dateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("dateOfBirth", Reads.DefaultLocalDateReads)
   val postCode: Retrieval[Option[String]] = OptionalRetrieval("postCode", Reads.StringReads)
   val email: Retrieval[Option[String]] = OptionalRetrieval("email", Reads.StringReads)
   val description: Retrieval[Option[String]] = OptionalRetrieval("description", Reads.StringReads)
@@ -58,7 +57,7 @@ trait Retrievals {
     description and groupIdentifier and unreadMessageCount
 
   val itmpName: Retrieval[ItmpName] = SimpleRetrieval("itmpName", ItmpName.reads)
-  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", RestFormats.localDateRead)
+  val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", Reads.DefaultLocalDateReads)
   val itmpAddress: Retrieval[ItmpAddress] = SimpleRetrieval("itmpAddress", ItmpAddress.reads)
 
   val allItmpUserDetails = itmpName and itmpDateOfBirth and itmpAddress
@@ -124,10 +123,10 @@ object LegacyCredentials {
   }
 }
 
-case class LoginTimes(currentLogin: DateTime, previousLogin: Option[DateTime])
+case class LoginTimes(currentLogin: Instant, previousLogin: Option[Instant])
 
 object LoginTimes {
-  implicit val dateTimeReads = RestFormats.dateTimeRead
+  implicit val dateTimeReads = Reads.DefaultInstantReads
   val reads = Json.reads[LoginTimes]
 }
 

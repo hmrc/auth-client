@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v5.x Jan 2022
+Removed Joda time dependency.
+
 ### v5.x July 2021
 Updated to latest version of sbt-auto-build and dropped Artifactory.
 
