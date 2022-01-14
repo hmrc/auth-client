@@ -17,12 +17,13 @@
 package uk.gov.hmrc.auth
 
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-trait UnitSpec extends WordSpec with Matchers with ScalaFutures {
+trait UnitSpec extends AnyWordSpec with Matchers with ScalaFutures {
 
   implicit val timeout: Duration = 5.seconds
 

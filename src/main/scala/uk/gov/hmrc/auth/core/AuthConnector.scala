@@ -34,28 +34,28 @@ trait PlayAuthConnector extends AuthConnector {
 
   def http: CorePost
 
-  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
-
-    // if the predicate is a single field (1x SimplePredicate), place it into an array
-    val predicateJson = predicate.toJson match {
-      case arr: JsArray => arr
-      case other        => Json.arr(other)
-    }
-    val json = Json.obj(
-      "authorise" -> predicateJson,
-      "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
-    )
-
-    http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
-      _.json match {
-        case null => JsNull.as[A](retrieval.reads)
-        case bdy  => bdy.as[A](retrieval.reads)
+  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+    hc.authorization.fold[Future[A]](Future.failed(new MissingBearerToken)) { _ =>
+      // if the predicate is a single field (1x SimplePredicate), place it into an array
+      val predicateJson = predicate.toJson match {
+        case arr: JsArray => arr
+        case other        => Json.arr(other)
       }
-    } recoverWith {
-      case res @ Upstream4xxResponse(_, 401, _, headers) =>
-        Future.failed(AuthenticateHeaderParser.parse(headers))
+      val json = Json.obj(
+        "authorise" -> predicateJson,
+        "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
+      )
+
+      http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
+        _.json match {
+          case null => JsNull.as[A](retrieval.reads)
+          case bdy  => bdy.as[A](retrieval.reads)
+        }
+      } recoverWith {
+        case res @ Upstream4xxResponse(_, 401, _, headers) =>
+          Future.failed(AuthenticateHeaderParser.parse(headers))
+      }
     }
-  }
 
 }
 

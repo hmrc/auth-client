@@ -7,6 +7,9 @@ Library for supporting user authorisation on microservices.
 ## Change History
 
 ### v5.x Jan 2022
+Check for presence/absence of the bearer token in the session cookie before calling auth to create a session.
+
+### v5.x Jan 2022
 Removed Joda time dependency.  
 Drop support for play 2.7 and play 2.6.
 

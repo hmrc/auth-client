@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.auth.core
 
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
@@ -33,11 +33,9 @@ object Status {
   val UNAUTHORIZED = 401
 }
 
-class AuthConnectorSpec extends WordSpec with ScalaFutures {
+class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
 
   private trait Setup {
-
-    implicit lazy val hc = HeaderCarrier()
 
     val clientVersion = ClientVersion.toString()
 
@@ -103,6 +101,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     val barRetrieval = SimpleRetrieval("barProperty", Bar.reads)
 
     "return a successful future when a 200 is returned and no retrievals are supplied" in new Setup {
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result) { _ => () }
@@ -117,7 +116,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
           |}
         """.stripMargin
       ))
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), fooRetrieval)
 
       whenReady(result) {
@@ -138,7 +137,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
           |}
         """.stripMargin
       ))
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), CompositeRetrieval(fooRetrieval, barRetrieval))
 
       whenReady(result) {
@@ -151,7 +150,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw InsufficientConfidenceLevel on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InsufficientConfidenceLevel"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -161,7 +160,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw InsufficientEnrolments on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InsufficientEnrolments"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -172,7 +171,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new FailedEnrolmentSetup {
       val headerMsg = "InsufficientEnrolments"
       val enrolment = "SA-UTR"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -183,7 +182,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw BearerTokenExpired on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "BearerTokenExpired"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -193,7 +192,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw MissingBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "MissingBearerToken"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -203,7 +202,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw InvalidBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InvalidBearerToken"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -213,7 +212,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw SessionRecordNotFound on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "SessionRecordNotFound"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -223,7 +222,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw FailedRelationship on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "FailedRelationship"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -233,7 +232,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw IncorrectNino on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "IncorrectNino"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -243,7 +242,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
 
     "throw InternalError on failed authorisation with unknown header message" in new UnauthorisedSetup {
       val headerMsg = "some-unknown-header-message"
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -260,7 +259,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
       val headerMsg = "some-invalid-header-value"
 
       override def exceptionHeaders(value: String, enrolment: Option[String]) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -276,7 +275,7 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
     "throw InternalError on failed authorisation with missing header" in new Setup {
 
       override val withStatus = Status.UNAUTHORIZED
-
+      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -286,6 +285,15 @@ class AuthConnectorSpec extends WordSpec with ScalaFutures {
             val internalError = e.asInstanceOf[InternalError]
             internalError.getMessage should include("MissingResponseHeader")
           }
+      }
+    }
+
+    "throw MissingBearerToken when bearer token is missing in header" in new Setup {
+      implicit lazy val hc = HeaderCarrier()
+      val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
+
+      whenReady(result.failed) {
+        e => e shouldBe a[MissingBearerToken]
       }
     }
   }
