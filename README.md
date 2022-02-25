@@ -6,13 +6,11 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
-### v5.x Jan 2022
-Check for presence/absence of the bearer token in the session cookie before calling auth to create a session.
-
-Presence of the Authorization header will now be checked before making the call to auth to check the session, so tests mocking a successful authorised() call will now need to be updated to set this header as well
+### v5.x Feb 2022
+Cross build for Scala 2.13.
 
 ### v5.x Jan 2022
-Removed Joda time dependency.  
+Removed Joda time dependency.
 Drop support for play 2.7 and play 2.6.
 
 ### v5.x July 2021
@@ -24,26 +22,26 @@ Earlier versions only supported CL50 or CL200, plus deprecated CL100.
 See the May 2021 auth-client v5.x Tech Blog Post for further details inc. the full changelog under "Notes"
 
 ### v4.x Feb 2021, deprecated
-Added support for Play 2.8, plus CL250 in part. 
+Added support for Play 2.8, plus CL250 in part.
 
 ### v3.x deprecated
 
 ## Installing
- 
+
 Include the following dependency in your SBT build
- 
+
 ``` scala
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
- 
+
 libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
 ```
 Note that this library is only available for Play 2.6.x through to Play 2.8.x. No other play versions are supported.
 
-> N.B. Play 2.7 support requires major version 3 of `auth-client`. This major release also includes an upgrade of the 
-> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 10.  
+> N.B. Play 2.7 support requires major version 3 of `auth-client`. This major release also includes an upgrade of the
+> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 10.
 
-> N.B. Play 2.8 support requires major version 4 of `auth-client`. This major release also includes an upgrade of the 
-> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 13.  
+> N.B. Play 2.8 support requires major version 4 of `auth-client`. This major release also includes an upgrade of the
+> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 13.
 
 > Play < 2.5 is no longer supported. If you plan to use it in a microservice that is still using an older version of Play, then you will need to upgrade it first.
 
@@ -53,20 +51,20 @@ The overall approach is to add the library and take advantage of it by extending
 
 ### Using the function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the AuthorisedFunctions trait:
-``` scala 
+``` scala
 // AuthorisedFunctions mixin
 class MyController @Inject() (val authConnector: AuthConnector) extends BaseController with AuthorisedFunctions {
-  
+
 }
 ```
 
 The AuthConnector instance itself is then usually defined somewhere in your wiring setup:
-``` scala 
+``` scala
 // AuthConnector Wiring
 
 class ConcreteAuthConnector(val serviceUrl: String
                             val http: HttpPost) extends PlayAuthConnector
- 
+
 class MyWSHttp extends WSHttp {
   override val hooks: Seq[HttpHook] = NoneRequired
 }
@@ -76,7 +74,7 @@ class MyWSHttp extends WSHttp {
 
 Depending on your requirements, you can define 0 to any number of predicates defining your authorisation logic, as well as 0 to any number of data retrievals from the current authority that you intend to use inside the function wrapper.
 In the simplest case (no authorisation predicates, no data retrieval) you can use an empty wrapper like this:
-``` scala 
+``` scala
 // Without Predicates
 authorised() {
   // your protected logic
@@ -84,18 +82,18 @@ authorised() {
 ```
 The minimal check that this code will still do is that the user is currently logged into the MDTP platform and has a bearer token in their session that is not yet expired. In case these conditions are not met, the function body will not execute.
 If you do have a few authorisation requirements, you can pass them to the authorise function:
-``` scala 
+``` scala
 // With Predicates
 authorised(Relationship("TRUST",Set(BusinessKey("UTR","12345")))) {
-  
+
   // your protected logic
 }
 ```
 In this example we require that the user has a relationship in the relationship establishment service, with the  relationship name of TRUST and the business key of a UTR of 12345.
-``` scala 
+``` scala
 // With Predicates
 authorised(Enrolment("SOME-ENROLMENT") and AuthProvider(GovernmentGateway)) {
-  
+
   // your protected logic
 }
 ```
@@ -104,23 +102,23 @@ In this example we require that the user has a SOME-ENROLMENT enrolment and only
 There are many other predicates that can be freely combined with and and/or or.
 
 If you also want load some data for the current authority, add a retrieval call after the authorisation logic:
-``` scala 
+``` scala
 // With Data Retrieval
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-  
+
 authorised(Enrolment("SOME-ENROLMENT)).retrieve(externalId) { externalId =>
- 
+
   // your protected logic
 }
 ```
 Here we specify that we want to retrieve the externalId of the current user, which is a stable identifier that can be used by external systems to key data for that user. Note that the function block now takes a parameter, which gives you the requested data in a type-safe manner. For all available retrieval options see the section on Retrievals below.
 If you request more than one data item, they will be passed in a flexible wrapper that can be best accessed via a pattern match in the body:
-``` scala 
+``` scala
 // Multiple Data Retrievals
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
-  
+
 authorised(Enrolment("SOME-ENROLMENT")).retrieve(internalId and userDetailsUri) {
- 
+
   case internalId ~ userDetailsUri => // your protected logic
 }
 ```
@@ -147,11 +145,11 @@ authorised(ConfidenceLevel.L250).retrieve(Retrievals.confidenceLevel) {
 The config based approach should not be used for frontends.  A frontend will generally require more control over the handling of authorisation errors than is available in the filter chain to avoid raw http errors surfacing in the user''s browser.  Whilst this is not true of backend services which will generally just return any http error codes resulting from calls within the filter chain we believe that the wrapper function is a better approach being easier to understand, more explicit and more flexible.
 
 The following shows an example for a configuration for two controllers:
-``` YAML 
+``` YAML
 controllers {
- 
+
   authorisation {
- 
+
     sa = {
       patterns = [
         "/my-service/enrolment1/:identifier"
@@ -162,7 +160,7 @@ controllers {
         identifiers = [{ key = "SOME-IDENTIFIER-KEY", value = "identifier" }]
       }]
     }
- 
+
     ct = {
       patterns = [
         "/my-service/enrolment2/:identifier"
@@ -173,26 +171,26 @@ controllers {
         identifiers = [{ key = "SOME-IDENTIFIER-KEY", value = "identifier" }]
       }]
     }
- 
+
   }
- 
+
   foo.FooController = {
     authorisedBy = ["enrolment1", "enrolment2"]
     needsLogging = false
     needsAuditing = false
   }
- 
+
   bar.BarController = {
     authorisedBy = ["enrolment1"]
     needsLogging = false
     needsAuditing = false
   }
- 
+
 }
 ```
 The example shows all aspects you need to define for protecting your endpoints:
 #### 1. Add one or more authorisation sections
-Inside the controllers section in the play configuration for your microservice, add an authorisation section, that contains one or more sections that define a concrete authorisation setup. In the example there are two sections named enrolment1 and enrolment2 respectively. 
+Inside the controllers section in the play configuration for your microservice, add an authorisation section, that contains one or more sections that define a concrete authorisation setup. In the example there are two sections named enrolment1 and enrolment2 respectively.
 #### 2. Specify one or more URI patterns in each authorisation section
 Within these sections, define one or more patterns for URIs that should be affected by this configuration. In the example both sections contain two path patterns each:
 ``` YAML
@@ -241,7 +239,7 @@ If you want to leave a controller unprotected, simply omit the authorisedBy pred
 ### Error handling
 #### Backends
 For backend services you usually do not want to explicitly handle unauthorised calls. It is usually the task of a frontend to determine whether a user is allowed to perform a certain action and then the frontend implementation ensures that all calls to backend services happen in an authorised context. If this is not the case, it is best to let the 401 response bubble back up to the frontend.
-#### Frontends 
+#### Frontends
 In frontends you would usually want to avoid letting 401 responses bubble up to the user, so you have two options to recover from such a failure:
 
 *Centralised Recovery in the Global object*
@@ -251,13 +249,13 @@ In many frontends, the recovery from certain types of authorisation failures wil
 import import play.api.mvc.Results._
 
 object MyGlobal extends DefaultFrontendGlobal {
-  
+
   override def resolveError(rh: RequestHeader, ex: Throwable): Result = ex match {
- 
+
     case ex: InsufficientEnrolments("HMRC-SA") => // your custom recovery logic, usually redirects
- 
+
     case _ => super.resolveError(rh, ex)
- 
+
   }
 }
 ```
@@ -265,12 +263,12 @@ object MyGlobal extends DefaultFrontendGlobal {
 *Individual Recoveries in Controllers*
 
 In rare cases where a single endpoint would require custom recovery logic, you can add it immediately after the authorised block in your controller logic:
-``` scala 
+``` scala
 authorised(Enrolment("SOME-ENROLMENT")) {
-  
+
   // your protected logic
 } recoverWith {
-  
+
   case ex: InsufficientEnrolments("SOME-ENROLMENT") => // your custom recovery logic, usually redirects
 }
 ```
@@ -336,7 +334,7 @@ Here you can find an example which retrieves credentials and enrolments:
 
   "calling retrieveProviderIdAndAuthorisedEnrolments" should {
     "return 200 for successful retrieval of 'authProviderId' and 'authorisedEnrolments' from auth-client" in {
-      val retrievalResult: Future[~[LegacyCredentials, Enrolments]] = Future.successful(new ~(GGCredId("cred-1234"), 
+      val retrievalResult: Future[~[LegacyCredentials, Enrolments]] = Future.successful(new ~(GGCredId("cred-1234"),
           Enrolments(Set(Enrolment("enrolment-value")))))
       val controller = new TestSetupAuthorisationDemoController(retrievalResult)
 
@@ -360,7 +358,7 @@ Another possibility is using `AuthConnector` as a class dependency. In that case
     "allow mocking of response" in {
       implicit val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val mockAuthConnector: AuthConnector = mock[AuthConnector]
-      val retrievalResult: Future[~[Credentials, Enrolments]] = Future.successful(new ~(Credentials("gg", "cred-1234"), 
+      val retrievalResult: Future[~[Credentials, Enrolments]] = Future.successful(new ~(Credentials("gg", "cred-1234"),
           Enrolments(Set(Enrolment("enrolment-value")))))
 
       Mockito.when(mockAuthConnector.authorise[~[Credentials, Enrolments]](any(), any())(any(), any()))
@@ -380,4 +378,3 @@ For more testing examples head to `uk.gov.hmrc.auth.core.AuthConnectorSpec` or [
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
-

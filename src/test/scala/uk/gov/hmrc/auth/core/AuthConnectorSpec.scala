@@ -51,7 +51,7 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
 
           headers shouldBe Seq(("Auth-Client-Version" -> clientVersion))
 
-          val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)))
+          val httpResponse = HttpResponse(withStatus, responseJson = withBody, responseHeaders = withHeaders.mapValues(Seq(_)).toMap)
 
           withStatus match {
             case Status.OK => Future.successful(httpResponse.asInstanceOf[O])

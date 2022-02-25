@@ -24,6 +24,11 @@ import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 
 val libName = "auth-client"
 
+val scala2_12 = "2.12.15"
+val scala2_13 = "2.13.7"
+
+val silencerVersion = "1.7.7"
+
 lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")
 )
@@ -43,7 +48,8 @@ lazy val library = Project(libName, file("."))
   )
   .settings(
     name := libName,
-    scalaVersion        := "2.12.12",
+    scalaVersion := scala2_12,
+    crossScalaVersions := Seq(scala2_12, scala2_13),
     libraryDependencies ++= BuildDependencies(),
     resolvers += Resolver.typesafeRepo("releases"),
     playCrossCompilationSettings,
@@ -54,5 +60,5 @@ lazy val library = Project(libName, file("."))
     buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
    )
   .settings(ScoverageSettings())
-  .settings(SilencerSettings())
+  .settings(SilencerSettings(silencerVersion))
   .settings(ScalariformSettings())
