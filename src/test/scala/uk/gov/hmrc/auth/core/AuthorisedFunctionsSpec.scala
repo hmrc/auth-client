@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.auth.core
 
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.ScalaFutures
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval, ~}
@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedFunctionsSpec extends WordSpec with ScalaFutures {
+class AuthorisedFunctionsSpec extends AnyWordSpec with ScalaFutures {
 
   private trait Setup extends AuthorisedFunctions {
 

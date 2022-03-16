@@ -7,6 +7,11 @@ Library for supporting user authorisation on microservices.
 ## Change History
 
 ### v5.x Jan 2022
+Check for presence/absence of the bearer token in the session cookie before calling auth to create a session.
+
+Presence of the Authorization header will now be checked before making the call to auth to check the session, so tests mocking a successful authorised() call will now need to be updated to set this header as well
+
+### v5.x Jan 2022
 Removed Joda time dependency.  
 Drop support for play 2.7 and play 2.6.
 
@@ -353,7 +358,7 @@ Another possibility is using `AuthConnector` as a class dependency. In that case
 
 ```scala
     "allow mocking of response" in {
-      implicit val hc = mock[HeaderCarrier]
+      implicit val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val mockAuthConnector: AuthConnector = mock[AuthConnector]
       val retrievalResult: Future[~[Credentials, Enrolments]] = Future.successful(new ~(Credentials("gg", "cred-1234"), 
           Enrolments(Set(Enrolment("enrolment-value")))))
