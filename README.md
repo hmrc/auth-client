@@ -10,6 +10,11 @@ Library for supporting user authorisation on microservices.
 Cross build for Scala 2.13.
 
 ### v5.x Jan 2022
+Check for presence/absence of the bearer token in the session cookie before calling auth to create a session.
+
+Presence of the Authorization header will now be checked before making the call to auth to check the session, so tests mocking a successful authorised() call will now need to be updated to set this header as well
+
+### v5.x Jan 2022
 Removed Joda time dependency.
 Drop support for play 2.7 and play 2.6.
 
