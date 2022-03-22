@@ -37,7 +37,6 @@ trait Retrievals {
   val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
   val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
   val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
-  val unreadMessageCount: Retrieval[Option[Int]] = OptionalRetrieval("unreadMessageCount", Reads.IntReads)
   val confidenceLevel: Retrieval[ConfidenceLevel] = SimpleRetrieval("confidenceLevel", ConfidenceLevel.jsonFormat)
   val nino: Retrieval[Option[String]] = OptionalRetrieval("nino", Reads.StringReads)
   val saUtr: Retrieval[Option[String]] = OptionalRetrieval("saUtr", Reads.StringReads)
@@ -54,7 +53,7 @@ trait Retrievals {
 
   val allUserDetails = credentials and name and dateOfBirth and postCode and email and
     affinityGroup and agentCode and agentInformation and credentialRole and
-    description and groupIdentifier and unreadMessageCount
+    description and groupIdentifier
 
   val itmpName: Retrieval[ItmpName] = SimpleRetrieval("itmpName", ItmpName.reads)
   val itmpDateOfBirth: Retrieval[Option[LocalDate]] = OptionalRetrieval("itmpDateOfBirth", Reads.DefaultLocalDateReads)
