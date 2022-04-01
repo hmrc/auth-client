@@ -6,24 +6,32 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
-### v5.x Feb 2022
-Cross build for Scala 2.13.
-
-### v5.9 Feb 2022
+### v5.11.0 Feb 2022
 Removed retrieval support for the deprecated unread_message_count attribute.
 
-### v5.x Jan 2022
+### v5.10.0 Feb 2022
+Cross build for Scala 2.13.
+
+### v5.9.0 Jan 2022
 Check for presence/absence of the bearer token in the session cookie before calling auth to create a session.
+
 Presence of the Authorization header will now be checked before making the call to auth to check the session, so tests mocking a successful authorised() call will now need to be updated to set this header as well
+
+### v5.8.0 Jan 2022
 Removed Joda time dependency.
+
 Drop support for play 2.7 and play 2.6.
 
-### v5.x July 2021
+### v5.7.0 July 2021
 Updated to latest version of sbt-auto-build and dropped Artifactory.
 
-### v5.x May 2021
-Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
+### v5.6.0 May 2021
+Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  
+
+For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
+
 Earlier versions only supported CL50 or CL200, plus deprecated CL100.
+
 See the May 2021 auth-client v5.x Tech Blog Post for further details inc. the full changelog under "Notes"
 
 ### v4.x Feb 2021, deprecated
@@ -374,6 +382,46 @@ Another possibility is using `AuthConnector` as a class dependency. In that case
       Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate),
         equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
     }
+
+```
+
+When using http client to test your controller's endpoint, depending on the code logic, you may need to provide a mocking session cookie as demonstrated below, otherwise, you may get an error `Bearer token not supplied`. 
+
+```scala
+  // http client calling endpoint
+  wsClient.url("/baseUrl/endpoint")
+    .withCookies(mockSessionCookie)
+    .get()
+
+  // mocking session cookie
+  def mockSessionCookie = {
+
+    def makeSessionCookie(session:Session): Cookie = {
+      val cookieCrypto = inject[SessionCookieCrypto]
+      val cookieBaker = inject[SessionCookieBaker]
+      val sessionCookie = cookieBaker.encodeAsCookie(session)
+      val encryptedValue = cookieCrypto.crypto.encrypt(PlainText(sessionCookie.value))
+      sessionCookie.copy(value = encryptedValue.value)
+    }
+
+    val mockSession = Session(Map(
+      SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString,
+      SessionKeys.authToken -> "mock-bearer-token",
+      SessionKeys.sessionId -> "mock-sessionid"
+    ))
+
+    val cookie = makeSessionCookie(mockSession)
+
+    new WSCookie() {
+      override def name: String = cookie.name
+      override def value: String = cookie.value
+      override def domain: Option[String] = cookie.domain
+      override def path: Option[String] = Some(cookie.path)
+      override def maxAge: Option[Long] = cookie.maxAge.map(_.toLong)
+      override def secure: Boolean = cookie.secure
+      override def httpOnly: Boolean = cookie.httpOnly
+    }
+  }
 
 ```
 
