@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v5.13.0 May 2022
+Removed dead OTAC & Passcode logic.
+
 ### v5.11.0 Feb 2022
 Removed retrieval support for the deprecated unread_message_count attribute.
 
@@ -296,41 +299,6 @@ Whenever the auth microservice returns a 401 response to the library, it will co
 - UnsupportedCredentialRole: the requested credentialRole did not match the one in the authority or the user is not a GG user
 - NoActiveSession: The user does not have an active session. This is an abstract type with 4 concrete subtypes, but you would usually handle all 4 types in the same way (most often by redirecting to the login page). The 4 subtypes are: MissingBearerToken (the user was probably not logged in), BearerTokenExpired (the user was logged in, but the session is expired), and two types which should never occur as they would hint at an internal error: InvalidBearerToken and SessionRecordNotFound.
 - FailedRelationship: The requested relationship in the authority did not match the one in the Relationship Establishment.
-
-## Allowlisting / OTAC
-
-The library includes functional wrapper for allowlisting / OTAC authorisation, which used to be in passcode-verification.
-
-### Using the OTAC function wrapper
-First, in any controller, service or connector where you want to protect any part of your logic, mix in the OtacAuthorisationFunctions trait:
-``` scala
-class MyController @Inject() (val authConnector: OtacAuthConnector) extends BaseController with OtacAuthorisationFunctions {
-
-}
-```
-
-The OtacAuthConnector instance itself is then usually defined somewhere in your wiring setup:
-``` scala
-class ConcreteOtacAuthConnector(val serviceUrl: String,
-                                val http: HttpGet) extends PlayOtacAuthConnector
-
-class MyWSHttp extends WSHttp {
-  override val hooks: Seq[HttpHook] = NoneRequired
-}
-```
-
----
-
-Once that is set up you can use the OTAC functional wrapper in your controller:
-
-```
-withVerifiedPasscode("myServiceName", Some("<otac token>")) {
-  // your protected logic
-}
-```
-
-Note that the function does not extract any data from the config the way passcode-verification did, so you need to provide the service name (previously called "regime") explicitly.
-
 
 ## Testing
 In most cases testing a controller that uses auth-client is a matter of overriding the `AuthConnector` by providing a stubbed implementation.
