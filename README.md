@@ -353,10 +353,17 @@ Another possibility is using `AuthConnector` as a class dependency. In that case
 
 ```
 
-When using http client to test your controller's endpoint, depending on the code logic, you may need to provide a mocking session cookie as demonstrated below, otherwise, you may get an error `Bearer token not supplied`. 
+When using Wiremock to test your controller's endpoint, you may get an error `Bearer token not supplied`. 
+
+To fix this, you can either provide an HTTP Authorization header
+```scala
+  wsClient.url("/baseUrl/endpoint")
+    .withHttpHeaders("Authorization" -> "Bearer123")
+    .get()
+```
+or provide a mocking session cookie as demonstrated below
 
 ```scala
-  // http client calling endpoint
   wsClient.url("/baseUrl/endpoint")
     .withCookies(mockSessionCookie)
     .get()
