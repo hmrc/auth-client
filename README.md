@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v5.14.0 July 2022
+Scala 2.13 - minor version increment.
+
 ### v5.13.0 May 2022
 Removed dead OTAC & Passcode logic.
 
