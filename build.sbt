@@ -25,7 +25,7 @@ import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 val libName = "auth-client"
 
 val scala2_12 = "2.12.15"
-val scala2_13 = "2.13.7"
+val scala2_13 = "2.13.8"
 
 val silencerVersion = "1.7.7"
 
@@ -37,7 +37,7 @@ lazy val library = Project(libName, file("."))
   .enablePlugins(BuildInfoPlugin)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
-  .settings(unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(
+  .settings(IntegrationTest / unmanagedSourceDirectories  := (IntegrationTest / baseDirectory)(base => Seq(
     base / "src" / "it" / "scala"
   )).value)
   .settings(serviceManagerSettings: _*)
@@ -53,7 +53,7 @@ lazy val library = Project(libName, file("."))
     libraryDependencies ++= BuildDependencies(),
     resolvers += Resolver.typesafeRepo("releases"),
     playCrossCompilationSettings,
-    fork in Test := true //Required to prevent https://github.com/sbt/sbt/issues/4609
+    Test / fork := true //Required to prevent https://github.com/sbt/sbt/issues/4609
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo
     buildInfoKeys := Seq[BuildInfoKey](name, version),
