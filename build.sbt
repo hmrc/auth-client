@@ -27,7 +27,7 @@ val libName = "auth-client"
 val scala2_12 = "2.12.15"
 val scala2_13 = "2.13.8"
 
-val silencerVersion = "1.7.7"
+val silencerVersion = "1.7.9"
 
 lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")
