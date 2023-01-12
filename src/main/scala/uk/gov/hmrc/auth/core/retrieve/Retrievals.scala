@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,8 +93,6 @@ trait LegacyCredentials
 
 case class GGCredId(credId: String) extends LegacyCredentials
 
-case class VerifyPid(pid: String) extends LegacyCredentials
-
 case class PAClientId(clientId: String) extends LegacyCredentials
 
 case object OneTimeLogin extends LegacyCredentials
@@ -111,7 +109,6 @@ object LegacyCredentials {
       }
 
     toCreds(json \ "ggCredId", GGCredId) ++
-      toCreds(json \ "verifyPid", VerifyPid) ++
       toCreds(json \ "paClientId", PAClientId) ++
       toCreds(json \ "clientId", StandardApplication) ++
       toCreds(json \ "applicationId", StandardApplication) ++ // for backwards compatibility
