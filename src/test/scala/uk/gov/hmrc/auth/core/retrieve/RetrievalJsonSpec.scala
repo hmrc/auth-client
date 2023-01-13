@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,12 +75,6 @@ class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
       val json = Json.parse("""{ "authProviderId": { "ggCredId": "xyz" }}""")
 
       Retrievals.authProviderId.reads.reads(json).get shouldBe GGCredId("xyz")
-    }
-
-    "read a Verify pid" in {
-      val json = Json.parse("""{ "authProviderId": { "verifyPid": "xyz" }}""")
-
-      Retrievals.authProviderId.reads.reads(json).get shouldBe VerifyPid("xyz")
     }
 
     "read a PAC clientId" in {

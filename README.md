@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v6.0 January 2023
+Auth Provider GDS/Verify is no longer supported. See 30th March 22 Tech Blog Post.
+
 ### v5.14.0 July 2022
 Scala 2.13 - minor version increment.
 

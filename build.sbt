@@ -24,10 +24,10 @@ import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 
 val libName = "auth-client"
 
-val scala2_12 = "2.12.15"
-val scala2_13 = "2.13.8"
+val scala2_12 = "2.12.17"
+val scala2_13 = "2.13.10"
 
-val silencerVersion = "1.7.9"
+val silencerVersion = "1.7.12"
 
 lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")
@@ -44,7 +44,7 @@ lazy val library = Project(libName, file("."))
   .settings(itDependenciesList := externalServices)
   .settings(
     isPublicArtefact := true,
-    majorVersion     := 5
+    majorVersion     := 6
   )
   .settings(
     name := libName,
