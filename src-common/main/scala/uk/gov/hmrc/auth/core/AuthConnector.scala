@@ -43,8 +43,7 @@ trait PlayAuthConnector extends AuthConnector {
       }
       val json = Json.obj(
         "authorise" -> predicateJson,
-        "retrieve" -> JsArray(retrieval.propertyNames.map(JsString))
-      )
+        "retrieve" -> JsArray(retrieval.propertyNames.map(JsString)))
 
       http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
         _.json match {

@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.core.utils
 
-import org.scalatest.{Matchers, WordSpecLike}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{AuthConnector, PlayAuthConnector}
@@ -27,7 +28,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 trait BaseSpec
-  extends WordSpecLike
+  extends AnyWordSpecLike
      with WsTestClient
      with GuiceOneAppPerSuite
      with Matchers

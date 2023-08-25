@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.auth.core
 
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsArray, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise._
 
-class PredicateSpec extends WordSpec with ScalaFutures {
+class PredicateSpec extends AnyWordSpec with ScalaFutures {
 
   "EmptyPredicate" should {
 

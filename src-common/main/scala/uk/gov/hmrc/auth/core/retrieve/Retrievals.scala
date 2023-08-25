@@ -126,30 +126,33 @@ object LoginTimes {
   val reads = Json.reads[LoginTimes]
 }
 
-case class AgentInformation(agentId:           Option[String],
-                            agentCode:         Option[String],
-                            agentFriendlyName: Option[String])
+case class AgentInformation(
+    agentId:           Option[String],
+    agentCode:         Option[String],
+    agentFriendlyName: Option[String])
 
 object AgentInformation {
   val reads = Json.reads[AgentInformation]
 }
 
-case class ItmpName(givenName:  Option[String],
-                    middleName: Option[String],
-                    familyName: Option[String])
+case class ItmpName(
+    givenName:  Option[String],
+    middleName: Option[String],
+    familyName: Option[String])
 
 object ItmpName {
   val reads = Json.reads[ItmpName]
 }
 
-case class ItmpAddress(line1:       Option[String],
-                       line2:       Option[String],
-                       line3:       Option[String],
-                       line4:       Option[String],
-                       line5:       Option[String],
-                       postCode:    Option[String],
-                       countryName: Option[String],
-                       countryCode: Option[String])
+case class ItmpAddress(
+    line1:       Option[String],
+    line2:       Option[String],
+    line3:       Option[String],
+    line4:       Option[String],
+    line5:       Option[String],
+    postCode:    Option[String],
+    countryName: Option[String],
+    countryCode: Option[String])
 
 object ItmpAddress {
   val reads = Json.reads[ItmpAddress]

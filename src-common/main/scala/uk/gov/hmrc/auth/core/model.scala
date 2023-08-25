@@ -105,8 +105,7 @@ object Enrolment {
           key,
           optIds.getOrElse(Seq()),
           optState.getOrElse("Activated"),
-          optDelegateRule
-        )
+          optDelegateRule)
     }
 
   def apply(key: String): Enrolment = apply(key, Seq(), "Activated", None)
@@ -173,8 +172,7 @@ case class AuthProviders(providers: AuthProvider*) extends Predicate {
 case class Nino(hasNino: Boolean, nino: Option[String] = None) extends Predicate {
   override def toJson = Json.obj(
     "hasNino" -> hasNino,
-    "nino" -> nino
-  )
+    "nino" -> nino)
 }
 
 object Nino {
