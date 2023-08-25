@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core._
 import java.time.Instant
 import java.util.UUID
 
+@annotation.nowarn("msg=deprecated")
 class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
 
   "The JSON reads for the internalId retrieval" should {

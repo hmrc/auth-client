@@ -30,18 +30,15 @@ trait Delegator {
 
   val delegationStateSessionKey = "delegationState"
 
-  def startDelegationAndRedirect(delegationContext: DelegationContext, redirectUrl: String)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] = {
+  def startDelegationAndRedirect(delegationContext: DelegationContext, redirectUrl: String)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] =
     delegationConnector.setDelegation(delegationContext).map { _ =>
       Results.SeeOther(redirectUrl).addingToSession(delegationStateSessionKey -> "On")
     }
-  }
 
-  def endDelegation(result: Result)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] = {
-    delegationConnector.endDelegation.map { _ =>
+  def endDelegation(result: Result)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Result] =
+    delegationConnector.endDelegation().map { _ =>
       result.removingFromSession(delegationStateSessionKey)
     }
-  }
-
 }
 
 case class TaxIdentifiers(paye: Option[Nino] = None)

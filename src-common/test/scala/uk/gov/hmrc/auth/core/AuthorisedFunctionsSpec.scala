@@ -91,7 +91,7 @@ class AuthorisedFunctionsSpec extends AnyWordSpec with ScalaFutures {
     "execute the supplied body with retrieved object when authorisation succeeds and no predicates supplied" in new Setup {
       override val success = Foo("foo message")
 
-      def testFunction() = authorised.retrieve(fooRetrieval) {
+      def testFunction() = authorised().retrieve(fooRetrieval) {
         implicit foo =>
           Future(foo)
       }

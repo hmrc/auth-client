@@ -23,8 +23,8 @@ import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 
 val libName = "auth-client"
 
-val scala2_12 = "2.12.17"
-val scala2_13 = "2.13.10"
+val scala2_12 = "2.12.18"
+val scala2_13 = "2.13.11"
 
 lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")

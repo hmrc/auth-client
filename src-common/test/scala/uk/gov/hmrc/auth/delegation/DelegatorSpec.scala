@@ -78,7 +78,7 @@ class DelegatorSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar 
 
       assert(request.session.get(DelegationStateSessionKey).contains("On"))
 
-      when(mockDelegationAuthConnector.endDelegation).thenReturn(Future.successful(HttpResponse(204)))
+      when(mockDelegationAuthConnector.endDelegation()).thenReturn(Future.successful(HttpResponse(204)))
 
       val result = await(delegator.endDelegation(Ok))
 

@@ -28,6 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import org.scalatestplus.mockito.MockitoSugar
 
+@annotation.nowarn("msg=deprecated")
 class MockingConnectorSpec extends AnyWordSpec with MockitoSugar {
 
   "Auth connector" should {
