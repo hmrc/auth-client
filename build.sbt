@@ -30,7 +30,7 @@ lazy val externalServices = List(
   ExternalService("AUTH_CLIENT_ALL")
 )
 
-ThisBuild / majorVersion     := 6
+ThisBuild / majorVersion     := 7
 ThisBuild / isPublicArtefact := true
 ThisBuild / scalaVersion     := scala2_13
 ThisBuild / Test / fork      := true //Required to prevent https://github.com/sbt/sbt/issues/4609
