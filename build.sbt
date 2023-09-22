@@ -16,18 +16,11 @@
 
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.ExternalService
-import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerConfiguration
-import uk.gov.hmrc.ServiceManagerPlugin.Keys.{itDependenciesList, startItDependencies, stopItDependencies}
 
 val libName = "auth-client"
 
 val scala2_12 = "2.12.18"
 val scala2_13 = "2.13.12"
-
-lazy val externalServices = List(
-  ExternalService("AUTH_CLIENT_ALL")
-)
 
 ThisBuild / majorVersion     := 7
 ThisBuild / isPublicArtefact := true
@@ -77,6 +70,7 @@ lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-pla
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
 
+// Run `sm2 --start AUTH_CLIENT_ALL` before `sbt it/test`
 lazy val it = (project in file("it"))
   .settings(publish / skip := true)
   .aggregate(
@@ -95,22 +89,6 @@ lazy val itPlay28 = Project("it-play-28", file("it-play-28"))
     )
   )
   .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
-  //.settings(serviceManagerSettings: _*)
-  .settings(
-    itDependenciesList := List.empty,
-    startItDependencies := {
-      serviceManagerConfiguration.value.start()
-    },
-    stopItDependencies := {
-      serviceManagerConfiguration.value.stop()
-    },
-    Test / test := {
-      stopItDependencies
-        .dependsOn(Test / test)
-        .dependsOn(startItDependencies).value
-    }
-  )
-  .settings(itDependenciesList := externalServices)
   .dependsOn(authClientPlay28 % "test->test")
 
 lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
@@ -124,20 +102,4 @@ lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
     )
   )
   .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
-  //.settings(serviceManagerSettings: _*)
-  .settings(
-    itDependenciesList := List.empty,
-    startItDependencies := {
-      serviceManagerConfiguration.value.start()
-    },
-    stopItDependencies := {
-      serviceManagerConfiguration.value.stop()
-    },
-    Test / test := {
-      stopItDependencies
-        .dependsOn(Test / test)
-        .dependsOn(startItDependencies).value
-    }
-  )
-  .settings(itDependenciesList := externalServices)
   .dependsOn(authClientPlay29 % "test->test")
