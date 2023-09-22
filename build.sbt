@@ -16,10 +16,9 @@
 
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.ExternalService
-import uk.gov.hmrc.ServiceManagerPlugin.Keys.itDependenciesList
-import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
+import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerConfiguration
+import uk.gov.hmrc.ServiceManagerPlugin.Keys.{itDependenciesList, startItDependencies, stopItDependencies}
 
 val libName = "auth-client"
 
@@ -47,14 +46,11 @@ val sharedSources = Seq(
   Compile         / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/main/scala",
   Compile         / unmanagedResourceDirectories += baseDirectory.value / s"../src-common/main/resources",
   Test            / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/test/scala",
-  Test            / unmanagedResourceDirectories += baseDirectory.value / s"../src-common/test/resources",
-  IntegrationTest / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/it/scala"
+  Test            / unmanagedResourceDirectories += baseDirectory.value / s"../src-common/test/resources"
 )
 
 lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-play-28"))
   .enablePlugins(BuildInfoPlugin)
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
   .settings(
     crossScalaVersions := Seq(scala2_12, scala2_13),
     libraryDependencies ++= BuildDependencies.shared ++ BuildDependencies.play28,
@@ -66,13 +62,9 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
   )
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
-  .settings(serviceManagerSettings: _*)
-  .settings(itDependenciesList := externalServices)
 
 lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
   .enablePlugins(BuildInfoPlugin)
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
   .settings(
     crossScalaVersions := Seq(scala2_13),
     libraryDependencies ++= BuildDependencies.shared ++ BuildDependencies.play29,
@@ -84,5 +76,68 @@ lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-pla
   )
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
-  .settings(serviceManagerSettings: _*)
+
+lazy val it = (project in file("it"))
+  .settings(publish / skip := true)
+  .aggregate(
+    itPlay28,
+    itPlay29
+  )
+
+lazy val itPlay28 = Project("it-play-28", file("it-play-28"))
+  .settings(
+    // TODO will be available in DefaultBuildSettings.itSettings
+    publish / skip := true,
+    Test / fork := false,
+    Test / testGrouping := uk.gov.hmrc.DefaultBuildSettings.oneForkedJvmPerTest(
+      (Test / definedTests).value,
+      (Test / javaOptions ).value
+    )
+  )
+  .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
+  //.settings(serviceManagerSettings: _*)
+  .settings(
+    itDependenciesList := List.empty,
+    startItDependencies := {
+      serviceManagerConfiguration.value.start()
+    },
+    stopItDependencies := {
+      serviceManagerConfiguration.value.stop()
+    },
+    Test / test := {
+      stopItDependencies
+        .dependsOn(Test / test)
+        .dependsOn(startItDependencies).value
+    }
+  )
   .settings(itDependenciesList := externalServices)
+  .dependsOn(authClientPlay28 % "test->test")
+
+lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
+  .settings(
+    // TODO will be available in DefaultBuildSettings.itSettings
+    publish / skip := true,
+    Test / fork := false,
+    Test / testGrouping := uk.gov.hmrc.DefaultBuildSettings.oneForkedJvmPerTest(
+      (Test / definedTests).value,
+      (Test / javaOptions ).value
+    )
+  )
+  .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
+  //.settings(serviceManagerSettings: _*)
+  .settings(
+    itDependenciesList := List.empty,
+    startItDependencies := {
+      serviceManagerConfiguration.value.start()
+    },
+    stopItDependencies := {
+      serviceManagerConfiguration.value.stop()
+    },
+    Test / test := {
+      stopItDependencies
+        .dependsOn(Test / test)
+        .dependsOn(startItDependencies).value
+    }
+  )
+  .settings(itDependenciesList := externalServices)
+  .dependsOn(authClientPlay29 % "test->test")
