@@ -28,9 +28,8 @@ object ClientVersion {
     case _                     => throw new RuntimeException(s"auth-client version could not be determined from BuildInfo.version : ${BuildInfo.version}")
   }
 
-  val name = BuildInfo.name
+  val name = "auth-client"
 
-  override def toString() = {
-    s"${BuildInfo.name}-${version}"
-  }
+  override def toString() =
+    s"$name-$version"
 }
