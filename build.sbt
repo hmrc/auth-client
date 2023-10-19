@@ -18,9 +18,6 @@ import PlayCrossCompilation._
 import sbt.Keys._
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.ExternalService
-import uk.gov.hmrc.ServiceManagerPlugin.Keys.itDependenciesList
-import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 
 val libName = "auth-client"
 
@@ -29,19 +26,12 @@ val scala2_13 = "2.13.10"
 
 val silencerVersion = "1.7.12"
 
-lazy val externalServices = List(
-  ExternalService("AUTH_CLIENT_ALL")
-)
-
 lazy val library = Project(libName, file("."))
   .enablePlugins(BuildInfoPlugin)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
   .settings(IntegrationTest / unmanagedSourceDirectories  := (IntegrationTest / baseDirectory)(base => Seq(
     base / "src" / "it" / "scala"
   )).value)
-  .settings(serviceManagerSettings: _*)
-  .settings(itDependenciesList := externalServices)
   .settings(
     isPublicArtefact := true,
     majorVersion     := 6
