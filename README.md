@@ -6,6 +6,9 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v6.2.0 October 2023
+Update to README and code changes to remove service manager plugin.
+
 ### v6.0 January 2023
 Auth Provider GDS/Verify is no longer supported. See 30th March 22 Tech Blog Post.
 
@@ -86,7 +89,7 @@ The AuthConnector instance itself is then usually defined somewhere in your wiri
 ``` scala
 // AuthConnector Wiring
 
-class ConcreteAuthConnector(val serviceUrl: String
+class ConcreteAuthConnector(val serviceUrl: String,
                             val http: HttpPost) extends PlayAuthConnector
 ```
 
