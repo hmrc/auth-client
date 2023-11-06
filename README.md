@@ -6,9 +6,12 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
-### v7.0 Sep 2023
+### v7.0 Nov 2023
 Adds support for Play 2.9 and drops support for Play 2.6 and 2.7.
 Versioning has changed to drop the play version - there will be an artefact for each play version supported.
+
+### v6.2.0 Oct 2023
+Update to README and code changes to remove service manager plugin.
 
 ### v6.0 Jan 2023
 Auth Provider GDS/Verify is no longer supported. See 30th March 22 Tech Blog Post.
@@ -74,6 +77,8 @@ Note that this library is only available for Play 2.8.x and 2.9.x. No other play
 
 The overall approach is to add the library and take advantage of it by extending various classes. When a user first logs in they will not have an active session, and this must be handled by ensuring that your play global object extends uk.gov.hmrc.auth.frontend.Redirects and has overridden the 'resolveError' method that it provides. Your method should contain a NoActiveSession case and a default case as a bare minimum, see the Error handling / Redirects section below for more detail.
 
+"auth-client is automatically included in your service, and is a transitive dependency provided by bootstrap-play which all microservices have within them. So there is no need to add auth-client as an explicit dependency. Additionally, keep the service's bootstrap-play library up to date so as to bring in the latest auth-client. Ideally, increment bootstrap-play to the latest version every time a microservice is updated. Same for the other library dependencies."
+
 ### Using the function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the AuthorisedFunctions trait:
 ``` scala
@@ -87,12 +92,8 @@ The AuthConnector instance itself is then usually defined somewhere in your wiri
 ``` scala
 // AuthConnector Wiring
 
-class ConcreteAuthConnector(val serviceUrl: String
+class ConcreteAuthConnector(val serviceUrl: String,
                             val http: HttpPost) extends PlayAuthConnector
-
-class MyWSHttp extends WSHttp {
-  override val hooks: Seq[HttpHook] = NoneRequired
-}
 ```
 
 ---
