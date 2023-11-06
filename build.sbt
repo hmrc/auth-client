@@ -16,6 +16,7 @@
 
 import sbt.Keys._
 import sbt._
+import uk.gov.hmrc.DefaultBuildSettings
 
 val libName = "auth-client"
 
@@ -79,27 +80,11 @@ lazy val it = (project in file("it"))
   )
 
 lazy val itPlay28 = Project("it-play-28", file("it-play-28"))
-  .settings(
-    // TODO will be available in DefaultBuildSettings.itSettings
-    publish / skip := true,
-    Test / fork := false,
-    Test / testGrouping := uk.gov.hmrc.DefaultBuildSettings.oneForkedJvmPerTest(
-      (Test / definedTests).value,
-      (Test / javaOptions ).value
-    )
-  )
+  .settings(DefaultBuildSettings.itSettings)
   .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
   .dependsOn(authClientPlay28 % "test->test")
 
 lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
-  .settings(
-    // TODO will be available in DefaultBuildSettings.itSettings
-    publish / skip := true,
-    Test / fork := false,
-    Test / testGrouping := uk.gov.hmrc.DefaultBuildSettings.oneForkedJvmPerTest(
-      (Test / definedTests).value,
-      (Test / javaOptions ).value
-    )
-  )
+  .settings(DefaultBuildSettings.itSettings)
   .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
   .dependsOn(authClientPlay29 % "test->test")
