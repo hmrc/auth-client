@@ -2,29 +2,34 @@ import sbt._
 
 private object BuildDependencies {
 
-  val httpVerbsVersion = "14.11.0"
+  val httpVerbsVersion = "14.12.0"
 
-  val shared = Seq(
-    "com.iheart"             %% "ficus"              % "1.5.2",
+  val play28 = play("play-28")
+  val play29 = play("play-29")
+  val play30 = play("play-30")
 
-    "org.scalamock"          %% "scalamock"          % "5.2.0"   % Test
+  private def play(playSuffix: String) = Seq(
+    "uk.gov.hmrc"            %% s"http-verbs-$playSuffix"      % httpVerbsVersion,
+    "com.iheart"             %% "ficus"                        % "1.5.2",
+
+    "uk.gov.hmrc"            %% s"http-verbs-test-$playSuffix" % httpVerbsVersion                     % Test,
+    "org.scalatestplus.play" %% "scalatestplus-play"           % scalaTestPlusPlayVersion(playSuffix) % Test,
+    "com.vladsch.flexmark"   %  "flexmark-all"                 % flexmarkAllVersion(playSuffix)       % Test,
+    "org.scalatestplus"      %% "mockito-3-4"                  % "3.2.10.0"                           % Test,
+    "org.scalamock"          %% "scalamock"                    % "5.2.0"                              % Test
   )
 
-  val play28 = Seq(
-    "uk.gov.hmrc"            %% "http-verbs-play-28"      % httpVerbsVersion,
+  private def scalaTestPlusPlayVersion(playSuffix: String): String =
+    playSuffix match {
+      case "play-28" => "5.1.0"
+      case "play-29" => "6.0.0"
+      case "play-30" => "7.0.0"
+    }
 
-    "com.vladsch.flexmark"   %  "flexmark-all"            % "0.36.8"         % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play"      % "5.1.0"          % Test,
-    "org.scalatestplus"      %% "mockito-3-4"             % "3.2.10.0"       % Test,
-    "uk.gov.hmrc"            %% "http-verbs-test-play-28" % httpVerbsVersion % Test
-  )
-
-  val play29 = Seq(
-    "uk.gov.hmrc"            %% "http-verbs-play-29"      % httpVerbsVersion,
-
-    "com.vladsch.flexmark"   %  "flexmark-all"            % "0.64.8"         % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play"      % "6.0.0"          % Test,
-    "org.scalatestplus"      %% "mockito-3-4"             % "3.2.10.0"       % Test,
-    "uk.gov.hmrc"            %% "http-verbs-test-play-29" % httpVerbsVersion % Test
-  )
+  private def flexmarkAllVersion(playSuffix: String): String =
+    playSuffix match {
+      case "play-28" => "0.36.8"
+      case "play-29" => "0.64.8"
+      case "play-30" => "0.64.8"
+    }
 }

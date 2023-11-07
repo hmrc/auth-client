@@ -7,7 +7,7 @@ Library for supporting user authorisation on microservices.
 ## Change History
 
 ### v7.0 Nov 2023
-Adds support for Play 2.9 and drops support for Play 2.6 and 2.7.
+Adds support for Play 2.9 and Play 3.0 and drops support for Play 2.6 and 2.7.
 Versioning has changed to drop the play version - there will be an artefact for each play version supported.
 
 ### v6.2.0 Oct 2023
