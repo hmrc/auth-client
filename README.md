@@ -6,13 +6,17 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
-### v6.2.0 October 2023
+### v7.0 Nov 2023
+Adds support for Play 2.9 and drops support for Play 2.6 and 2.7.
+Versioning has changed to drop the play version - there will be an artefact for each play version supported.
+
+### v6.2.0 Oct 2023
 Update to README and code changes to remove service manager plugin.
 
-### v6.0 January 2023
+### v6.0 Jan 2023
 Auth Provider GDS/Verify is no longer supported. See 30th March 22 Tech Blog Post.
 
-### v5.14.0 July 2022
+### v5.14.0 Jul 2022
 Scala 2.13 - minor version increment.
 
 ### v5.13.0 May 2022
@@ -34,11 +38,11 @@ Removed Joda time dependency.
 
 Drop support for play 2.7 and play 2.6.
 
-### v5.7.0 July 2021
+### v5.7.0 Jul 2021
 Updated to latest version of sbt-auto-build and dropped Artifactory.
 
 ### v5.6.0 May 2021
-Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).  
+Added full support for CL250, the Identity Verification (IV) Multiple Evidence Option (MEO).
 
 For CLxxx meanings, see: https://confluence.tools.tax.service.gov.uk/display/VER/%27Confidence+Level%27+definitions
 
@@ -56,19 +60,18 @@ Added support for Play 2.8, plus CL250 in part.
 Include the following dependency in your SBT build
 
 ``` scala
-resolvers += Resolver.bintrayRepo("hmrc", "releases")
+resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
 
-libraryDependencies += "uk.gov.hmrc" %% "auth-client" % "[INSERT-VERSION]"
+libraryDependencies += "uk.gov.hmrc" %% "auth-client-play-xx" % "[INSERT-VERSION]"
 ```
-Note that this library is only available for Play 2.6.x through to Play 2.8.x. No other play versions are supported.
 
-> N.B. Play 2.7 support requires major version 3 of `auth-client`. This major release also includes an upgrade of the
-> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 10.
+Where `play-xx` is your version of Play (e.g. `play-29`).
 
-> N.B. Play 2.8 support requires major version 4 of `auth-client`. This major release also includes an upgrade of the
-> underlying [`http-verbs`](https://github.com/hmrc/http-verbs) library to major version 13.
+Note the version does not include the version of Play (as it did prior to version 7.0.0).
 
-> Play < 2.5 is no longer supported. If you plan to use it in a microservice that is still using an older version of Play, then you will need to upgrade it first.
+Note that this library is only available for Play 2.8.x and 2.9.x. No other play versions are supported.
+
+> Play < 2.8 is no longer supported. If you plan to use it in a microservice that is still using an older version of Play, then you will need to upgrade it first.
 
 ## Usage
 
@@ -360,7 +363,7 @@ Another possibility is using `AuthConnector` as a class dependency. In that case
 
 ```
 
-When using Wiremock to test your controller's endpoint, you may get an error `Bearer token not supplied`. 
+When using Wiremock to test your controller's endpoint, you may get an error `Bearer token not supplied`.
 
 To fix this, you can either provide an HTTP Authorization header
 ```scala
