@@ -21,7 +21,7 @@ package uk.gov.hmrc.auth.clientversion
  * (See https://github.com/sbt/sbt-buildinfo)
  */
 object ClientVersion {
-  private val versionRegex = raw"([0-9]+\.[0-9]+\.[0-9]+).+".r
+  private val versionRegex = raw"([0-9]+\.[0-9]+\.[0-9]+).*".r
 
   val version = BuildInfo.version match {
     case versionRegex(version) => version
