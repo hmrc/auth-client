@@ -32,9 +32,14 @@ ThisBuild / scalacOptions    += "-Wconf:src=src_managed/.*:s" // silence all war
 lazy val library = (project in file("."))
   .settings(publish / skip := true)
   .aggregate(
+    authClient,
     authClientPlay28,
     authClientPlay29
   )
+
+// empty artefact, exists to ensure eviction of previous auth-client jar which has now moved into auth-client-play-28
+lazy val authClient = Project("auth-client", file("auth-client"))
+  .settings(crossScalaVersions := Seq(scala2_12, scala2_13))
 
 val sharedSources = Seq(
   Compile         / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/main/scala",
@@ -56,6 +61,7 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
   )
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
+  .dependsOn(authClient)
 
 lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
   .enablePlugins(BuildInfoPlugin)
