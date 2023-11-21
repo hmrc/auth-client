@@ -32,9 +32,15 @@ ThisBuild / scalacOptions    += "-Wconf:src=src_managed/.*:s" // silence all war
 lazy val library = (project in file("."))
   .settings(publish / skip := true)
   .aggregate(
+    authClient,
     authClientPlay28,
-    authClientPlay29
+    authClientPlay29,
+    authClientPlay30
   )
+
+// empty artefact, exists to ensure eviction of previous auth-client jar which has now moved into auth-client-play-28
+lazy val authClient = Project("auth-client", file("auth-client"))
+  .settings(crossScalaVersions := Seq(scala2_12, scala2_13))
 
 val sharedSources = Seq(
   Compile         / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/main/scala",
@@ -47,7 +53,22 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
   .enablePlugins(BuildInfoPlugin)
   .settings(
     crossScalaVersions := Seq(scala2_12, scala2_13),
-    libraryDependencies ++= BuildDependencies.shared ++ BuildDependencies.play28,
+    libraryDependencies ++= BuildDependencies.play28,
+    sharedSources
+  )
+  .settings( //see https://github.com/sbt/sbt-buildinfo
+    buildInfoKeys    := Seq[BuildInfoKey](name, version),
+    buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
+  )
+  .settings(ScoverageSettings())
+  .settings(ScalariformSettings())
+  .dependsOn(authClient)
+
+lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    crossScalaVersions := Seq(scala2_13),
+    libraryDependencies ++= BuildDependencies.play29,
     sharedSources
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo
@@ -57,11 +78,11 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
 
-lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
+lazy val authClientPlay30 = Project("auth-client-play-30", file("auth-client-play-30"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     crossScalaVersions := Seq(scala2_13),
-    libraryDependencies ++= BuildDependencies.shared ++ BuildDependencies.play29,
+    libraryDependencies ++= BuildDependencies.play30,
     sharedSources
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo
@@ -76,7 +97,8 @@ lazy val it = (project in file("it"))
   .settings(publish / skip := true)
   .aggregate(
     itPlay28,
-    itPlay29
+    itPlay29,
+    itPlay30
   )
 
 lazy val itPlay28 = Project("it-play-28", file("it-play-28"))
@@ -88,3 +110,8 @@ lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
   .settings(DefaultBuildSettings.itSettings)
   .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
   .dependsOn(authClientPlay29 % "test->test")
+
+lazy val itPlay30 = Project("it-play-30", file("it-play-30"))
+  .settings(DefaultBuildSettings.itSettings)
+  .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
+  .dependsOn(authClientPlay30 % "test->test")
