@@ -20,24 +20,24 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.WsTestClient
-import uk.gov.hmrc.auth.core.{AuthConnector, PlayAuthConnector}
+import uk.gov.hmrc.auth.core.{ AuthConnector, PlayAuthConnector }
 import uk.gov.hmrc.http.CorePost
 import uk.gov.hmrc.http.test.HttpClientSupport
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 trait BaseSpec
   extends AnyWordSpecLike
-     with WsTestClient
-     with GuiceOneAppPerSuite
-     with Matchers
-     with HttpClientSupport {
+  with WsTestClient
+  with GuiceOneAppPerSuite
+  with Matchers
+  with HttpClientSupport {
 
   val authConnector: AuthConnector =
     new PlayAuthConnector {
-      override val serviceUrl: String   = "http://localhost:8500"
-      override val http      : CorePost = httpClient
+      override val serviceUrl: String = "http://localhost:8500"
+      override val http: CorePost = httpClient
     }
 
   implicit val defaultTimeout: FiniteDuration = 5.seconds

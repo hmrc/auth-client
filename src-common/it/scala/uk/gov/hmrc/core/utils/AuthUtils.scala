@@ -17,9 +17,9 @@
 package uk.gov.hmrc.core.utils
 
 import java.util.UUID
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, EnrolmentIdentifier}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HeaderNames}
+import play.api.libs.json.{ Json, OFormat }
+import uk.gov.hmrc.auth.core.{ AuthorisedFunctions, Enrolment, EnrolmentIdentifier }
+import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HeaderNames }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -49,15 +49,13 @@ trait AuthUtils extends AuthorisedFunctions {
       "affinityGroup" -> "Individual",
       "confidenceLevel" -> 250,
       "credentialStrength" -> "strong",
-      "enrolments" -> Json.toJson(enrolments)
-    ) ++ nino.map(n => Json.obj("nino" -> nino)).getOrElse(Json.obj())
+      "enrolments" -> Json.toJson(enrolments)) ++ nino.map(n => Json.obj("nino" -> nino)).getOrElse(Json.obj())
     val exchangeResult = withClient { ws => await(ws.url(authLoginApiResource("/government-gateway/session/login")).post(request)) }
 
     exchangeResult.status shouldBe 201
 
     HeaderCarrier(
-      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization
-    )
+      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
 
   }
 
