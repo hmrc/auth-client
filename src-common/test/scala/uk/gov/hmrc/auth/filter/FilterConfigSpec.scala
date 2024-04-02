@@ -20,11 +20,12 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.Configuration
 
 class FilterConfigSpec extends AnyWordSpec with ScalaFutures with Matchers with ConfigSetup {
 
   val config = ConfigFactory.parseString(fullConfig).getConfig("controllers")
-  val filterConfig = FilterConfig(config)
+  val filterConfig = FilterConfig(Configuration(config))
 
   "FilterConfig" should {
 

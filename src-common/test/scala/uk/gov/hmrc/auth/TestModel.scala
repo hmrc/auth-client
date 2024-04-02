@@ -16,19 +16,19 @@
 
 package uk.gov.hmrc.auth
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, Json, Reads}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 
 case class Foo(value: String)
 
 object Foo {
-  implicit val reads = Json.reads[Foo]
+  implicit val reads: Reads[Foo] = Json.reads[Foo]
 }
 
 case class Bar(value: String, number: Int)
 
 object Bar {
-  implicit val reads = Json.reads[Bar]
+  implicit val reads: Reads[Bar] = Json.reads[Bar]
 }
 
 case class TestPredicate1(value: String) extends Predicate {

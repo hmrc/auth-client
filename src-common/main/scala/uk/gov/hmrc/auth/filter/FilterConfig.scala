@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.auth.filter
 
+import play.api.Configuration
 import com.typesafe.config.{Config, ConfigRenderOptions}
-import net.ceedubs.ficus.Ficus._
-import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
 case class AuthConfig(patterns: Seq[String], predicates: Seq[Config]) {
 
-  val pathMatchers = patterns.map(PathMatcher)
+  val pathMatchers = patterns.map(PathMatcher.apply)
 
   val predicatesAsJson = predicates
     .map(_.root.render(ConfigRenderOptions.concise))
@@ -30,15 +29,22 @@ case class AuthConfig(patterns: Seq[String], predicates: Seq[Config]) {
 
 }
 
-case class FilterConfig(controllerConfigs: Config) {
+case class FilterConfig(controllerConfigs: Configuration) {
+
+  private def toAuthConfig(config: Configuration): AuthConfig =
+    AuthConfig(
+      patterns   = config.getOptional[Seq[String]]("patterns").getOrElse(Seq.empty),
+      predicates = config.getOptional[Seq[Config]]("predicates").getOrElse(Seq.empty)
+    )
 
   private val presets: Map[String, AuthConfig] =
-    controllerConfigs.as[Option[Map[String, AuthConfig]]]("authorisation").getOrElse(Map())
+    controllerConfigs.getOptional[Map[String, Configuration]]("authorisation")
+      .fold(Map.empty[String, AuthConfig])(_.mapValues(toAuthConfig).toMap)
 
   def getConfigByName(name: String): AuthConfig =
     presets.getOrElse(name, throw new RuntimeException(s"unknown auth config: '$name'")) // TODO - error handling might get improved
 
   def getConfigForController(controller: String): Seq[AuthConfig] =
-    controllerConfigs.getAs[Seq[String]](s"$controller.authorisedBy").map(_.map(getConfigByName)).getOrElse(Seq())
+    controllerConfigs.getOptional[Seq[String]](s"$controller.authorisedBy").fold(Seq.empty[AuthConfig])(_.map(getConfigByName))
 
 }

@@ -198,8 +198,8 @@ class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
       Enrolment("ENROL-B", Seq(EnrolmentIdentifier("ID-B", "456")), "Activated")
     )
 
-      def enrolmentsJson(retrieve: String) = Json.parse(
-        s"""
+    def enrolmentsJson(retrieve: String) = Json.parse(
+      s"""
          |{ "$retrieve": [
          |  {
          |    "key": "ENROL-A",

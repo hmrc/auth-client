@@ -17,6 +17,7 @@
 package uk.gov.hmrc.auth.core
 
 import play.api.libs.json._
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -43,14 +44,14 @@ trait PlayAuthConnector extends AuthConnector {
       }
       val json = Json.obj(
         "authorise" -> predicateJson,
-        "retrieve" -> JsArray(retrieval.propertyNames.map(JsString)))
+        "retrieve" -> JsArray(retrieval.propertyNames.map(JsString.apply)))
 
-      http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))) map {
+      http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))).map {
         _.json match {
           case null => JsNull.as[A](retrieval.reads)
           case bdy  => bdy.as[A](retrieval.reads)
         }
-      } recoverWith {
+      }.recoverWith {
         case res @ Upstream4xxResponse(_, 401, _, headers) =>
           Future.failed(AuthenticateHeaderParser.parse(headers))
       }

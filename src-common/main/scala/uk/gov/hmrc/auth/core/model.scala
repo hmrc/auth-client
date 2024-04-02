@@ -91,8 +91,8 @@ case class Enrolment(
 }
 
 object Enrolment {
-  implicit val idFormat = Json.format[EnrolmentIdentifier]
-  implicit val writes = Json.writes[Enrolment].transform { json: JsObject =>
+  implicit val idFormat: Format[EnrolmentIdentifier] = Json.format[EnrolmentIdentifier]
+  implicit val writes: Writes[Enrolment] = Json.writes[Enrolment].transform { (json: JsObject) =>
     val JsObject(props) = json
     JsObject(props + ("enrolment" -> props("key")) - "key")
   }
@@ -131,7 +131,7 @@ object AffinityGroup {
 
   private val mapping = Mappings.mapEnum[AffinityGroup](Individual, Organisation, Agent)
 
-  implicit val jsonFormat = mapping.jsonFormat
+  implicit val jsonFormat: Format[AffinityGroup] = mapping.jsonFormat
 }
 
 trait CredentialRole extends Predicate {
@@ -148,7 +148,7 @@ case object Assistant extends CredentialRole
 object CredentialRole {
   private val mapping = Mappings.mapEnum[CredentialRole](Admin, Assistant, User)
 
-  implicit val reads = mapping.jsonFormat
+  implicit val reads: Format[CredentialRole] = mapping.jsonFormat // Note, type is Format not Reads (backward compatibility)
 }
 
 trait AuthProvider
@@ -176,8 +176,8 @@ case class Nino(hasNino: Boolean, nino: Option[String] = None) extends Predicate
 }
 
 object Nino {
-  implicit val reads = Json.reads[Nino]
-  implicit val writes = Json.writes[Nino]
+  implicit val reads: Reads[Nino] = Json.reads[Nino]
+  implicit val writes: Writes[Nino] = Json.writes[Nino]
 }
 
 case class BusinessKey(name: String, value: String)

@@ -101,7 +101,7 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
     val barRetrieval = SimpleRetrieval("barProperty", Bar.reads)
 
     "return a successful future when a 200 is returned and no retrievals are supplied" in new Setup {
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result) { _ => () }
@@ -116,11 +116,11 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
           |}
         """.stripMargin
       ))
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), fooRetrieval)
 
-      whenReady(result) {
-        theFoo => theFoo shouldBe Foo("someValue")
+      whenReady(result) { theFoo =>
+        theFoo shouldBe Foo("someValue")
       }
     }
 
@@ -137,41 +137,40 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
           |}
         """.stripMargin
       ))
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), CompositeRetrieval(fooRetrieval, barRetrieval))
 
       whenReady(result) {
-        case theFoo ~ theBar => {
+        case theFoo ~ theBar =>
           theFoo shouldBe Foo("someValue")
           theBar shouldBe Bar("someOtherValue", 123)
-        }
       }
     }
 
     "throw InsufficientConfidenceLevel on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InsufficientConfidenceLevel"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[InsufficientConfidenceLevel]
+      whenReady(result.failed){ e =>
+        e shouldBe a[InsufficientConfidenceLevel]
       }
     }
 
     "throw InsufficientEnrolments on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InsufficientEnrolments"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[InsufficientEnrolments]
+      whenReady(result.failed){ e =>
+        e shouldBe a[InsufficientEnrolments]
       }
     }
 
     "throw InsufficientEnrolments on failed authorisation with appropriate header and retain failed enrolment" in new FailedEnrolmentSetup {
       val headerMsg = "InsufficientEnrolments"
       val enrolment = "SA-UTR"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       whenReady(result.failed) {
@@ -182,76 +181,73 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
 
     "throw BearerTokenExpired on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "BearerTokenExpired"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[BearerTokenExpired]
+      whenReady(result.failed){ e =>
+        e shouldBe a[BearerTokenExpired]
       }
     }
 
     "throw MissingBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "MissingBearerToken"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[MissingBearerToken]
+      whenReady(result.failed){ e =>
+        e shouldBe a[MissingBearerToken]
       }
     }
 
     "throw InvalidBearerToken on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "InvalidBearerToken"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[InvalidBearerToken]
+      whenReady(result.failed){ e =>
+        e shouldBe a[InvalidBearerToken]
       }
     }
 
     "throw SessionRecordNotFound on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "SessionRecordNotFound"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[SessionRecordNotFound]
+      whenReady(result.failed){ e =>
+        e shouldBe a[SessionRecordNotFound]
       }
     }
 
     "throw FailedRelationship on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "FailedRelationship"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[FailedRelationship]
+      whenReady(result.failed){ e =>
+        e shouldBe a[FailedRelationship]
       }
     }
 
     "throw IncorrectNino on failed authorisation with appropriate header" in new UnauthorisedSetup {
       val headerMsg = "IncorrectNino"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe IncorrectNino
+      whenReady(result.failed){ e =>
+        e shouldBe IncorrectNino
       }
     }
 
     "throw InternalError on failed authorisation with unknown header message" in new UnauthorisedSetup {
       val headerMsg = "some-unknown-header-message"
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e =>
-          {
-            e shouldBe a[InternalError]
-            val internalError = e.asInstanceOf[InternalError]
-            internalError.getMessage should include(headerMsg)
-          }
+      whenReady(result.failed){ e =>
+        e shouldBe a[InternalError]
+        val internalError = e.asInstanceOf[InternalError]
+        internalError.getMessage should include(headerMsg)
       }
     }
 
@@ -259,41 +255,35 @@ class AuthConnectorSpec extends AnyWordSpec with ScalaFutures {
       val headerMsg = "some-invalid-header-value"
 
       override def exceptionHeaders(value: String, enrolment: Option[String]) = Map(AuthenticateHeaderParser.WWW_AUTHENTICATE -> headerMsg)
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e =>
-          {
-            e shouldBe a[InternalError]
-            val internalError = e.asInstanceOf[InternalError]
-            internalError.getMessage should include("InvalidResponseHeader")
-          }
+      whenReady(result.failed){ e =>
+        e shouldBe a[InternalError]
+        val internalError = e.asInstanceOf[InternalError]
+        internalError.getMessage should include("InvalidResponseHeader")
       }
     }
 
     "throw InternalError on failed authorisation with missing header" in new Setup {
 
       override val withStatus = Status.UNAUTHORIZED
-      implicit lazy val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e =>
-          {
-            e shouldBe a[InternalError]
-            val internalError = e.asInstanceOf[InternalError]
-            internalError.getMessage should include("MissingResponseHeader")
-          }
+      whenReady(result.failed){ e =>
+        e shouldBe a[InternalError]
+        val internalError = e.asInstanceOf[InternalError]
+        internalError.getMessage should include("MissingResponseHeader")
       }
     }
 
     "throw MissingBearerToken when bearer token is missing in header" in new Setup {
-      implicit lazy val hc = HeaderCarrier()
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier()
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
-      whenReady(result.failed) {
-        e => e shouldBe a[MissingBearerToken]
+      whenReady(result.failed){ e =>
+        e shouldBe a[MissingBearerToken]
       }
     }
   }
