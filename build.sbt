@@ -56,9 +56,6 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
     libraryDependencies ++= BuildDependencies.play28,
     sharedSources
   )
-  .settings(
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-  )
   .settings( //see https://github.com/sbt/sbt-buildinfo
     buildInfoKeys    := Seq[BuildInfoKey](name, version),
     buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
