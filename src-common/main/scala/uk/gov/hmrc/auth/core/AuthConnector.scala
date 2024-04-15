@@ -21,7 +21,8 @@ import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, Upstream4xxResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +34,7 @@ trait PlayAuthConnector extends AuthConnector {
 
   val serviceUrl: String
 
-  def http: CorePost
+  def httpClientV2: HttpClientV2
 
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     hc.authorization.fold[Future[A]](Future.failed(new MissingBearerToken)) { _ =>
@@ -46,17 +47,21 @@ trait PlayAuthConnector extends AuthConnector {
         "authorise" -> predicateJson,
         "retrieve" -> JsArray(retrieval.propertyNames.map(JsString.apply)))
 
-      http.POST(s"$serviceUrl/auth/authorise", json, Seq(("Auth-Client-Version" -> ClientVersion.toString()))).map {
-        _.json match {
-          case null => JsNull.as[A](retrieval.reads)
-          case bdy  => bdy.as[A](retrieval.reads)
+      httpClientV2
+        .post(url"$serviceUrl/auth/authorise")
+        .setHeader("Auth-Client-Version" -> ClientVersion.toString)
+        .withBody(json)
+        .execute[HttpResponse]
+        .map { res =>
+          res.json match {
+            case null => JsNull.as[A](retrieval.reads)
+            case bdy  => bdy.as[A](retrieval.reads)
+          }
+        }.recoverWith {
+          case res @ Upstream4xxResponse(_, 401, _, headers) =>
+            Future.failed(AuthenticateHeaderParser.parse(headers))
         }
-      }.recoverWith {
-        case res @ Upstream4xxResponse(_, 401, _, headers) =>
-          Future.failed(AuthenticateHeaderParser.parse(headers))
-      }
     }
-
 }
 
 object AuthenticateHeaderParser {
@@ -75,5 +80,4 @@ object AuthenticateHeaderParser {
       case None    => new InternalError("MissingResponseHeader")
     }
   }
-
 }

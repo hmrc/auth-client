@@ -21,12 +21,15 @@ import com.github.tomakehurst.wiremock.client.WireMock.{verify => _, _}
 import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.test.{HttpClientSupport, WireMockSupport}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.test.{HttpClientV2Support, WireMockSupport}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import org.scalatest.concurrent.IntegrationPatience
 
-class DelegationAuthConnectorSpec extends UnitSpec with WireMockSupport with HttpClientSupport with IntegrationPatience {
+class DelegationAuthConnectorSpec extends UnitSpec with WireMockSupport with HttpClientV2Support with IntegrationPatience {
+
+  private lazy val anHttpClientV2 = httpClientV2
 
   val hc: HeaderCarrier = HeaderCarrier()
 
@@ -39,9 +42,9 @@ class DelegationAuthConnectorSpec extends UnitSpec with WireMockSupport with Htt
     link          = Link(url  = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
   )
 
-  val connector: DelegationAuthConnector = new DelegationAuthConnector {
+  lazy val connector: DelegationAuthConnector = new DelegationAuthConnector {
     override val authServiceUrl = wireMockUrl
-    override val http = mkHttpClient()
+    override val httpClientV2: HttpClientV2 = anHttpClientV2
   }
 
   "DelegationAuthConnector" should {

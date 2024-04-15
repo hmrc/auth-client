@@ -19,30 +19,22 @@ package uk.gov.hmrc.core.utils
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{ AuthConnector, PlayAuthConnector }
 import uk.gov.hmrc.http.CorePost
-import uk.gov.hmrc.http.test.HttpClientSupport
+import uk.gov.hmrc.http.test.HttpClientV2Support
 
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, Future }
 
 trait BaseSpec
   extends AnyWordSpecLike
-  with WsTestClient
   with GuiceOneAppPerSuite
   with Matchers
-  with HttpClientSupport {
+  with HttpClientV2Support {
 
   val authConnector: AuthConnector =
     new PlayAuthConnector {
       override val serviceUrl: String = "http://localhost:8500"
-      override val http: CorePost = httpClient
+      override val httpClientV2: HttpClientV2 = httpClientV2
     }
-
-  implicit val defaultTimeout: FiniteDuration = 5.seconds
-  implicit def extractAwait[A](future: Future[A]): A = await[A](future)
-
-  def await[A](future: Future[A])(implicit timeout: Duration): A = Await.result(future, timeout)
-
 }
