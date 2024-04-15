@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.{JsNull, Json, JsValue}
 import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}

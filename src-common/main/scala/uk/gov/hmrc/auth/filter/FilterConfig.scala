@@ -39,7 +39,7 @@ case class FilterConfig(controllerConfigs: Configuration) {
 
   private val presets: Map[String, AuthConfig] =
     controllerConfigs.getOptional[Map[String, Configuration]]("authorisation")
-      .fold(Map.empty[String, AuthConfig])(_.mapValues(toAuthConfig).toMap)
+      .fold(Map.empty[String, AuthConfig])(_.view.mapValues(toAuthConfig).toMap)
 
   def getConfigByName(name: String): AuthConfig =
     presets.getOrElse(name, throw new RuntimeException(s"unknown auth config: '$name'")) // TODO - error handling might get improved

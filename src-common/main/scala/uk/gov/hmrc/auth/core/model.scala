@@ -94,7 +94,7 @@ object Enrolment {
   implicit val idFormat: Format[EnrolmentIdentifier] = Json.format[EnrolmentIdentifier]
   implicit val writes: Writes[Enrolment] = Json.writes[Enrolment].transform { (json: JsObject) =>
     val JsObject(props) = json
-    JsObject(props + ("enrolment" -> props("key")) - "key")
+    JsObject(props.toMap + ("enrolment" -> props("key")) - "key")
   }
   implicit val reads: Reads[Enrolment] = ((__ \ "key").read[String] and
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and

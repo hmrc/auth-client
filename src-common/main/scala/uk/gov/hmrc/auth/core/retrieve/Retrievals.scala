@@ -122,7 +122,7 @@ object LegacyCredentials {
 case class LoginTimes(currentLogin: Instant, previousLogin: Option[Instant])
 
 object LoginTimes {
-  implicit val dateTimeReads: Reads[Instant] = Reads.DefaultInstantReads // TODO should this be private?
+  private implicit val dateTimeReads: Reads[Instant] = Reads.DefaultInstantReads
   val reads: Reads[LoginTimes] = Json.reads[LoginTimes]
 }
 

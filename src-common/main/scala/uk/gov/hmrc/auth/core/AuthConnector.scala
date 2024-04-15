@@ -21,7 +21,7 @@ import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, Upstream4xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,6 +31,8 @@ trait AuthConnector {
 }
 
 trait PlayAuthConnector extends AuthConnector {
+  implicit val legacyRawReads: HttpReads[HttpResponse] =
+    HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
 
   val serviceUrl: String
 
@@ -58,8 +60,8 @@ trait PlayAuthConnector extends AuthConnector {
             case bdy  => bdy.as[A](retrieval.reads)
           }
         }.recoverWith {
-          case res @ Upstream4xxResponse(_, 401, _, headers) =>
-            Future.failed(AuthenticateHeaderParser.parse(headers))
+          case res @ UpstreamErrorResponse.WithStatusCode(401) =>
+            Future.failed(AuthenticateHeaderParser.parse(res.headers))
         }
     }
 }
