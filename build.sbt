@@ -18,21 +18,13 @@ import sbt.Keys.*
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
 
-val libName = "auth-client"
-
-val scala2_12 = "2.12.18"
 val scala2_13 = "2.13.12"
 val scala3    = "3.3.3"
 
-ThisBuild / majorVersion     := 7
+ThisBuild / majorVersion     := 8
 ThisBuild / isPublicArtefact := true
 ThisBuild / scalaVersion     := scala2_13
 ThisBuild / Test / fork      := true //Required to prevent https://github.com/sbt/sbt/issues/4609
-ThisBuild / scalacOptions    ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-                                   case Some((3, _ )) => Seq("-explain")
-                                   case _             => Seq.empty
-                                 })
-                                 // TODO address all warnings (expecially http-verbs deprecated usage) - use HttpClientV2 too
 
 lazy val library = (project in file("."))
   .settings(publish / skip := true)
@@ -45,7 +37,6 @@ lazy val library = (project in file("."))
 
 // empty artefact, exists to ensure eviction of previous auth-client jar which has now moved into auth-client-play-28
 lazy val authClient = Project("auth-client", file("auth-client"))
-  .settings(crossScalaVersions := Seq(scala2_12, scala2_13))
 
 val sharedSources = Seq(
   Compile         / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/main/scala",
@@ -57,7 +48,6 @@ val sharedSources = Seq(
 lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-play-28"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    crossScalaVersions := Seq(scala2_12, scala2_13),
     libraryDependencies ++= BuildDependencies.play28,
     sharedSources
   )
@@ -72,7 +62,6 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
 lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    crossScalaVersions := Seq(scala2_13),
     libraryDependencies ++= BuildDependencies.play29,
     sharedSources
   )

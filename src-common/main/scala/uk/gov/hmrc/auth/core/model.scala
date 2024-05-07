@@ -113,12 +113,14 @@ object Enrolment {
 
 case class Enrolments(enrolments: Set[Enrolment]) {
 
-  def getEnrolment(key: String): Option[Enrolment] = enrolments.find(_.key.equalsIgnoreCase(key))
+  def getEnrolment(key: String): Option[Enrolment] =
+    enrolments.find(_.key.equalsIgnoreCase(key))
 
 }
 
 trait AffinityGroup extends Predicate {
-  def toJson: JsValue = Json.obj("affinityGroup" -> getClass.getSimpleName.dropRight(1))
+  def toJson: JsValue =
+    Json.obj("affinityGroup" -> getClass.getSimpleName.dropRight(1))
 }
 
 object AffinityGroup {
@@ -135,7 +137,8 @@ object AffinityGroup {
 }
 
 trait CredentialRole extends Predicate {
-  def toJson: JsValue = Json.obj("credentialRole" -> getClass.getSimpleName.dropRight(1).toLowerCase)
+  def toJson: JsValue =
+    Json.obj("credentialRole" -> getClass.getSimpleName.dropRight(1).toLowerCase)
 }
 
 case object User extends CredentialRole

@@ -2,7 +2,7 @@ import sbt._
 
 private object BuildDependencies {
 
-  val httpVerbsVersion = "14.14.0-SNAPSHOT"
+  val httpVerbsVersion = "15.0.0"
 
   val play28 = play("play-28")
   val play29 = play("play-29")
@@ -10,7 +10,6 @@ private object BuildDependencies {
 
   private def play(playSuffix: String) = Seq(
     "uk.gov.hmrc"            %% s"http-verbs-$playSuffix"      % httpVerbsVersion,
-    //"com.iheart"             %% "ficus"                        % "1.5.2", // TODO https://github.com/iheartradio/ficus/issues/219
 
     "uk.gov.hmrc"            %% s"http-verbs-test-$playSuffix" % httpVerbsVersion                     % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"           % scalaTestPlusPlayVersion(playSuffix) % Test,
