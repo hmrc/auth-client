@@ -49,6 +49,7 @@ lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-pla
   .enablePlugins(BuildInfoPlugin)
   .settings(
     libraryDependencies ++= BuildDependencies.play28,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     sharedSources
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo

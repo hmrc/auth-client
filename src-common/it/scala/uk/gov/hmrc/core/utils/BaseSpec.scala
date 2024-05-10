@@ -21,6 +21,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.auth.core.{ AuthConnector, PlayAuthConnector }
 import uk.gov.hmrc.http.CorePost
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.HttpClientV2Support
 
 import scala.concurrent.duration._
@@ -32,9 +33,16 @@ trait BaseSpec
   with Matchers
   with HttpClientV2Support {
 
+  private lazy val anHttpClientV2 = httpClientV2
+
   val authConnector: AuthConnector =
     new PlayAuthConnector {
       override val serviceUrl: String = "http://localhost:8500"
-      override val httpClientV2: HttpClientV2 = httpClientV2
+      override val httpClientV2: HttpClientV2 = anHttpClientV2
     }
+
+  implicit val defaultTimeout: FiniteDuration = 5.seconds
+  implicit def extractAwait[A](future: Future[A]): A = await[A](future)
+
+  def await[A](future: Future[A])(implicit timeout: Duration): A = Await.result(future, timeout)
 }

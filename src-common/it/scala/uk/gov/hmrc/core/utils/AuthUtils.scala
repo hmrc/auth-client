@@ -18,6 +18,7 @@ package uk.gov.hmrc.core.utils
 
 import java.util.UUID
 import play.api.libs.json.{ Json, OFormat }
+import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{ AuthorisedFunctions, Enrolment, EnrolmentIdentifier }
 import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HeaderNames }
 
@@ -25,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-trait AuthUtils extends AuthorisedFunctions {
+trait AuthUtils extends AuthorisedFunctions with WsTestClient {
 
   this: BaseSpec =>
 
