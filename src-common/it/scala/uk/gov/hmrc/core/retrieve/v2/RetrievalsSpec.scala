@@ -21,6 +21,8 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.core.utils.{ AuthUtils, BaseSpec }
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RetrievalsSpec extends BaseSpec with AuthUtils {
 
@@ -28,13 +30,13 @@ class RetrievalsSpec extends BaseSpec with AuthUtils {
     "retrieve the correct data" in {
       val credId = randomCredId
       implicit val hc = signInGGWithAuthLoginApi(credId)
-      val creds: Option[Credentials] = awaitAuth(authorised(ConfidenceLevel.L250).retrieve(Retrievals.credentials))
+      val creds: Option[Credentials] = authorised(ConfidenceLevel.L250).retrieve(Retrievals.credentials)(Future.successful).futureValue
       creds shouldBe Some(Credentials(credId, "GovernmentGateway"))
     }
     "retrieve CL250 as CL250 i.e. not downgraded to CL200" in {
       val credId = randomCredId
       implicit val hc = signInGGWithAuthLoginApi(credId)
-      val cl: ConfidenceLevel = awaitAuth(authorised().retrieve(Retrievals.confidenceLevel))
+      val cl: ConfidenceLevel = authorised().retrieve(Retrievals.confidenceLevel)(Future.successful).futureValue
       cl shouldBe ConfidenceLevel.L250
     }
   }
@@ -43,9 +45,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils {
     "fail" when {
       "no token is provided" in {
         implicit val hc = HeaderCarrier()
-        assertThrows[MissingBearerToken] {
-          awaitAuth(authorised())
-        }
+        authorised()(Future.unit).failed.futureValue shouldBe an[MissingBearerToken]
       }
     }
   }

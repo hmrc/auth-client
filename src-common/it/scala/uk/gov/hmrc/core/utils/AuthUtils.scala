@@ -18,12 +18,11 @@ package uk.gov.hmrc.core.utils
 
 import java.util.UUID
 import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{ AuthorisedFunctions, Enrolment, EnrolmentIdentifier }
 import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HeaderNames }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.util.Random
 
 trait AuthUtils extends AuthorisedFunctions with WsTestClient {
@@ -34,9 +33,6 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
   def randomNino = s"AA${900000 + random.nextInt(99999)}D"
   def randomCredId = s"credId-${random.nextInt(10101010)}"
   def randomGroupId = UUID.randomUUID().toString
-
-  def awaitAuth[T](f: AuthorisedFunctionWithResult[T])(implicit hc: HeaderCarrier): T = await(f(Future.successful))
-  def awaitAuth(f: AuthorisedFunction)(implicit hc: HeaderCarrier): Unit = await(f(Future.successful(())))
 
   def authLoginApiResource(resource: String): String = s"http://localhost:8585$resource"
 
@@ -51,12 +47,12 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
       "confidenceLevel" -> 250,
       "credentialStrength" -> "strong",
       "enrolments" -> Json.toJson(enrolments)) ++ nino.map(n => Json.obj("nino" -> nino)).getOrElse(Json.obj())
-    val exchangeResult = withClient { ws => await(ws.url(authLoginApiResource("/government-gateway/session/login")).post(request)) }
+    val exchangeResult = withClient { ws => ws.url(authLoginApiResource("/government-gateway/session/login")).post(request).futureValue }
 
     exchangeResult.status shouldBe 201
 
     HeaderCarrier(
-      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
+      authorization = exchangeResult.header(HeaderNames.authorisation).map(Authorization.apply))
 
   }
 
