@@ -36,6 +36,8 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
 
   def authLoginApiResource(resource: String): String = s"http://localhost:8585$resource"
 
+  def authResource(resource: String): String = s"http://localhost:8500$resource"
+
   def signInGGWithAuthLoginApi(credId: String = randomCredId, enrolments: Set[Enrolment] = Set.empty, nino: Option[String] = None, groupId: String = randomGroupId): HeaderCarrier = {
     implicit val idFormat: OFormat[EnrolmentIdentifier] = Json.format[EnrolmentIdentifier]
     implicit val enrolmentsFormat: OFormat[Enrolment] = Json.format[Enrolment]
