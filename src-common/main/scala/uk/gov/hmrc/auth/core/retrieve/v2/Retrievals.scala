@@ -87,7 +87,7 @@ object OauthTokens {
   val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
 }
 
-case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: String)
+case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: Option[String])
 
 object TrustedHelper {
   val reads: Reads[TrustedHelper] = Json.reads[TrustedHelper]

@@ -411,7 +411,26 @@ class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
       val tokens = trustedHelper.reads.reads(json)
       tokens shouldBe a[JsSuccess[_]]
 
-      tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, principalNino))
+      tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, Some(principalNino)))
+    }
+
+    "read trusted helper object when principal nino isn't defined" in {
+      val principalName = UUID.randomUUID().toString
+      val attorneyName = UUID.randomUUID().toString
+      val returnLinkUrl = UUID.randomUUID().toString
+
+      val json = Json.obj(
+        "trustedHelper" -> Json.obj(
+          "principalName" -> principalName,
+          "attorneyName" -> attorneyName,
+          "returnLinkUrl" -> returnLinkUrl
+        )
+      )
+
+      val tokens = trustedHelper.reads.reads(json)
+      tokens shouldBe a[JsSuccess[_]]
+
+      tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, principalNino = None))
     }
 
     "error when read a uncompleted trusted helper object e.g attorneyName is missing" in {
