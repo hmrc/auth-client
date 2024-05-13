@@ -16,16 +16,20 @@
 
 package uk.gov.hmrc.auth.delegation
 
-import org.scalamock.scalatest.MockFactory
-import play.api.libs.json.Writes
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{verify => _, _}
 import uk.gov.hmrc.auth.UnitSpec
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.test.{HttpClientV2Support, WireMockSupport}
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
+import org.scalatest.concurrent.IntegrationPatience
 
-class DelegationAuthConnectorSpec extends UnitSpec with MockFactory {
+class DelegationAuthConnectorSpec extends UnitSpec with WireMockSupport with HttpClientV2Support with IntegrationPatience {
+
+  private lazy val anHttpClientV2 = httpClientV2
 
   val hc: HeaderCarrier = HeaderCarrier()
 
@@ -38,46 +42,50 @@ class DelegationAuthConnectorSpec extends UnitSpec with MockFactory {
     link          = Link(url  = "http://taxplatform/some/dashboard", text = Some("Back to dashboard"))
   )
 
-  val authUrl = "http://localhost:8500"
-
-  val stubResponse = Future.successful(HttpResponse(200))
-
-  val stubbedHttp = stub[WSHttp]
+  lazy val connector: DelegationAuthConnector = new DelegationAuthConnector {
+    override val authServiceUrl = wireMockUrl
+    override val httpClientV2: HttpClientV2 = anHttpClientV2
+  }
 
   "DelegationAuthConnector" should {
-
     "call authoriseDelegation" in {
+      wireMockServer.stubFor(
+        WireMock.post(urlEqualTo("/auth/authoriseDelegation"))
+          .willReturn(aResponse().withStatus(200))
+      )
 
-      (stubbedHttp.POST[DelegationContext, HttpResponse](
-        _: String, _: DelegationContext, _: Seq[(String, String)])(
-          _: Writes[DelegationContext], _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
-        .when(s"$authUrl/auth/authoriseDelegation", delegationContext, *, *, *, *, *)
-        .returns(stubResponse)
+      connector.setDelegation(delegationContext)(hc, ec).futureValue.status shouldBe 200
 
-      val connector: DelegationAuthConnector = new DelegationAuthConnector {
-        override val authServiceUrl = authUrl
-        override def http = stubbedHttp
-      }
-
-      connector.setDelegation(delegationContext)(hc, ec) should be (stubResponse)
+      wireMockServer.verify(
+        postRequestedFor(urlEqualTo("/auth/authoriseDelegation"))
+          .withRequestBody(equalToJson("""{
+            "principalName": "Client",
+            "attorneyName": "Agent",
+            "link" : {
+              "url" : "http://taxplatform/some/dashboard",
+              "text" : "Back to dashboard"
+            },
+            "accounts" : {
+              "paye" : {
+                "hasNino" : true,
+                "nino" : "AB123456D"
+              }
+            }
+          }"""))
+      )
     }
 
     "call endDelegation" in {
+      wireMockServer.stubFor(
+        WireMock.delete(urlEqualTo("/auth/endDelegation"))
+          .willReturn(aResponse().withStatus(200))
+      )
 
-      (stubbedHttp.DELETE[HttpResponse](
-        _: String, _: Seq[(String, String)])(
-          _: HttpReads[HttpResponse], _: HeaderCarrier, _: ExecutionContext))
-        .when(s"$authUrl/auth/endDelegation", *, *, *, *)
-        .returns(stubResponse)
+      connector.endDelegation()(hc, ec).futureValue.status shouldBe 200
 
-      val connector: DelegationAuthConnector = new DelegationAuthConnector {
-        override val authServiceUrl = authUrl
-        override def http = stubbedHttp
-      }
-
-      connector.endDelegation()(hc, ec) should be (stubResponse)
+      wireMockServer.verify(
+        deleteRequestedFor(urlEqualTo("/auth/endDelegation"))
+      )
     }
-
   }
-
 }

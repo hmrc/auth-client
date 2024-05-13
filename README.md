@@ -6,6 +6,13 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v8.0 May 2024
+Built for Scala 3 and drops Scala 2.12.
+
+It uses http-verbs 15.0.0 and `HttpClientV2`. It is a major version since there are binary incompatibilities in this dependency.
+
+The `principalNino` field in the `TrustedHelper` retrieval is now optional. This covers some edge cases where it could be `None`.
+
 ### v7.0 Nov 2023
 Adds support for Play 2.9 and Play 3.0 and drops support for Play 2.6 and 2.7.
 Versioning has changed to drop the play version - there will be an artefact for each play version supported.

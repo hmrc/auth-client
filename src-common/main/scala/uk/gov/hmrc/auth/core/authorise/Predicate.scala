@@ -51,11 +51,11 @@ trait Predicate {
 case class CompositePredicate(predicateA: Predicate, predicateB: Predicate) extends Predicate {
 
   val toJson = {
-      def extractPredicates(predicate: Predicate) = predicate match {
-        case CompositePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
-        case EmptyPredicate             => Seq()
-        case other                      => Seq(other)
-      }
+    def extractPredicates(predicate: Predicate) = predicate match {
+      case CompositePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
+      case EmptyPredicate             => Seq()
+      case other                      => Seq(other)
+    }
 
     val predicates = extractPredicates(predicateA) ++ extractPredicates(predicateB)
     JsArray(predicates.map(_.toJson))
@@ -66,11 +66,11 @@ case class CompositePredicate(predicateA: Predicate, predicateB: Predicate) exte
 case class AlternatePredicate(predicateA: Predicate, predicateB: Predicate) extends Predicate {
 
   val toJson = {
-      def extractPredicates(predicate: Predicate) = predicate match {
-        case AlternatePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
-        case EmptyPredicate             => Seq()
-        case other                      => Seq(other)
-      }
+    def extractPredicates(predicate: Predicate) = predicate match {
+      case AlternatePredicate(p1, p2) => Seq(p1, p2) // optimization to avoid unnecessary nesting
+      case EmptyPredicate             => Seq()
+      case other                      => Seq(other)
+    }
 
     val predicates = extractPredicates(predicateA) ++ extractPredicates(predicateB)
     Json.obj("$or" -> JsArray(predicates.map(_.toJson)))

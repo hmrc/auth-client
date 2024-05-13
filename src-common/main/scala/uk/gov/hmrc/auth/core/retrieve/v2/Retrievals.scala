@@ -26,13 +26,13 @@ trait Retrievals {
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
   val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
   val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
-  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri")
+  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri", since = "2.15.0")
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
   val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", LoginTimes.reads)
-  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
-  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
-  @deprecated("Use 'credentials' retrieval")
+  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments.apply))
+  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments.apply))
+  @deprecated("Use 'credentials' retrieval", since = "2.15.0")
   val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
   val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
   val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
@@ -87,7 +87,7 @@ object OauthTokens {
   val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
 }
 
-case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: String)
+case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: Option[String])
 
 object TrustedHelper {
   val reads: Reads[TrustedHelper] = Json.reads[TrustedHelper]

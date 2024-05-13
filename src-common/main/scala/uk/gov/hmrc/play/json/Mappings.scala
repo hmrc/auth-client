@@ -135,8 +135,8 @@ class Enum[B](enumName: String, val elements: Seq[B]) {
 
 }
 
-class EnumMapping[B](val enum: Enum[B]) extends Mapping[String, B](enum.toDomain, enum.fromDomain) {
+class EnumMapping[B](val `enum`: Enum[B]) extends Mapping[String, B](`enum`.toDomain, `enum`.fromDomain) {
 
-  def fromString(name: String): Option[B] = enum.fromName(name)
+  def fromString(name: String): Option[B] = `enum`.fromName(name)
 
 }

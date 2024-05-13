@@ -16,22 +16,29 @@
 
 package uk.gov.hmrc.auth.delegation
 
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttp
+import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DelegationAuthConnector {
+  implicit val legacyRawReads: HttpReads[HttpResponse] =
+    HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
 
   val authServiceUrl: String
-  def http: WSHttp
 
-  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST(s"$authServiceUrl/auth/authoriseDelegation", body = delegationContext)
-  }
+  def httpClientV2: HttpClientV2
 
-  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.DELETE(s"$authServiceUrl/auth/endDelegation")
-  }
+  def setDelegation(delegationContext: DelegationContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+    httpClientV2
+      .post(url"$authServiceUrl/auth/authoriseDelegation")
+      .withBody(Json.toJson(delegationContext))
+      .execute[HttpResponse]
 
+  def endDelegation()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] =
+    httpClientV2
+      .delete(url"$authServiceUrl/auth/endDelegation")
+      .execute[HttpResponse]
 }

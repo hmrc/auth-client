@@ -16,11 +16,15 @@
 
 package uk.gov.hmrc.core.retrieve.v2
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.{ ConfidenceLevel, MissingBearerToken }
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.core.utils.{ AuthUtils, BaseSpec }
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RetrievalsSpec extends BaseSpec with AuthUtils {
 
@@ -28,14 +32,44 @@ class RetrievalsSpec extends BaseSpec with AuthUtils {
     "retrieve the correct data" in {
       val credId = randomCredId
       implicit val hc = signInGGWithAuthLoginApi(credId)
-      val creds: Option[Credentials] = awaitAuth(authorised(ConfidenceLevel.L250).retrieve(Retrievals.credentials))
+      val creds: Option[Credentials] = authorised(ConfidenceLevel.L250).retrieve(Retrievals.credentials)(Future.successful).futureValue
       creds shouldBe Some(Credentials(credId, "GovernmentGateway"))
     }
     "retrieve CL250 as CL250 i.e. not downgraded to CL200" in {
       val credId = randomCredId
       implicit val hc = signInGGWithAuthLoginApi(credId)
-      val cl: ConfidenceLevel = awaitAuth(authorised().retrieve(Retrievals.confidenceLevel))
+      val cl: ConfidenceLevel = authorised().retrieve(Retrievals.confidenceLevel)(Future.successful).futureValue
       cl shouldBe ConfidenceLevel.L250
+    }
+  }
+
+  "TrustedHelper" should {
+    "retrieve the correct data" in {
+      val credId = randomCredId
+      implicit val hc = signInGGWithAuthLoginApi(credId)
+
+      val request = Json.parse("{\"attorneyName\":\"attorneyName\",\"principalName\":\"principalName\",\"link\":{\"text\":\"returnLink\",\"url\":\"returnLinkUrl\"},\"accounts\":{\"paye\":\"AA000003C\"}}")
+      val authoriseDelegationResult = withClient { ws => ws.url(authResource("/auth/authoriseDelegation")).withHttpHeaders("Authorization" -> hc.authorization.get.value).post(request).futureValue }
+
+      authoriseDelegationResult.status shouldBe 201
+
+      val trustedHelper: Option[TrustedHelper] = authorised().retrieve(Retrievals.trustedHelper)(Future.successful).futureValue
+
+      trustedHelper shouldBe Some(TrustedHelper("principalName", "attorneyName", "returnLinkUrl", principalNino = Some("AA000003C")))
+    }
+
+    "retrieve the correct data with principalNino undefined if it's None in delegation context" in {
+      val credId = randomCredId
+      implicit val hc = signInGGWithAuthLoginApi(credId)
+
+      val request = Json.parse("{\"attorneyName\":\"attorneyName\",\"principalName\":\"principalName\",\"link\":{\"text\":\"returnLink\",\"url\":\"returnLinkUrl\"},\"accounts\":{}}")
+      val authoriseDelegationResult = withClient { ws => ws.url(authResource("/auth/authoriseDelegation")).withHttpHeaders("Authorization" -> hc.authorization.get.value).post(request).futureValue }
+
+      authoriseDelegationResult.status shouldBe 201
+
+      val trustedHelper: Option[TrustedHelper] = authorised().retrieve(Retrievals.trustedHelper)(Future.successful).futureValue
+
+      trustedHelper shouldBe Some(TrustedHelper("principalName", "attorneyName", "returnLinkUrl", principalNino = None))
     }
   }
 
@@ -43,9 +77,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils {
     "fail" when {
       "no token is provided" in {
         implicit val hc = HeaderCarrier()
-        assertThrows[MissingBearerToken] {
-          awaitAuth(authorised())
-        }
+        authorised()(Future.unit).failed.futureValue shouldBe an[MissingBearerToken]
       }
     }
   }

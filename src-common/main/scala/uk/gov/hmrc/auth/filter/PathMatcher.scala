@@ -34,9 +34,9 @@ case class PathMatcher(pattern: String) {
 
   def matchPath(path: String): Option[Map[String, String]] = {
 
-      def processResult(result: Match): Map[String, String] =
-        if (result.groupCount != pathVariables.size) throw new RuntimeException("Internal error, unexpected number of groups")
-        else (pathVariables zip result.subgroups).toMap
+    def processResult(result: Match): Map[String, String] =
+      if (result.groupCount != pathVariables.size) throw new RuntimeException("Internal error, unexpected number of groups")
+      else (pathVariables zip result.subgroups).toMap
 
     val matchResult = regex.findAllMatchIn(path).toSeq
     matchResult match {

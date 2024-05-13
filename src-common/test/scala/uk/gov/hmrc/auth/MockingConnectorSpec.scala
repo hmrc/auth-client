@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.auth
 
-import org.mockito.ArgumentMatchers.{any, eq => equalTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito
 import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
@@ -33,7 +33,7 @@ class MockingConnectorSpec extends AnyWordSpec with MockitoSugar {
 
   "Auth connector" should {
     "allow mocking of response" in {
-      implicit val hc = mock[HeaderCarrier]
+      implicit val hc: HeaderCarrier = mock[HeaderCarrier]
       val mockAuthConnector: AuthConnector = mock[AuthConnector]
       val retrievalResult: Future[~[Credentials, Enrolments]] = Future.successful(new ~(Credentials("gg", "cred-1234"), Enrolments(Set(Enrolment("enrolment-value")))))
 
@@ -42,8 +42,8 @@ class MockingConnectorSpec extends AnyWordSpec with MockitoSugar {
 
       mockAuthConnector.authorise(EmptyPredicate, Retrievals.credentials and Retrievals.authorisedEnrolments)
 
-      Mockito.verify(mockAuthConnector).authorise(equalTo(EmptyPredicate),
-                                                  equalTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
+      Mockito.verify(mockAuthConnector).authorise(eqTo(EmptyPredicate),
+                                                  eqTo(Retrievals.credentials and Retrievals.authorisedEnrolments))(any(), any())
     }
   }
 

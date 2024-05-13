@@ -91,10 +91,10 @@ case class Enrolment(
 }
 
 object Enrolment {
-  implicit val idFormat = Json.format[EnrolmentIdentifier]
-  implicit val writes = Json.writes[Enrolment].transform { json: JsObject =>
+  implicit val idFormat: Format[EnrolmentIdentifier] = Json.format[EnrolmentIdentifier]
+  implicit val writes: Writes[Enrolment] = Json.writes[Enrolment].transform { (json: JsObject) =>
     val JsObject(props) = json
-    JsObject(props + ("enrolment" -> props("key")) - "key")
+    JsObject(props.toMap + ("enrolment" -> props("key")) - "key")
   }
   implicit val reads: Reads[Enrolment] = ((__ \ "key").read[String] and
     (__ \ "identifiers").readNullable[Seq[EnrolmentIdentifier]] and
@@ -113,12 +113,14 @@ object Enrolment {
 
 case class Enrolments(enrolments: Set[Enrolment]) {
 
-  def getEnrolment(key: String): Option[Enrolment] = enrolments.find(_.key.equalsIgnoreCase(key))
+  def getEnrolment(key: String): Option[Enrolment] =
+    enrolments.find(_.key.equalsIgnoreCase(key))
 
 }
 
 trait AffinityGroup extends Predicate {
-  def toJson: JsValue = Json.obj("affinityGroup" -> getClass.getSimpleName.dropRight(1))
+  def toJson: JsValue =
+    Json.obj("affinityGroup" -> getClass.getSimpleName.dropRight(1))
 }
 
 object AffinityGroup {
@@ -131,16 +133,17 @@ object AffinityGroup {
 
   private val mapping = Mappings.mapEnum[AffinityGroup](Individual, Organisation, Agent)
 
-  implicit val jsonFormat = mapping.jsonFormat
+  implicit val jsonFormat: Format[AffinityGroup] = mapping.jsonFormat
 }
 
 trait CredentialRole extends Predicate {
-  def toJson: JsValue = Json.obj("credentialRole" -> getClass.getSimpleName.dropRight(1).toLowerCase)
+  def toJson: JsValue =
+    Json.obj("credentialRole" -> getClass.getSimpleName.dropRight(1).toLowerCase)
 }
 
 case object User extends CredentialRole
 
-@deprecated("Admin and User are equivalent. In the future Admin will be removed. Use User instead!")
+@deprecated("Admin and User are equivalent. In the future Admin will be removed. Use User instead!", since = "2.26.0")
 case object Admin extends CredentialRole
 
 case object Assistant extends CredentialRole
@@ -148,7 +151,7 @@ case object Assistant extends CredentialRole
 object CredentialRole {
   private val mapping = Mappings.mapEnum[CredentialRole](Admin, Assistant, User)
 
-  implicit val reads = mapping.jsonFormat
+  implicit val reads: Format[CredentialRole] = mapping.jsonFormat // Note, type is Format not Reads (backward compatibility)
 }
 
 trait AuthProvider
@@ -176,8 +179,8 @@ case class Nino(hasNino: Boolean, nino: Option[String] = None) extends Predicate
 }
 
 object Nino {
-  implicit val reads = Json.reads[Nino]
-  implicit val writes = Json.writes[Nino]
+  implicit val reads: Reads[Nino] = Json.reads[Nino]
+  implicit val writes: Writes[Nino] = Json.writes[Nino]
 }
 
 case class BusinessKey(name: String, value: String)

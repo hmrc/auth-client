@@ -31,7 +31,7 @@ class AuthorisedFunctionsSpec extends AnyWordSpec with ScalaFutures {
 
   private trait Setup extends AuthorisedFunctions {
 
-    implicit lazy val hc = HeaderCarrier()
+    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     def success: Any = ()
 

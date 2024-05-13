@@ -20,20 +20,20 @@ import play.api.libs.json._
 import uk.gov.hmrc.auth.core._
 import java.time.{Instant, LocalDate}
 
-@deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", "2.11.0-play-26")
+@deprecated("Please use uk.gov.hmrc.auth.core.retrieve.v2.Retrievals instead", since = "2.11.0-play-26")
 trait Retrievals {
 
   val internalId: Retrieval[Option[String]] = OptionalRetrieval("internalId", Reads.StringReads)
   val externalId: Retrieval[Option[String]] = OptionalRetrieval("externalId", Reads.StringReads)
   val credentialStrength: Retrieval[Option[String]] = OptionalRetrieval("credentialStrength", Reads.StringReads)
   val agentCode: Retrieval[Option[String]] = OptionalRetrieval("agentCode", Reads.StringReads)
-  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri")
+  @deprecated("Use retrievals that fetch user details data directly as opposed to retrieve json using the uri", since = "2.4.0")
   val userDetailsUri: Retrieval[Option[String]] = OptionalRetrieval("userDetailsUri", Reads.StringReads)
   val affinityGroup: Retrieval[Option[AffinityGroup]] = OptionalRetrieval("affinityGroup", AffinityGroup.jsonFormat)
   val loginTimes: Retrieval[LoginTimes] = SimpleRetrieval("loginTimes", LoginTimes.reads)
-  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments))
-  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments))
-  @deprecated("Use 'credentials' retrieval")
+  val allEnrolments: Retrieval[Enrolments] = SimpleRetrieval("allEnrolments", Reads.set[Enrolment].map(Enrolments.apply))
+  val authorisedEnrolments: Retrieval[Enrolments] = SimpleRetrieval("authorisedEnrolments", Reads.set[Enrolment].map(Enrolments.apply))
+  @deprecated("Use 'credentials' retrieval", since = "2.4.0")
   val authProviderId: Retrieval[LegacyCredentials] = SimpleRetrieval("authProviderId", LegacyCredentials.reads)
   val mdtpInformation: Retrieval[Option[MdtpInformation]] = OptionalRetrieval("mdtpInformation", MdtpInformation.reads)
   val gatewayInformation: Retrieval[Option[GatewayInformation]] = OptionalRetrieval("gatewayInformation", GatewayInformation.reads)
@@ -102,16 +102,16 @@ case class StandardApplication(clientId: String) extends LegacyCredentials
 object LegacyCredentials {
   val reads: Reads[LegacyCredentials] = Reads[LegacyCredentials] { json =>
 
-      def toCreds(json: JsLookupResult, f: String => LegacyCredentials): Seq[LegacyCredentials] = json match {
-        case JsDefined(JsString(value)) => Seq(f(value))
-        case _: JsUndefined             => Seq()
-        case JsDefined(json)            => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
-      }
+    def toCreds(json: JsLookupResult, f: String => LegacyCredentials): Seq[LegacyCredentials] = json match {
+      case JsDefined(JsString(value)) => Seq(f(value))
+      case _: JsUndefined             => Seq()
+      case JsDefined(json)            => throw new RuntimeException(s"Illegal credentials format: ${Json.stringify(json)}")
+    }
 
-    toCreds(json \ "ggCredId", GGCredId) ++
-      toCreds(json \ "paClientId", PAClientId) ++
-      toCreds(json \ "clientId", StandardApplication) ++
-      toCreds(json \ "applicationId", StandardApplication) ++ // for backwards compatibility
+    toCreds(json \ "ggCredId", GGCredId.apply) ++
+      toCreds(json \ "paClientId", PAClientId.apply) ++
+      toCreds(json \ "clientId", StandardApplication.apply) ++
+      toCreds(json \ "applicationId", StandardApplication.apply) ++ // for backwards compatibility
       toCreds(json \ "oneTimeLogin", _ => OneTimeLogin) match {
         case Seq(creds) => JsSuccess(creds)
         case _          => JsError(s"Illegal format for credentials: ${Json.stringify(json)}")
@@ -122,8 +122,8 @@ object LegacyCredentials {
 case class LoginTimes(currentLogin: Instant, previousLogin: Option[Instant])
 
 object LoginTimes {
-  implicit val dateTimeReads = Reads.DefaultInstantReads
-  val reads = Json.reads[LoginTimes]
+  private implicit val dateTimeReads: Reads[Instant] = Reads.DefaultInstantReads
+  val reads: Reads[LoginTimes] = Json.reads[LoginTimes]
 }
 
 case class AgentInformation(
@@ -132,7 +132,7 @@ case class AgentInformation(
     agentFriendlyName: Option[String])
 
 object AgentInformation {
-  val reads = Json.reads[AgentInformation]
+  val reads: Reads[AgentInformation] = Json.reads[AgentInformation]
 }
 
 case class ItmpName(
@@ -141,7 +141,7 @@ case class ItmpName(
     familyName: Option[String])
 
 object ItmpName {
-  val reads = Json.reads[ItmpName]
+  val reads: Reads[ItmpName] = Json.reads[ItmpName]
 }
 
 case class ItmpAddress(
