@@ -26,6 +26,8 @@ import uk.gov.hmrc.core.utils.{ AuthUtils, BaseSpec }
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import play.api.libs.ws.writeableOf_JsValue
+
 class RetrievalsSpec extends BaseSpec with AuthUtils {
 
   "Credentials" should {
