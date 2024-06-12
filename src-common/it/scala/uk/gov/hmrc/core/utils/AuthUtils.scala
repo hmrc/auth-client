@@ -17,11 +17,11 @@
 package uk.gov.hmrc.core.utils
 
 import java.util.UUID
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.WsTestClient
-import uk.gov.hmrc.auth.core.{ AuthorisedFunctions, Enrolment, EnrolmentIdentifier }
-import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HeaderNames }
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HeaderNames}
 
 import scala.util.Random
 

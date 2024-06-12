@@ -17,12 +17,12 @@
 package uk.gov.hmrc.core.retrieve.v2
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.auth.core.{ ConfidenceLevel, MissingBearerToken }
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.core.utils.{ AuthUtils, BaseSpec }
+import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
