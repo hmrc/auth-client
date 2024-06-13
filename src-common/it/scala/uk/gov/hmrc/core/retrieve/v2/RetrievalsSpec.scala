@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.core.retrieve.v2
 
+import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -23,12 +24,14 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import play.api.libs.ws.writeableOf_JsValue
 
-class RetrievalsSpec extends BaseSpec with AuthUtils {
+import java.util.UUID
+
+class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
   "Credentials" should {
     "retrieve the correct data" in {
@@ -72,6 +75,19 @@ class RetrievalsSpec extends BaseSpec with AuthUtils {
       val trustedHelper: Option[TrustedHelper] = authorised().retrieve(Retrievals.trustedHelper)(Future.successful).futureValue
 
       trustedHelper shouldBe Some(TrustedHelper("principalName", "attorneyName", "returnLinkUrl", principalNino = None))
+    }
+
+    "retrieve agent data correctly" in {
+      val agentId = s"agentId-${UUID.randomUUID().toString}"
+      val agentCode = s"agentCode-${UUID.randomUUID().toString}"
+      val agentFriendlyName = s"agentFriendlyName-${UUID.randomUUID().toString}"
+
+      implicit val headerCarrier = signWithAgentInfo(agentId, agentCode, agentFriendlyName)
+
+      val agentInformation = authorised().retrieve(Retrievals.agentInformation)(Future.successful).futureValue
+      agentInformation.agentId.value shouldBe agentId
+      agentInformation.agentCode.value shouldBe agentCode
+      agentInformation.agentFriendlyName.value shouldBe agentFriendlyName
     }
   }
 

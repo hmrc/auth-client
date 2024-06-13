@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.auth.clientversion
 
+import uk.gov.hmrc.http.BuildInfo
+
 /**
  * returns auth-client-x.x.x string as derived using the sbt-buildinfo plugin and associated build.sbt settings.
  * (See https://github.com/sbt/sbt-buildinfo)
