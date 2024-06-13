@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.core.utils
 
-import java.util.UUID
-import play.api.libs.json.{ Json, OFormat }
+import play.api.libs.json.{Json, OFormat}
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.WsTestClient
-import uk.gov.hmrc.auth.core.{ AuthorisedFunctions, Enrolment, EnrolmentIdentifier }
-import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HeaderNames }
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, EnrolmentIdentifier}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HeaderNames}
 
+import java.util.UUID
 import scala.util.Random
 
 trait AuthUtils extends AuthorisedFunctions with WsTestClient {
@@ -56,6 +56,30 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
     HeaderCarrier(
       authorization = exchangeResult.header(HeaderNames.authorisation).map(Authorization.apply))
 
+  }
+
+  def signWithAgentInfo(agentId: String, agentCode: String, agentFriendlyName: String): HeaderCarrier = {
+
+    val request = Json.obj(
+      "credId" -> randomCredId,
+      "nino" -> randomNino,
+      "groupIdentifier" -> randomGroupId,
+      "usersName" -> "An Agent",
+      "email" -> "someemail@email.com",
+      "affinityGroup" -> "Individual",
+      "confidenceLevel" -> 200,
+      "credentialStrength" -> "strong",
+      "credentialRole" -> "Admin",
+      "agentId" -> agentId,
+      "agentCode" -> agentCode,
+      "agentFriendlyName" -> agentFriendlyName,
+      "enrolments" -> Json.toJson(Seq.empty[Enrolment]))
+    val exchangeResult = withClient { ws => ws.url(authLoginApiResource("/government-gateway/session/login")).post(request).futureValue }
+
+    exchangeResult.status shouldBe 201
+
+    HeaderCarrier(
+      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
   }
 
 }

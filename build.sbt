@@ -41,9 +41,27 @@ lazy val authClient = Project("auth-client", file("auth-client"))
 val sharedSources = Seq(
   Compile         / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/main/scala",
   Compile         / unmanagedResourceDirectories += baseDirectory.value / s"../src-common/main/resources",
+  Test            / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/it/scala",
   Test            / unmanagedSourceDirectories   += baseDirectory.value / s"../src-common/test/scala",
   Test            / unmanagedResourceDirectories += baseDirectory.value / s"../src-common/test/resources"
 )
+
+/**
+ * declared as a module so that the IDE can resolve dependencies and allow easier development
+ * Should generally depend on the latest play version deps
+ */
+lazy val srcCommon = Project("src-common", file("src-common"))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    libraryDependencies ++= BuildDependencies.play30,
+    sharedSources
+    )
+  .settings( //see https://github.com/sbt/sbt-buildinfo
+             buildInfoKeys    := Seq[BuildInfoKey](name, version),
+             buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
+             )
+  .settings(ScoverageSettings())
+  .settings(ScalariformSettings())
 
 lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-play-28"))
   .enablePlugins(BuildInfoPlugin)
