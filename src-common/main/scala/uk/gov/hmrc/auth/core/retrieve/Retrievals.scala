@@ -167,3 +167,10 @@ case class GatewayInformation(gatewayToken: Option[String])
 object GatewayInformation {
   val reads = Json.reads[GatewayInformation]
 }
+
+case class ScpInformation(
+    scpSessionId:     Option[String],
+    trustId:          Option[String],
+    trustIdChangedAt: Option[String],
+    trustIdChangedBy: Option[String]
+)

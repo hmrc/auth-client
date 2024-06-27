@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.core.utils
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, EnrolmentIdentifier}
@@ -58,7 +58,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
 
   }
 
-  def signWithAgentInfo(agentId: String, agentCode: String, agentFriendlyName: String): HeaderCarrier = {
+  def signWithAgentInfo(agentId: String, agentCode: String, agentFriendlyName: String, extraFields: Map[String, JsValue] = Map.empty): HeaderCarrier = {
 
     val request = Json.obj(
       "credId" -> randomCredId,
@@ -73,7 +73,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
       "agentId" -> agentId,
       "agentCode" -> agentCode,
       "agentFriendlyName" -> agentFriendlyName,
-      "enrolments" -> Json.toJson(Seq.empty[Enrolment]))
+      "enrolments" -> Json.toJson(Seq.empty[Enrolment])) ++ JsObject(extraFields)
     val exchangeResult = withClient { ws => ws.url(authLoginApiResource("/government-gateway/session/login")).post(request).futureValue }
 
     exchangeResult.status shouldBe 201

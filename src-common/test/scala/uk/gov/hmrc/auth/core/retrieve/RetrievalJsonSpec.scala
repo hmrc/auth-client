@@ -452,4 +452,55 @@ class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
     }
   }
 
+  "The JSON reads for the scpInformation fields" should {
+    import v2.Retrievals.{scpInformation, scpSessionId, trustId, trustIdChangedAt, trustIdChangedBy}
+    val json = Json.parse(
+      """{
+        |  "scpSessionId": "c88b769e-23e2-429c-aafc-9eba02e466f0",
+        |  "trustId": "e7de76f4-8acb-49e5-b351-27f625b86f2b",
+        |  "trustIdChangedAt": "2024-01-01T12:00:00.000Z",
+        |  "trustIdChangedBy": "someUser"
+        |}""".stripMargin)
+
+    "read the values from the Json separately" in {
+      scpSessionId.reads.reads(json).get shouldBe Some("c88b769e-23e2-429c-aafc-9eba02e466f0")
+      trustId.reads.reads(json).get shouldBe Some("e7de76f4-8acb-49e5-b351-27f625b86f2b")
+      trustIdChangedAt.reads.reads(json).get shouldBe Some("2024-01-01T12:00:00.000Z")
+      trustIdChangedBy.reads.reads(json).get shouldBe Some("someUser")
+    }
+
+    "read the values from the Json together" in {
+      scpInformation.reads.reads(json).get shouldBe ScpInformation(
+        trustId          = Some("e7de76f4-8acb-49e5-b351-27f625b86f2b"),
+        scpSessionId     = Some("c88b769e-23e2-429c-aafc-9eba02e466f0"),
+        trustIdChangedAt = Some("2024-01-01T12:00:00.000Z"),
+        trustIdChangedBy = Some("someUser")
+      )
+    }
+
+    "read missing values as None from the Json" in {
+      val json = Json.obj()
+
+      scpInformation.reads.reads(json).get shouldBe ScpInformation(None, None, None, None)
+      scpSessionId.reads.reads(json).get shouldBe None
+      trustId.reads.reads(json).get shouldBe None
+      trustIdChangedAt.reads.reads(json).get shouldBe None
+      trustIdChangedBy.reads.reads(json).get shouldBe None
+    }
+  }
+
+  "The JSON reads for identityProviderType" should {
+    import v2.Retrievals.identityProviderType
+
+    "read the value from the Json" in {
+      val json = Json.parse("""{"identityProviderType": "SCP"}""")
+      identityProviderType.reads.reads(json).get shouldBe Some("SCP")
+    }
+
+    "read missing values as None from the Json" in {
+      val json = Json.obj()
+      identityProviderType.reads.reads(json).get shouldBe None
+    }
+  }
+
 }
