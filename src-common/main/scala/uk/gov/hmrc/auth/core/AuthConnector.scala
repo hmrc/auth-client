@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.auth.core
 
+import play.api.Logging
+import play.api.http.HeaderNames
 import play.api.libs.json._
 import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, Retrieval}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 
@@ -30,7 +33,7 @@ trait AuthConnector {
   def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A]
 }
 
-trait PlayAuthConnector extends AuthConnector {
+trait PlayAuthConnector extends AuthConnector with Logging {
   implicit val legacyRawReads: HttpReads[HttpResponse] =
     HttpReads.Implicits.throwOnFailure(HttpReads.Implicits.readEitherOf(HttpReads.Implicits.readRaw))
 
@@ -49,6 +52,8 @@ trait PlayAuthConnector extends AuthConnector {
         "authorise" -> predicateJson,
         "retrieve" -> JsArray(retrieval.propertyNames.map(JsString.apply)))
 
+      logIfDeprecated(retrieval) // GG-7679 log a warning if using the deprecated 'name' retrieval
+
       httpClientV2
         .post(url"$serviceUrl/auth/authorise")
         .setHeader("Auth-Client-Version" -> ClientVersion.toString)
@@ -60,10 +65,26 @@ trait PlayAuthConnector extends AuthConnector {
             case bdy  => bdy.as[A](retrieval.reads)
           }
         }.recoverWith {
+          case res @ UpstreamErrorResponse.WithStatusCode(403) =>
+            logger.warn(s"GG-7679 service name ${getUserAgent(hc)} generated a Retrievals 403/Forbidden, sessionId: ${hc.sessionId}, requestId: ${hc.requestId}")
+            Future.failed(res)
           case res @ UpstreamErrorResponse.WithStatusCode(401) =>
             Future.failed(AuthenticateHeaderParser.parse(res.headers))
         }
     }
+
+  private def getUserAgent(implicit hc: HeaderCarrier): String = {
+    hc.otherHeaders.toMap.getOrElse(HeaderNames.USER_AGENT, "No User-Agent")
+  }
+
+  private def logIfDeprecated(retrieval: Retrieval[_])(implicit hc: HeaderCarrier): Unit = retrieval match {
+    case Retrievals.name =>
+      logger.warn(s"GG-7679 service name ${getUserAgent(hc)} used deprecated name Retrieval, sessionId: ${hc.sessionId}, requestId: ${hc.requestId}")
+    case CompositeRetrieval(retrievalA, retrievalB) =>
+      logIfDeprecated(retrievalA)
+      logIfDeprecated(retrievalB)
+    case _ => ()
+  }
 }
 
 object AuthenticateHeaderParser {

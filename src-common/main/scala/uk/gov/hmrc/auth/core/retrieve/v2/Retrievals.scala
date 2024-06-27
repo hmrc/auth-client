@@ -19,6 +19,7 @@ package uk.gov.hmrc.auth.core.retrieve.v2
 import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
+
 import java.time.LocalDate
 
 trait Retrievals {
@@ -48,7 +49,10 @@ trait Retrievals {
   val credentialRole: Retrieval[Option[CredentialRole]] = OptionalRetrieval("credentialRole", CredentialRole.reads)
   val agentInformation: Retrieval[AgentInformation] = SimpleRetrieval("agentInformation", AgentInformation.reads)
 
-  val credentials: Retrieval[Option[Credentials]] = OptionalRetrieval("optionalCredentials", Credentials.reads)
+  val credentials: Retrieval[Option[Credentials]] = OptionalRetrieval("optionalCredentials", Credentials.reads) // eg: providerType = "GovernmentGateway", providerId = <credId> | <authProviderId>
+
+  // Deprecated as at 2024-04, see Tech Blog Post dated 2024-02-26
+  @deprecated("See Tech Blog Post dated 2024-02-26.", since = "8.2.0")
   val name: Retrieval[Option[Name]] = OptionalRetrieval("optionalName", Name.reads)
   val itmpName: Retrieval[Option[ItmpName]] = OptionalRetrieval("optionalItmpName", ItmpName.reads)
   val itmpAddress: Retrieval[Option[ItmpAddress]] = OptionalRetrieval("optionalItmpAddress", ItmpAddress.reads)
@@ -77,6 +81,28 @@ trait Retrievals {
 
   val applicationId: Retrieval[Option[String]] = OptionalRetrieval("applicationId", Reads.StringReads)
 
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val scpSessionId: Retrieval[Option[String]] = OptionalRetrieval("scpSessionId", Reads.StringReads)
+
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val trustId: Retrieval[Option[String]] = OptionalRetrieval("trustId", Reads.StringReads)
+
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val trustIdChangedAt: Retrieval[Option[String]] = OptionalRetrieval("trustIdChangedAt", Reads.StringReads)
+
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val trustIdChangedBy: Retrieval[Option[String]] = OptionalRetrieval("trustIdChangedBy", Reads.StringReads)
+
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val scpInformation: Retrieval[ScpInformation] = new Retrieval[ScpInformation] {
+    def propertyNames: Seq[String] = Seq("scpInformation")
+    def reads: Reads[ScpInformation] = (scpSessionId and trustId and trustIdChangedAt and trustIdChangedBy).reads.map {
+      case a ~ b ~ c ~ d => ScpInformation(a, b, c, d)
+    }
+  }
+
+  // An allowlisted Retrieval, only useable by selected internal services, returns 403/Forbidden otherwise.
+  val identityProviderType: Retrieval[Option[String]] = OptionalRetrieval("identityProviderType", Reads.StringReads) // eg: "SCP" or "ONE_LOGIN"
 }
 
 object Retrievals extends Retrievals

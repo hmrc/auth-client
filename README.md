@@ -6,6 +6,19 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+
+
+### v8.2.0 July 2024
+
+Deprecated the 'name' Retrieval as at 04/2024 following a Tech Blog Post dated 2024-02-26.
+
+Added 5 new allowlisted Retrievals; only useable by selected internal services:
+- scpInformation
+- trustId
+- trustIdChangedAt
+- trustIdChangedBy
+- identityProviderType
+
 ### v8.0 May 2024
 Built for Scala 3 and drops Scala 2.12.
 

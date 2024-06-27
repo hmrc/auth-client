@@ -17,19 +17,18 @@
 package uk.gov.hmrc.core.retrieve.v2
 
 import org.scalatest.OptionValues
-import play.api.libs.json.Json
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.v2.TrustedHelper
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.json.{JsString, Json}
 import play.api.libs.ws.writeableOf_JsValue
+import play.api.test.Helpers.USER_AGENT
+import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals, TrustedHelper}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ScpInformation}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
+import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
@@ -88,6 +87,51 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
       agentInformation.agentId.value shouldBe agentId
       agentInformation.agentCode.value shouldBe agentCode
       agentInformation.agentFriendlyName.value shouldBe agentFriendlyName
+    }
+  }
+
+  "scpInformation" should {
+    val randomScpSessionId = UUID.randomUUID().toString
+    val randomTrustId = UUID.randomUUID().toString
+    val extraFields = Map(
+      "scpSessionId" -> JsString(randomScpSessionId),
+      "trustId" -> JsString(randomTrustId),
+      "trustIdChangedAt" -> JsString("2024-01-01T12:00:00.000Z"),
+      "trustIdChangedBy" -> JsString("hmrc"))
+
+    "retrieve individual information correctly" in {
+      implicit val headerCarrier = createSession(extraFields = extraFields)
+        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // these retrievals are allowlisted, restricted to only some services.
+
+      authorised().retrieve(Retrievals.scpSessionId)(Future.successful).futureValue shouldBe Some(randomScpSessionId)
+      authorised().retrieve(Retrievals.trustId)(Future.successful).futureValue shouldBe Some(randomTrustId)
+      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some("2024-01-01T12:00:00.000Z")
+      authorised().retrieve(Retrievals.trustIdChangedBy)(Future.successful).futureValue shouldBe Some("hmrc")
+    }
+
+    "retrieve combined information correctly" in {
+      implicit val headerCarrier = createSession(extraFields = extraFields)
+        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // this retrieval is allowlisted, restricted to only some services.
+
+      val scpInformation = authorised().retrieve(Retrievals.scpInformation)(Future.successful).futureValue
+      scpInformation shouldBe ScpInformation(
+        scpSessionId     = Some(randomScpSessionId),
+        trustId          = Some(randomTrustId),
+        trustIdChangedAt = Some("2024-01-01T12:00:00.000Z"),
+        trustIdChangedBy = Some("hmrc"))
+    }
+  }
+
+  "identityProviderType" should {
+    "retrieve information correctly" in {
+      val agentId = s"agentId-${UUID.randomUUID().toString}"
+      val agentCode = s"agentCode-${UUID.randomUUID().toString}"
+      val agentFriendlyName = s"agentFriendlyName-${UUID.randomUUID().toString}"
+
+      implicit val headerCarrier = createSession(extraFields = Map("identityProviderType" -> JsString("GovernmentGateway")))
+        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // this retrieval is allowlisted, restricted to only some services.
+
+      authorised().retrieve(Retrievals.identityProviderType)(Future.successful).futureValue shouldBe Some("GovernmentGateway")
     }
   }
 
