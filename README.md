@@ -94,13 +94,20 @@ class MyController @Inject() (val authConnector: AuthConnector) extends BaseCont
 
 }
 ```
-
 The AuthConnector instance itself is then usually defined somewhere in your wiring setup:
 ``` scala
 // AuthConnector Wiring
-
 class ConcreteAuthConnector(val serviceUrl: String,
-                            val http: HttpPost) extends PlayAuthConnector
+                            val httpClientV2: HttpClientV2) extends PlayAuthConnector
+```
+Note that you must enable the HttpClientV2Module in application.conf in order to use HttpClientV2:
+```
+play.modules.enabled += "uk.gov.hmrc.play.bootstrap.HttpClientV2Module"
+```
+Alternatively if using the HMRC bootstrap library, an AuthConnector instance can be made available by enabling the following module in application.conf:
+```
+# Provides an implementation of AuthConnector.
+play.modules.enabled += "uk.gov.hmrc.play.bootstrap.AuthModule"
 ```
 
 ---
