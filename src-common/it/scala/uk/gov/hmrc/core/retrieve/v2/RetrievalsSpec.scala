@@ -101,7 +101,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
     "retrieve individual information correctly" in {
       implicit val headerCarrier = createSession(extraFields = extraFields)
-        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // these retrievals are allowlisted, restricted to only some services.
+        .withExtraHeaders((USER_AGENT, "identity-provider-gateway")) // these retrievals are allowlisted, restricted to only some services.
 
       authorised().retrieve(Retrievals.scpSessionId)(Future.successful).futureValue shouldBe Some(randomScpSessionId)
       authorised().retrieve(Retrievals.trustId)(Future.successful).futureValue shouldBe Some(randomTrustId)
@@ -111,7 +111,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
     "retrieve combined information correctly" in {
       implicit val headerCarrier = createSession(extraFields = extraFields)
-        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // this retrieval is allowlisted, restricted to only some services.
+        .withExtraHeaders((USER_AGENT, "identity-provider-gateway")) // this retrieval is allowlisted, restricted to only some services.
 
       val scpInformation = authorised().retrieve(Retrievals.scpInformation)(Future.successful).futureValue
       scpInformation shouldBe ScpInformation(
@@ -124,12 +124,8 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
   "identityProviderType" should {
     "retrieve information correctly" in {
-      val agentId = s"agentId-${UUID.randomUUID().toString}"
-      val agentCode = s"agentCode-${UUID.randomUUID().toString}"
-      val agentFriendlyName = s"agentFriendlyName-${UUID.randomUUID().toString}"
-
-      implicit val headerCarrier = createSession(extraFields = Map("identityProviderType" -> JsString("GovernmentGateway")))
-        .withExtraHeaders(USER_AGENT -> "identity-provider-gateway") // this retrieval is allowlisted, restricted to only some services.
+      implicit val headerCarrier = createSession(extraFields = Map(("identityProviderType", JsString("GovernmentGateway"))))
+        .withExtraHeaders((USER_AGENT, "identity-provider-gateway")) // this retrieval is allowlisted, restricted to only some services.
 
       authorised().retrieve(Retrievals.identityProviderType)(Future.successful).futureValue shouldBe Some("GovernmentGateway")
     }
