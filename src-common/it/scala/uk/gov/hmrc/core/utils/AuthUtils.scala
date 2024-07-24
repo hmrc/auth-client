@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.core.utils
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.WsTestClient
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, EnrolmentIdentifier}
@@ -58,7 +58,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
 
   }
 
-  def signWithAgentInfo(agentId: String, agentCode: String, agentFriendlyName: String): HeaderCarrier = {
+  def signWithAgentInfo(agentId: String, agentCode: String, agentFriendlyName: String, extraFields: Map[String, JsValue] = Map.empty): HeaderCarrier = {
 
     val request = Json.obj(
       "credId" -> randomCredId,
@@ -73,8 +73,30 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
       "agentId" -> agentId,
       "agentCode" -> agentCode,
       "agentFriendlyName" -> agentFriendlyName,
-      "enrolments" -> Json.toJson(Seq.empty[Enrolment]))
+      "enrolments" -> Json.toJson(Seq.empty[Enrolment])) ++ JsObject(extraFields)
     val exchangeResult = withClient { ws => ws.url(authLoginApiResource("/government-gateway/session/login")).post(request).futureValue }
+
+    exchangeResult.status shouldBe 201
+
+    HeaderCarrier(
+      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
+  }
+
+  def createSession(extraFields: Map[String, JsValue] = Map.empty): HeaderCarrier = {
+
+    val request = Json.obj(
+      "credId" -> randomCredId,
+      "nino" -> randomNino,
+      "confidenceLevel" -> 200,
+      "scpSessionId" -> "c88b769e-23e2-429c-aafc-9eba02e466f0",
+      "trustId" -> "e7de76f4-8acb-49e5-b351-27f625b86f2b",
+      "trustIdChangedAt" -> "2024-01-01T12:00:00.000Z",
+      "trustIdChangedBy" -> "hmrc",
+      "enrolments" -> Json.toJson(Seq.empty[Enrolment]),
+      "affinityGroup" -> "Individual",
+      "sso" -> false,
+      "twoFactorAuthEnabled" -> false) ++ JsObject(extraFields)
+    val exchangeResult = withClient { ws => ws.url(authResource("/auth/sessions")).post(request).futureValue }
 
     exchangeResult.status shouldBe 201
 
