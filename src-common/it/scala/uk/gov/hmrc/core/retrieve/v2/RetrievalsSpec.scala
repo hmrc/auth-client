@@ -93,7 +93,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
   "scpInformation" should {
     val randomScpSessionId = UUID.randomUUID().toString
     val randomTrustId = UUID.randomUUID().toString
-    val trustIdChangedAt = "2024-01-01T12:00:00.00Z"
+    val trustIdChangedAt = "2024-01-01T12:00:00Z"
     val extraFields = Map(
       "scpSessionId" -> JsString(randomScpSessionId),
       "trustId" -> JsString(randomTrustId),
