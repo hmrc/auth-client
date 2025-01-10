@@ -93,10 +93,11 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
   "scpInformation" should {
     val randomScpSessionId = UUID.randomUUID().toString
     val randomTrustId = UUID.randomUUID().toString
+    val trustIdChangedAt = "2024-01-01T12:00:00Z"
     val extraFields = Map(
       "scpSessionId" -> JsString(randomScpSessionId),
       "trustId" -> JsString(randomTrustId),
-      "trustIdChangedAt" -> JsString("2024-01-01T12:00:00.000Z"),
+      "trustIdChangedAt" -> JsString(trustIdChangedAt),
       "trustIdChangedBy" -> JsString("hmrc"))
 
     "retrieve individual information correctly" in {
@@ -105,7 +106,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
       authorised().retrieve(Retrievals.scpSessionId)(Future.successful).futureValue shouldBe Some(randomScpSessionId)
       authorised().retrieve(Retrievals.trustId)(Future.successful).futureValue shouldBe Some(randomTrustId)
-      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some("2024-01-01T12:00:00.000Z")
+      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some(trustIdChangedAt)
       authorised().retrieve(Retrievals.trustIdChangedBy)(Future.successful).futureValue shouldBe Some("hmrc")
     }
 
@@ -117,7 +118,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
       scpInformation shouldBe ScpInformation(
         scpSessionId     = Some(randomScpSessionId),
         trustId          = Some(randomTrustId),
-        trustIdChangedAt = Some("2024-01-01T12:00:00.000Z"),
+        trustIdChangedAt = Some(trustIdChangedAt),
         trustIdChangedBy = Some("hmrc"))
     }
   }
