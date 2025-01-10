@@ -105,7 +105,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
       authorised().retrieve(Retrievals.scpSessionId)(Future.successful).futureValue shouldBe Some(randomScpSessionId)
       authorised().retrieve(Retrievals.trustId)(Future.successful).futureValue shouldBe Some(randomTrustId)
-      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some("2024-01-01T12:00:00.000Z")
+      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some("2024-01-01T12:00:00.00Z")
       authorised().retrieve(Retrievals.trustIdChangedBy)(Future.successful).futureValue shouldBe Some("hmrc")
     }
 
@@ -117,7 +117,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
       scpInformation shouldBe ScpInformation(
         scpSessionId     = Some(randomScpSessionId),
         trustId          = Some(randomTrustId),
-        trustIdChangedAt = Some("2024-01-01T12:00:00.000Z"),
+        trustIdChangedAt = Some("2024-01-01T12:00:00.00Z"),
         trustIdChangedBy = Some("hmrc"))
     }
   }
