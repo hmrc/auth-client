@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
 import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.Instant
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -94,6 +95,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
     val randomScpSessionId = UUID.randomUUID().toString
     val randomTrustId = UUID.randomUUID().toString
     val trustIdChangedAt = "2024-01-01T12:00:00Z"
+    val trustIdChangedAtInstant = Instant.parse(trustIdChangedAt)
     val extraFields = Map(
       "scpSessionId" -> JsString(randomScpSessionId),
       "trustId" -> JsString(randomTrustId),
@@ -106,7 +108,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
 
       authorised().retrieve(Retrievals.scpSessionId)(Future.successful).futureValue shouldBe Some(randomScpSessionId)
       authorised().retrieve(Retrievals.trustId)(Future.successful).futureValue shouldBe Some(randomTrustId)
-      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue shouldBe Some(trustIdChangedAt)
+      authorised().retrieve(Retrievals.trustIdChangedAt)(Future.successful).futureValue.map(Instant.parse) shouldBe Some(trustIdChangedAtInstant)
       authorised().retrieve(Retrievals.trustIdChangedBy)(Future.successful).futureValue shouldBe Some("hmrc")
     }
 
@@ -115,11 +117,10 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
         .withExtraHeaders((USER_AGENT, "identity-provider-gateway")) // this retrieval is allowlisted, restricted to only some services.
 
       val scpInformation = authorised().retrieve(Retrievals.scpInformation)(Future.successful).futureValue
-      scpInformation shouldBe ScpInformation(
-        scpSessionId     = Some(randomScpSessionId),
-        trustId          = Some(randomTrustId),
-        trustIdChangedAt = Some(trustIdChangedAt),
-        trustIdChangedBy = Some("hmrc"))
+      scpInformation.scpSessionId shouldBe Some(randomScpSessionId)
+      scpInformation.trustId shouldBe Some(randomTrustId)
+      scpInformation.trustIdChangedAt.map(Instant.parse) shouldBe Some(trustIdChangedAtInstant)
+      scpInformation.trustIdChangedBy shouldBe Some("hmrc")
     }
   }
 
