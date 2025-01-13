@@ -7,6 +7,9 @@ Library for supporting user authorisation on microservices.
 ## Change History
 
 
+### v8.3.0 January 2025
+
+Fixed a bug where the client version was being incorrectly reported in the Auth-Client-Version header.
 
 ### v8.2.0 July 2024
 

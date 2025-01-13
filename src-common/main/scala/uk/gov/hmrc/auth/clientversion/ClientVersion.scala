@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.auth.clientversion
 
-import uk.gov.hmrc.http.BuildInfo
-
 /**
  * returns auth-client-x.x.x string as derived using the sbt-buildinfo plugin and associated build.sbt settings.
  * (See https://github.com/sbt/sbt-buildinfo)
@@ -25,9 +23,11 @@ import uk.gov.hmrc.http.BuildInfo
 object ClientVersion {
   private val versionRegex = raw"([0-9]+\.[0-9]+\.[0-9]+).*".r
 
-  val version = BuildInfo.version match {
+  // we are using the fully qualified class name to avoid referring to the wrong BuildInfo by accident
+  // (as other libraries may define their own BuildInfo as we have seen before)
+  val version = uk.gov.hmrc.auth.clientversion.BuildInfo.version match {
     case versionRegex(version) => version
-    case _                     => throw new RuntimeException(s"auth-client version could not be determined from BuildInfo.version : ${BuildInfo.version}")
+    case other                 => throw new RuntimeException(s"auth-client version could not be determined from BuildInfo.version : $other")
   }
 
   val name = "auth-client"

@@ -16,20 +16,23 @@
 
 package uk.gov.hmrc.auth.core
 
-import com.github.tomakehurst.wiremock.client.{ResponseDefinitionBuilder, WireMock}
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => _, _}
-import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
+import com.github.tomakehurst.wiremock.client.{ResponseDefinitionBuilder, WireMock}
+import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders, RequestMethod}
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import com.github.tomakehurst.wiremock.verification.LoggedRequest
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.auth.clientversion.ClientVersion
 import uk.gov.hmrc.auth.core.retrieve.{CompositeRetrieval, EmptyRetrieval, SimpleRetrieval, ~}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.auth.{Bar, Foo, TestPredicate1}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.{HttpClientV2Support, WireMockSupport}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.jdk.CollectionConverters.ListHasAsScala
 
 object Status {
   val OK = 200
@@ -268,6 +271,31 @@ class AuthConnectorSpec
       val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
 
       result.failed.futureValue shouldBe a[MissingBearerToken]
+    }
+
+    // This test is to check the bugfix GG-8308 where an 8.x.x client version was incorrectly being reported as 15.x.x.
+    // The test should be removed by the time the real auth-client-version actually reaches 15.
+    "[GG-8308] not use an incorrect client version in the Auth-Client-Version header" in new Setup {
+      def checkAuthClientVersionIsBelow15(authClientVersion: String): Unit = {
+        val majorVersionRegex = """auth-client-([0-9]+)\..*""".r
+        authClientVersion match {
+          case majorVersionRegex(majorVersion) => majorVersion.toInt should be < 15
+          case _                               => fail(s"client version header absent or in unexpected format: $clientVersionHeader")
+        }
+      }
+
+      // The simple check in the line below should be sufficient...
+      checkAuthClientVersionIsBelow15(ClientVersion.toString)
+      // ...however to be safer we now also check the actual headers sent in the request:
+
+      implicit lazy val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+      val result = authConnector.authorise(TestPredicate1("aValue"), EmptyRetrieval)
+
+      result.futureValue
+
+      val authoriseRequests: Seq[LoggedRequest] = wireMockServer.findRequestsMatching(RequestPatternBuilder.newRequestPattern(RequestMethod.POST, urlPathMatching(".*/auth/authorise")).build()).getRequests().asScala.toSeq
+      val clientVersionHeader = authoriseRequests.head.getHeader("Auth-Client-Version")
+      checkAuthClientVersionIsBelow15(clientVersionHeader)
     }
   }
 }
