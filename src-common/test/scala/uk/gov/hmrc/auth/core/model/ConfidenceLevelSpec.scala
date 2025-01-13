@@ -31,20 +31,29 @@ class ConfidenceLevelSpec extends UnitSpec {
       val cl200 = ConfidenceLevel.fromInt(200).get
       val cl250 = ConfidenceLevel.fromInt(250).get
       val cl500 = ConfidenceLevel.fromInt(500).get
+      val cl600 = ConfidenceLevel.fromInt(600).get
 
       cl50 should be < cl200
       cl200 should be < cl250
       cl250 should be < cl500
+      cl500 should be < cl600
     }
 
     "be serializable to Json" in {
       L500.toJson shouldBe Json.obj("confidenceLevel" -> 500)
+      L600.toJson shouldBe Json.obj("confidenceLevel" -> 600)
     }
 
     "have a confidence level 250" in {
       val cl250 = ConfidenceLevel.fromInt(250)
       cl250.isSuccess shouldBe true
       cl250.get shouldBe L250
+    }
+
+    "have a confidence level 600" in {
+      val cl600 = ConfidenceLevel.fromInt(600)
+      cl600.isSuccess shouldBe true
+      cl600.get shouldBe L600
     }
 
     "not accept invalid level values" in {

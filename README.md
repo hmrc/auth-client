@@ -6,6 +6,12 @@ Library for supporting user authorisation on microservices.
 
 ## Change History
 
+### v8.4.0 February 2025
+
+Added CL600 for OLfG (One Login).
+Removed Play 2.8 support.
+Updated dependencies.
+Minor README clarifications.
 
 ### v8.3.0 January 2025
 
@@ -100,7 +106,9 @@ Note that this library is only available for Play 2.8.x and 2.9.x. No other play
 
 The overall approach is to add the library and take advantage of it by extending various classes. When a user first logs in they will not have an active session, and this must be handled by ensuring that your play global object extends uk.gov.hmrc.auth.frontend.Redirects and has overridden the 'resolveError' method that it provides. Your method should contain a NoActiveSession case and a default case as a bare minimum, see the Error handling / Redirects section below for more detail.
 
-"auth-client is automatically included in your service, and is a transitive dependency provided by bootstrap-play which all microservices have within them. So there is no need to add auth-client as an explicit dependency. Additionally, keep the service's bootstrap-play library up to date so as to bring in the latest auth-client. Ideally, increment bootstrap-play to the latest version every time a microservice is updated. Same for the other library dependencies."
+Provides the interface to the platform standard authentication and authorisation service via authorised(). Use Predicates wherever possible to state up-front what the user's account profile should be before they return back to your service. Then use Retrievals to obtain the user's account details.
+
+auth-client is automatically included in your service, and is a transitive dependency provided by bootstrap-play which all microservices have within them. So there is no need to add auth-client as an explicit dependency. Additionally, keep the service's bootstrap-play library up to date so as to bring in the latest auth-client. Ideally, increment [bootstrap-play](https://github.com/hmrc/bootstrap-play) to the latest version every time a microservice is updated. Same for the other library dependencies.
 
 ### Using the function wrapper
 First, in any controller, service or connector where you want to protect any part of your logic, mix in the AuthorisedFunctions trait:
@@ -194,102 +202,6 @@ authorised(ConfidenceLevel.L250).retrieve(Retrievals.confidenceLevel) {
   case confidenceLevel => // logic
 }
 ```
-
----
-### Using Play Configuration - DEPRECATED
-
-The config based approach should not be used for frontends.  A frontend will generally require more control over the handling of authorisation errors than is available in the filter chain to avoid raw http errors surfacing in the user''s browser.  Whilst this is not true of backend services which will generally just return any http error codes resulting from calls within the filter chain we believe that the wrapper function is a better approach being easier to understand, more explicit and more flexible.
-
-The following shows an example for a configuration for two controllers:
-``` YAML
-controllers {
-
-  authorisation {
-
-    sa = {
-      patterns = [
-        "/my-service/enrolment1/:identifier"
-        "/other-service/enrolment1/:identifier/"
-      ]
-      predicates = [{
-        enrolment = "ENROLMENT1"
-        identifiers = [{ key = "SOME-IDENTIFIER-KEY", value = "identifier" }]
-      }]
-    }
-
-    ct = {
-      patterns = [
-        "/my-service/enrolment2/:identifier"
-        "/other-service/enrolment2/:identifier/:rest"
-      ]
-      predicates = [{
-        enrolment = "ENROLMENT2"
-        identifiers = [{ key = "SOME-IDENTIFIER-KEY", value = "identifier" }]
-      }]
-    }
-
-  }
-
-  foo.FooController = {
-    authorisedBy = ["enrolment1", "enrolment2"]
-    needsLogging = false
-    needsAuditing = false
-  }
-
-  bar.BarController = {
-    authorisedBy = ["enrolment1"]
-    needsLogging = false
-    needsAuditing = false
-  }
-
-}
-```
-The example shows all aspects you need to define for protecting your endpoints:
-#### 1. Add one or more authorisation sections
-Inside the controllers section in the play configuration for your microservice, add an authorisation section, that contains one or more sections that define a concrete authorisation setup. In the example there are two sections named enrolment1 and enrolment2 respectively.
-#### 2. Specify one or more URI patterns in each authorisation section
-Within these sections, define one or more patterns for URIs that should be affected by this configuration. In the example both sections contain two path patterns each:
-``` YAML
-patterns = [
-  "/my-service/enrolment1/:identifier"
-  "/other-service/enrolment1/:identifier/"
-]
-```
-Note that the pattern syntax is close to the one used for Play routes definition, it is not a regular expression like in our older library. Both paths above have several literal path elements like enrolment1, and one dynamic path element each (:identifier). These dynamic path elements match any string and the actual concrete value can be referred to in the predicate definitions as shown further below. For each incoming request the paths will be tried against the URI of the request in the order they are defined until one of them matches.
-#### 3. Specify zero or more predicates in each authorisation section
-Below the path patterns, define zero or any number of predicates that define the authorisation requirements for each incoming request:
-``` YAML
-predicates = [{
-  enrolment = "ENROLMENT1"
-  identifiers = [{ key = "SOME-IDENTIFIER-KEY", value = "identifier" }]
-}]
-```
-In this example there is just one predicate. It specifies that the current user has to have an ENROLMENT-1 enrolment with a specific SOME-IDENTIFIER-KEY extracted from the URI. This ensures that all calls happen in this specific context. But as you see the predicates property is an array, so you can specify any number of predicates. They are combined with an implicit AND, if you need an OR combinator, you can use a mongo-style $or property:
-``` YAML
-predicates = [{
-  $or = [
-    { affinityGroup = "Organisation" }
-    { affinityGroup = "Individual" }
-  ]
-}]
-```
-Here the endpoint is blocked for all agents, as we only allow either Organisations or Individuals in. Finally, like with the Scala API you can omit predicates altogether with an empty array:
-``` YAML
-predicates = []
-```
-In this case the filter will only check that the user is currently logged into the platform and has a bearer token in her session that is not yet expired.
-For all the available predicates you can use see the Predicate Reference page.
-#### 4. Link protected controllers to the authorisation sections you defined.
-In our example one controller is linked to 2 authorisation presets:
-``` YAML
-foo.FooController = {
-  authorisedBy = ["enrolment1", "enrolment2"]
-  needsLogging = false
-  needsAuditing = false
-}
-```
-Here it will first try the 2 patterns defined in the "enrolment1" preset, and if any of the 2 matches, apply the predicates defined in there. If none of them matches, it tries the 2 patterns defined in the enrolment2 preset, and again, if any of the 2 matches, applies the predicates in that section. If no pattern matches it is considered an insecure call which will lead to a 401 response. This is to avoid that a new endpoint that got added to an existing controller with a pattern that does not match does not accidentally become unprotected. As a consequence this means that within a single controller all endpoints are either protected or not. If you need more flexibility, use the Scala API inside your controller implementations.
-If you want to leave a controller unprotected, simply omit the authorisedBy predicate.
 
 ---
 ### Error handling

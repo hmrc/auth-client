@@ -38,7 +38,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
 
   def authResource(resource: String): String = s"http://localhost:8500$resource"
 
-  def signInGGWithAuthLoginApi(credId: String = randomCredId, enrolments: Set[Enrolment] = Set.empty, nino: Option[String] = None, groupId: String = randomGroupId): HeaderCarrier = {
+  def signInGGWithAuthLoginApi(credId: String = randomCredId, enrolments: Set[Enrolment] = Set.empty, nino: Option[String] = None, groupId: String = randomGroupId, confidenceLevel: Int = 250): HeaderCarrier = {
     implicit val idFormat: OFormat[EnrolmentIdentifier] = Json.format[EnrolmentIdentifier]
     implicit val enrolmentsFormat: OFormat[Enrolment] = Json.format[Enrolment]
 
@@ -46,7 +46,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
       "credId" -> credId,
       "groupIdentifier" -> groupId,
       "affinityGroup" -> "Individual",
-      "confidenceLevel" -> 250,
+      "confidenceLevel" -> confidenceLevel,
       "credentialStrength" -> "strong",
       "enrolments" -> Json.toJson(enrolments)) ++ nino.map(n => Json.obj("nino" -> nino)).getOrElse(Json.obj())
     val exchangeResult = withClient { ws => ws.url(authLoginApiResource("/government-gateway/session/login")).post(request).futureValue }
@@ -79,7 +79,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
     exchangeResult.status shouldBe 201
 
     HeaderCarrier(
-      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
+      authorization = exchangeResult.header(HeaderNames.authorisation).map(Authorization.apply))
   }
 
   def createSession(extraFields: Map[String, JsValue] = Map.empty): HeaderCarrier = {
@@ -101,7 +101,7 @@ trait AuthUtils extends AuthorisedFunctions with WsTestClient {
     exchangeResult.status shouldBe 201
 
     HeaderCarrier(
-      authorization = exchangeResult.header(HeaderNames.authorisation) map Authorization)
+      authorization = exchangeResult.header(HeaderNames.authorisation).map(Authorization.apply))
   }
 
 }

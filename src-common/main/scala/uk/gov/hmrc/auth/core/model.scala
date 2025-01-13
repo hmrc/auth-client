@@ -35,6 +35,8 @@ sealed abstract class ConfidenceLevel(val level: Int) extends Ordered[Confidence
 
 object ConfidenceLevel {
 
+  case object L600 extends ConfidenceLevel(600)
+
   case object L500 extends ConfidenceLevel(500)
 
   case object L250 extends ConfidenceLevel(250)
@@ -44,6 +46,7 @@ object ConfidenceLevel {
   case object L50 extends ConfidenceLevel(50)
 
   def fromInt(level: Int): Try[ConfidenceLevel] = level match {
+    case 600 => Success(L600)
     case 500 => Success(L500)
     case 250 => Success(L250)
     case 200 => Success(L200)
