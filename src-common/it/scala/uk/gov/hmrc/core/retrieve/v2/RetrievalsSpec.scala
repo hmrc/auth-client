@@ -21,7 +21,7 @@ import play.api.libs.json.{JsString, Json}
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.test.Helpers.USER_AGENT
 import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals, TrustedHelper}
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ScpInformation}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
 import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,6 +45,12 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
       implicit val hc = signInGGWithAuthLoginApi(credId)
       val cl: ConfidenceLevel = authorised().retrieve(Retrievals.confidenceLevel)(Future.successful).futureValue
       cl shouldBe ConfidenceLevel.L250
+    }
+    "retrieve CL600 as CL600 i.e. not downgraded to anything else" in {
+      val credId = randomCredId
+      implicit val hc = signInGGWithAuthLoginApi(credId, confidenceLevel = 600)
+      val cl: ConfidenceLevel = authorised().retrieve(Retrievals.confidenceLevel)(Future.successful).futureValue
+      cl shouldBe ConfidenceLevel.L600
     }
   }
 

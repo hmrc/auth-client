@@ -30,7 +30,6 @@ lazy val library = (project in file("."))
   .settings(publish / skip := true)
   .aggregate(
     authClient,
-    authClientPlay28,
     authClientPlay29,
     authClientPlay30
   )
@@ -63,21 +62,6 @@ lazy val srcCommon = Project("src-common", file("src-common"))
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
 
-lazy val authClientPlay28 = Project("auth-client-play-28", file("auth-client-play-28"))
-  .enablePlugins(BuildInfoPlugin)
-  .settings(
-    libraryDependencies ++= BuildDependencies.play28,
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    sharedSources
-  )
-  .settings( //see https://github.com/sbt/sbt-buildinfo
-    buildInfoKeys    := Seq[BuildInfoKey](name, version),
-    buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
-  )
-  .settings(ScoverageSettings())
-  .settings(ScalariformSettings())
-  .dependsOn(authClient)
-
 lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
@@ -109,15 +93,9 @@ lazy val authClientPlay30 = Project("auth-client-play-30", file("auth-client-pla
 lazy val it = (project in file("it"))
   .settings(publish / skip := true)
   .aggregate(
-    itPlay28,
     itPlay29,
     itPlay30
   )
-
-lazy val itPlay28 = Project("it-play-28", file("it-play-28"))
-  .settings(DefaultBuildSettings.itSettings())
-  .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
-  .dependsOn(authClientPlay28 % "test->test")
 
 lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
   .settings(DefaultBuildSettings.itSettings())

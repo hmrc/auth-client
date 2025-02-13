@@ -1,2 +1,3 @@
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
 type: library
+description: Provides the interface to the platform standard authentication and authorisation service via authorised(). Use Predicates wherever possible to state up-front what the user's account profile should be before they return back to your service. Then use Retrievals to obtain the user's account details. Pulled in as a transitive dependency via https://github.com/hmrc/bootstrap-play which is used for every microservice.
