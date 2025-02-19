@@ -79,7 +79,7 @@ trait PlayAuthConnector extends AuthConnector with Logging {
 
   private def logIfDeprecated(retrieval: Retrieval[_])(implicit hc: HeaderCarrier): Unit = retrieval match {
     case Retrievals.name =>
-      logger.warn(s"GG-7679 service name ${getUserAgent(hc)} used deprecated name Retrieval, sessionId: ${hc.sessionId}, requestId: ${hc.requestId}")
+      logger.info(s"[GG-7679] service name ${getUserAgent(hc)} used deprecated name Retrieval, sessionId: ${hc.sessionId}, requestId: ${hc.requestId}")
     case CompositeRetrieval(retrievalA, retrievalB) =>
       logIfDeprecated(retrievalA)
       logIfDeprecated(retrievalB)
