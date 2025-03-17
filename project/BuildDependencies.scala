@@ -2,7 +2,7 @@ import sbt._
 
 private object BuildDependencies {
 
-  val httpVerbsVersion = "15.1.0"
+  val httpVerbsVersion = "15.2.0"
 
   val play29 = play("play-29")
   val play30 = play("play-30")

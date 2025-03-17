@@ -5,19 +5,31 @@ auth-client
 Library for supporting user authorisation on microservices.
 
 ## Change History
+### v8.6.0 Mar 2025
 
-### v8.4.0 February 2025
+Updated dependencies.
+
+Build is now on Java 21.
+
+### v8.5.0 Feb 2025
+
+Dialed back severity of a log message.
+
+### v8.4.0 Feb 2025
 
 Added CL600 for OLfG (One Login).
+
 Removed Play 2.8 support.
+
 Updated dependencies.
+
 Minor README clarifications.
 
-### v8.3.0 January 2025
+### v8.3.0 Jan 2025
 
 Fixed a bug where the client version was being incorrectly reported in the Auth-Client-Version header.
 
-### v8.2.0 July 2024
+### v8.2.0 Jul 2024
 
 Deprecated the 'name' Retrieval as at 04/2024 following a Tech Blog Post dated 2024-02-26.
 
