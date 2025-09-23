@@ -5,6 +5,10 @@ auth-client
 Library for supporting user authorisation on microservices.
 
 ## Change History
+### v8.7.0 Sept 2025
+
+Removed Play 2.9 support.
+
 ### v8.6.0 Mar 2025
 
 Updated dependencies.
@@ -106,13 +110,13 @@ resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefac
 libraryDependencies += "uk.gov.hmrc" %% "auth-client-play-xx" % "[INSERT-VERSION]"
 ```
 
-Where `play-xx` is your version of Play (e.g. `play-29`).
+Where `play-xx` is your version of Play (e.g. `play-30`).
 
 Note the version does not include the version of Play (as it did prior to version 7.0.0).
 
-Note that this library is only available for Play 2.8.x and 2.9.x. No other play versions are supported.
+Note that this library is only available for Play 3.0.x. No other play versions are supported.
 
-> Play < 2.8 is no longer supported. If you plan to use it in a microservice that is still using an older version of Play, then you will need to upgrade it first.
+> Play < 3.0 is no longer supported. If you plan to use it in a microservice that is still using an older version of Play, then you will need to upgrade it first.
 
 ## Usage
 

@@ -18,7 +18,7 @@ import sbt.Keys.*
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
 
-val scala2_13 = "2.13.12"
+val scala2_13 = "2.13.16"
 val scala3    = "3.3.4"
 
 ThisBuild / majorVersion     := 8
@@ -30,7 +30,6 @@ lazy val library = (project in file("."))
   .settings(publish / skip := true)
   .aggregate(
     authClient,
-    authClientPlay29,
     authClientPlay30
   )
 
@@ -52,7 +51,7 @@ val sharedSources = Seq(
 lazy val srcCommon = Project("src-common", file("src-common"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    libraryDependencies ++= BuildDependencies.play30,
+    libraryDependencies ++= BuildDependencies.dependenciesFor("play-30"),
     sharedSources
     )
   .settings( //see https://github.com/sbt/sbt-buildinfo
@@ -62,24 +61,11 @@ lazy val srcCommon = Project("src-common", file("src-common"))
   .settings(ScoverageSettings())
   .settings(ScalariformSettings())
 
-lazy val authClientPlay29 = Project("auth-client-play-29", file("auth-client-play-29"))
-  .enablePlugins(BuildInfoPlugin)
-  .settings(
-    libraryDependencies ++= BuildDependencies.play29,
-    sharedSources
-  )
-  .settings( //see https://github.com/sbt/sbt-buildinfo
-    buildInfoKeys    := Seq[BuildInfoKey](name, version),
-    buildInfoPackage := "uk.gov.hmrc.auth.clientversion"
-  )
-  .settings(ScoverageSettings())
-  .settings(ScalariformSettings())
-
 lazy val authClientPlay30 = Project("auth-client-play-30", file("auth-client-play-30"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     crossScalaVersions := Seq(scala2_13, scala3),
-    libraryDependencies ++= BuildDependencies.play30,
+    libraryDependencies ++= BuildDependencies.dependenciesFor("play-30"),
     sharedSources
   )
   .settings( //see https://github.com/sbt/sbt-buildinfo
@@ -93,14 +79,8 @@ lazy val authClientPlay30 = Project("auth-client-play-30", file("auth-client-pla
 lazy val it = (project in file("it"))
   .settings(publish / skip := true)
   .aggregate(
-    itPlay29,
     itPlay30
   )
-
-lazy val itPlay29 = Project("it-play-29", file("it-play-29"))
-  .settings(DefaultBuildSettings.itSettings())
-  .settings(Test / unmanagedSourceDirectories += baseDirectory.value / s"../src-common/it/scala")
-  .dependsOn(authClientPlay29 % "test->test")
 
 lazy val itPlay30 = Project("it-play-30", file("it-play-30"))
   .settings(DefaultBuildSettings.itSettings())
