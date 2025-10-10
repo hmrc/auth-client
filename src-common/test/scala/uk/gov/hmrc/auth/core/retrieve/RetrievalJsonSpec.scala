@@ -21,6 +21,7 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 
 import java.time.Instant
 import java.util.UUID
