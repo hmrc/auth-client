@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 
 @annotation.nowarn("msg=deprecated")
 class MockingConnectorSpec extends AnyWordSpec with MockitoSugar {

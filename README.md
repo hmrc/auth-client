@@ -5,6 +5,10 @@ auth-client
 Library for supporting user authorisation on microservices.
 
 ## Change History
+### v9.0.0 Oct 2025
+
+Remove v1 Retrievals, long since deprecated after 2.11.0-play-26, to assist One Login integration.
+
 ### v8.7.0 Sept 2025
 
 Removed Play 2.9 support.
@@ -369,6 +373,12 @@ or provide a mocking session cookie as demonstrated below
 ```
 
 For more testing examples head to `uk.gov.hmrc.auth.core.AuthConnectorSpec` or [Auth-Demo-Frontend]("https://github.com/hmrc/auth-demo-frontend")
+
+## Running the tests
+```
+sm2 --start AUTH_CLIENT_ALL
+sbt clean compile test it/test
+```
 
 
 ## License
