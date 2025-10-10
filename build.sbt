@@ -21,7 +21,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val scala2_13 = "2.13.16"
 val scala3    = "3.3.4"
 
-ThisBuild / majorVersion     := 8
+ThisBuild / majorVersion     := 9
 ThisBuild / isPublicArtefact := true
 ThisBuild / scalaVersion     := scala2_13
 ThisBuild / Test / fork      := true //Required to prevent https://github.com/sbt/sbt/issues/4609
