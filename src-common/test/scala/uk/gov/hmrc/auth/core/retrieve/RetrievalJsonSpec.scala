@@ -389,69 +389,6 @@ class RetrievalJsonSpec extends AnyWordSpec with ScalaFutures {
 
   }
 
-  "The JSON reads for the trusted helper retrieval" should {
-    import v2.Retrievals.trustedHelper
-    import v2.TrustedHelper
-
-    "read a fully populated trusted helper object" in {
-      val principalName = UUID.randomUUID().toString
-      val attorneyName = UUID.randomUUID().toString
-      val returnLinkUrl = UUID.randomUUID().toString
-      val principalNino = "AA000003D"
-
-      val json = Json.obj(
-        "trustedHelper" -> Json.obj(
-          "principalName" -> principalName,
-          "attorneyName" -> attorneyName,
-          "returnLinkUrl" -> returnLinkUrl,
-          "principalNino" -> Json.toJson(principalNino)
-        )
-      )
-
-      val tokens = trustedHelper.reads.reads(json)
-      tokens shouldBe a[JsSuccess[_]]
-
-      tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, Some(principalNino)))
-    }
-
-    "read trusted helper object when principal nino isn't defined" in {
-      val principalName = UUID.randomUUID().toString
-      val attorneyName = UUID.randomUUID().toString
-      val returnLinkUrl = UUID.randomUUID().toString
-
-      val json = Json.obj(
-        "trustedHelper" -> Json.obj(
-          "principalName" -> principalName,
-          "attorneyName" -> attorneyName,
-          "returnLinkUrl" -> returnLinkUrl
-        )
-      )
-
-      val tokens = trustedHelper.reads.reads(json)
-      tokens shouldBe a[JsSuccess[_]]
-
-      tokens.get shouldBe Some(TrustedHelper(principalName, attorneyName, returnLinkUrl, principalNino = None))
-    }
-
-    "error when read a uncompleted trusted helper object e.g attorneyName is missing" in {
-      val principalName = UUID.randomUUID().toString
-      val returnLinkUrl = UUID.randomUUID().toString
-      val principalNino = "AA000003D"
-
-      val json = Json.obj(
-        "trustedHelper" -> Json.obj(
-          "principalName" -> principalName,
-          "returnLinkUrl" -> returnLinkUrl,
-          "principalNino" -> Json.toJson(principalNino)
-        )
-      )
-
-      trustedHelper.reads.reads(json).isError shouldBe true
-      trustedHelper.reads.reads(json).toString.contains("""JsError(List((/trustedHelper/attorneyName""") shouldBe true
-
-    }
-  }
-
   "The JSON reads for the scpInformation fields" should {
     import v2.Retrievals.{scpInformation, scpSessionId, trustId, trustIdChangedAt, trustIdChangedBy}
     val json = Json.parse(

@@ -17,10 +17,9 @@
 package uk.gov.hmrc.core.retrieve.v2
 
 import org.scalatest.OptionValues
-import play.api.libs.json.{JsString, Json}
-import play.api.libs.ws.writeableOf_JsValue
+import play.api.libs.json.JsString
 import play.api.test.Helpers.USER_AGENT
-import uk.gov.hmrc.auth.core.retrieve.v2.{Retrievals, TrustedHelper}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, MissingBearerToken}
 import uk.gov.hmrc.core.utils.{AuthUtils, BaseSpec}
@@ -54,35 +53,7 @@ class RetrievalsSpec extends BaseSpec with AuthUtils with OptionValues {
     }
   }
 
-  "TrustedHelper" should {
-    "retrieve the correct data" in {
-      val credId = randomCredId
-      implicit val hc = signInGGWithAuthLoginApi(credId)
-
-      val request = Json.parse("{\"attorneyName\":\"attorneyName\",\"principalName\":\"principalName\",\"link\":{\"text\":\"returnLink\",\"url\":\"returnLinkUrl\"},\"accounts\":{\"paye\":\"AA000003C\"}}")
-      val authoriseDelegationResult = withClient { ws => ws.url(authResource("/auth/authoriseDelegation")).withHttpHeaders("Authorization" -> hc.authorization.get.value).post(request).futureValue }
-
-      authoriseDelegationResult.status shouldBe 201
-
-      val trustedHelper: Option[TrustedHelper] = authorised().retrieve(Retrievals.trustedHelper)(Future.successful).futureValue
-
-      trustedHelper shouldBe Some(TrustedHelper("principalName", "attorneyName", "returnLinkUrl", principalNino = Some("AA000003C")))
-    }
-
-    "retrieve the correct data with principalNino undefined if it's None in delegation context" in {
-      val credId = randomCredId
-      implicit val hc = signInGGWithAuthLoginApi(credId)
-
-      val request = Json.parse("{\"attorneyName\":\"attorneyName\",\"principalName\":\"principalName\",\"link\":{\"text\":\"returnLink\",\"url\":\"returnLinkUrl\"},\"accounts\":{}}")
-      val authoriseDelegationResult = withClient { ws => ws.url(authResource("/auth/authoriseDelegation")).withHttpHeaders("Authorization" -> hc.authorization.get.value).post(request).futureValue }
-
-      authoriseDelegationResult.status shouldBe 201
-
-      val trustedHelper: Option[TrustedHelper] = authorised().retrieve(Retrievals.trustedHelper)(Future.successful).futureValue
-
-      trustedHelper shouldBe Some(TrustedHelper("principalName", "attorneyName", "returnLinkUrl", principalNino = None))
-    }
-
+  "agentInformation" should {
     "retrieve agent data correctly" in {
       val agentId = s"agentId-${UUID.randomUUID().toString}"
       val agentCode = s"agentCode-${UUID.randomUUID().toString}"
