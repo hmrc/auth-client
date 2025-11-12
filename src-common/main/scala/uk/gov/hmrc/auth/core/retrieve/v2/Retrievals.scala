@@ -71,8 +71,6 @@ trait Retrievals {
 
   val oauthTokens: Retrieval[Option[OauthTokens]] = OptionalRetrieval("oauthTokens", OauthTokens.reads)
 
-  val trustedHelper: Retrieval[Option[TrustedHelper]] = OptionalRetrieval("trustedHelper", TrustedHelper.reads)
-
   val legacySaUserId: Retrieval[Option[String]] = OptionalRetrieval("legacySaUserId", Reads.StringReads)
 
   val clientId: Retrieval[Option[String]] = OptionalRetrieval("clientId", Reads.StringReads)
@@ -111,10 +109,4 @@ case class OauthTokens(accessToken: Option[String], refreshToken: Option[String]
 
 object OauthTokens {
   val reads: Reads[OauthTokens] = Json.reads[OauthTokens]
-}
-
-case class TrustedHelper(principalName: String, attorneyName: String, returnLinkUrl: String, principalNino: Option[String])
-
-object TrustedHelper {
-  val reads: Reads[TrustedHelper] = Json.reads[TrustedHelper]
 }
