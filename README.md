@@ -5,7 +5,7 @@ auth-client
 Library for supporting user authorisation on microservices.
 
 ## Change History
-### v8.8.0 Oct 2025
+### v8.8.0 Nov 2025
 
 Removed unused trustedHelper retrieval.
 
