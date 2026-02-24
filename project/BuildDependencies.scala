@@ -2,7 +2,7 @@ import sbt._
 
 private object BuildDependencies {
 
-  val httpVerbsVersion = "15.5.0"
+  val httpVerbsVersion = "15.7.0"
 
   def dependenciesFor(playSuffix: String) = Seq(
     "uk.gov.hmrc"            %% s"http-verbs-$playSuffix"      % httpVerbsVersion,
